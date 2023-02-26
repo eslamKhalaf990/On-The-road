@@ -58,7 +58,12 @@ class _AddSignState extends State<AddSign> {
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.white,
                   boxShadow: const [
-                    BoxShadow(color: Colors.black54, spreadRadius: 2),
+                    BoxShadow(
+                      color: Colors.grey,
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: Offset(0, 0.1), // changes position of shadow
+                    ),
                   ],
                 ),
                 child: ListView(children: [

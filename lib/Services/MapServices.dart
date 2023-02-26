@@ -81,7 +81,7 @@ class MapServices{
     return (response);
   }
   //BitMapLiveLocation
-  HashSet<Marker> bitmapLiveLocation(var markersOnMap, Position position, BitmapDescriptor currentBitmap){
+  Set<Marker> bitmapLiveLocation(var markersOnMap, Position position, BitmapDescriptor currentBitmap){
     double pastLong = 0.0;
     double pastLat = 0.0;
     if (firstTime) {

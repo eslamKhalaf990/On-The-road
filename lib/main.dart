@@ -14,8 +14,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'On The Road',
       darkTheme: ThemeData(
-        // brightness: Brightness.dark,
-        // visualDensity: VisualDensity.adaptivePlatformDensity,
+        brightness: Brightness.dark,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const AutoLogIn(
       ),

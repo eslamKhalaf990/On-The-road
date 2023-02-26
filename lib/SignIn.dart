@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'LoadingSignIn.dart';
 import 'Admin.dart';
@@ -59,9 +60,14 @@ class _SignInScreenState extends State<SignInScreen> {
                     margin: const EdgeInsets.only(top: 7),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Colors.white,
+                      color: Colors.black12,
                       boxShadow: const [
-                        BoxShadow(color: Colors.black54, spreadRadius: 2),
+                        BoxShadow(
+                          color: Colors.black12,
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: Offset(0, 0.1), // changes position of shadow
+                        ),
                       ],
                     ),
                     child: ListView(
@@ -117,6 +123,10 @@ class _SignInScreenState extends State<SignInScreen> {
                                 style: const ButtonStyle(
                                     backgroundColor: MaterialStatePropertyAll(Colors.grey)),
                                 onPressed: () {
+                                  const storage = FlutterSecureStorage();
+                                  storage.write(key: "Key_Username", value: _controllerName.text);
+                                  storage.write(key: "Key_Password", value: _controllerPassword.text);
+                                  storage.write(key: "Logged_In", value: "true");
                                   Navigator.push(context, MaterialPageRoute(builder: (context){
                                     return LoadingScreen(name: _controllerName.text,
                                         password: _controllerPassword.text);

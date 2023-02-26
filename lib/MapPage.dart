@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
+import 'package:tilt/tilt.dart';
 import 'package:on_the_road/UI/Profile.dart';
 
 import 'Services/MapServices.dart';
@@ -31,13 +32,14 @@ class MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   MapServices services = MapServices();
-  var markersOnMap = HashSet<Marker>();
+  Set<Marker> markersOnMap = {};
   late BitmapDescriptor bitmap;
   late BitmapDescriptor currentBitmap;
   late Position position;
   late double speed = 0.0;
   double pastLong = 0.0;
   double pastLat = 0.0;
+  late Color _activeColor = Colors.grey;
   late double _apiSpeed = 0.0;
   late StreamSubscription<Position> positionStream;
 
@@ -52,22 +54,25 @@ class MapScreenState extends State<MapScreen> {
     final GoogleMapController controller = await _controller.future;
     LocationSettings locationSettings = const LocationSettings(
       accuracy: LocationAccuracy.bestForNavigation,
-      distanceFilter: 1,
+      distanceFilter: 0,
     );
 
-    StreamSubscription<Position> positionStream =
+    positionStream =
         Geolocator.getPositionStream(locationSettings: locationSettings)
-            .listen((Position position) {
+            .listen((Position position) async {
+          double zoomLevel = await controller.getZoomLevel();
       setState(() {
-        markersOnMap = services.bitmapLiveLocation(markersOnMap, position, currentBitmap);
-        _apiSpeed = position.speed*3.6;
+        markersOnMap =
+            services.bitmapLiveLocation(markersOnMap, position, currentBitmap);
+        _apiSpeed = position.speed * 3.6;
+
         controller.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
               target: LatLng(position.latitude, position.longitude),
-              zoom: 18,
-              tilt: 80,
-              bearing: 50,
+              zoom: zoomLevel,
+              tilt: 90,
+              bearing: 10,
             ),
           ),
         );
@@ -86,8 +91,14 @@ class MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
     customizeBitmap();
-    getLiveLocation();
+    // getLiveLocation();
     update(widget.longitude, widget.latitude);
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    positionStream.cancel();
   }
 
   @override
@@ -100,21 +111,21 @@ class MapScreenState extends State<MapScreen> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(25),
                       color: Colors.white,
                       boxShadow: const [
                         BoxShadow(
-                          color: Color(0xffEE6262),
+                          color: Colors.grey,
                           spreadRadius: 1,
                           blurRadius: 2,
                           offset: Offset(0, 0.1), // changes position of shadow
                         ),
                       ]),
-                  height: 80,
+                  height: 75,
                   margin: const EdgeInsets.only(
-                      left: 5, right: 5, top: 5, bottom: 5),
+                      left: 2, right: 2, top: 5, bottom: 3),
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(25)),
+                    borderRadius: const BorderRadius.all(Radius.circular(35)),
                     child: Center(
                       child: Text(
                         "Current Speed: ${_apiSpeed.toStringAsFixed(2)},\n Manual Speed: ${speed.toStringAsFixed(2)}",
@@ -133,18 +144,32 @@ class MapScreenState extends State<MapScreen> {
           ),
           Expanded(
             child: Container(
-              margin: const EdgeInsets.only(left: 5, right: 5, bottom: 3),
+              margin: const EdgeInsets.only(left: 2, right: 2, bottom: 0),
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(
-                  Radius.circular(25),
+                  Radius.circular(
+                      30),
                 ),
                 child: GoogleMap(
+                  onTap: (LatLng l){
+                    setState(() {
+                      markersOnMap.add(
+                        Marker(
+                          markerId: MarkerId('markerToAdd ${l.longitude}, ${l.latitude}'),
+                          position: LatLng(
+                            l.latitude, l.longitude,
+                          ),
+                          icon: currentBitmap,
+                        ),
+                      );
+                    });
+                  },
                   initialCameraPosition: CameraPosition(
                     // target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-                    tilt: 80,
-                    bearing: 50,
+                    tilt: 90,
+                    // bearing: 0,
                     target: LatLng(latitude, longitude),
-                    zoom: 20,
+                    zoom: 25,
                   ),
                   onMapCreated: (GoogleMapController controller) async {
                     _controller.complete(controller);
@@ -174,14 +199,19 @@ class MapScreenState extends State<MapScreen> {
           ),
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
-              color: Colors.white,
-              boxShadow: const [
-                BoxShadow(color: Color(0xffEEEEEE), spreadRadius: 1),
-              ],
-            ),
+                borderRadius: BorderRadius.circular(30),
+                color: Colors.white,
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.grey,
+                    // color: Color(0xffEEEEEE),
+                    spreadRadius: 1,
+                    blurRadius: 2,
+                    offset: Offset(0, 0.1), // changes position of shadow
+                  ),
+                ]),
             height: 70,
-            margin: const EdgeInsets.only(left: 7, right: 7, top: 7, bottom: 7),
+            margin: const EdgeInsets.only(left: 2, right: 2, top: 3, bottom: 3),
             child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(25)),
                 child: Container(
@@ -189,27 +219,29 @@ class MapScreenState extends State<MapScreen> {
                   child: Row(
                     children: [
                       IconButton(
-                        onPressed: () async {
-                          MapServices services = MapServices();
-                          await services.getCurrentLocation();
-                          var x = services.long;
-                          var y = services.lat;
-                          Future.delayed(const Duration(seconds: 7), () async {
-                            await services.getCurrentLocation();
-                            var x_2 = services.long;
-                            var y_2 = services.lat;
-                            setState(() {
-                              speed =
-                                  Geolocator.distanceBetween(y, x, y_2, x_2);
-                              speed /= 7;
-                              speed *= 3.6;
-                            });
-                          });
+                        onPressed: () {
+                          _activeColor = Colors.green;
+                          getLiveLocation();
+                          // MapServices services = MapServices();
+                          // await services.getCurrentLocation();
+                          // var x = services.long;
+                          // var y = services.lat;
+                          // Future.delayed(const Duration(seconds: 7), () async {
+                          //   await services.getCurrentLocation();
+                          //   var x_2 = services.long;
+                          //   var y_2 = services.lat;
+                          //   setState(() {
+                          //     speed =
+                          //         Geolocator.distanceBetween(y, x, y_2, x_2);
+                          //     speed /= 7;
+                          //     speed *= 3.6;
+                          //   });
+                          // });
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.navigation_outlined,
                           size: 35,
-                          color: Colors.lightBlue,
+                          color: _activeColor,
                         ),
                       ),
                       const Expanded(child: SizedBox()),
@@ -231,20 +263,30 @@ class MapScreenState extends State<MapScreen> {
                         ),
                       ),
                       const Expanded(child: SizedBox()),
-                      IconButton(onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context){
-                          return Profile(token: widget.token,);
-                        }));
-                      },
+                      IconButton(
+                        onPressed: () {
+                          if(_activeColor == Colors.green){
+                            positionStream.cancel();
+                          }
+                          setState(() {
+                            _activeColor = Colors.grey;
+                          });
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return Profile(
+                              token: widget.token,
+                            );
+                          }));
+                        },
                         icon: CircleAvatar(
-                        radius: 18,
-                        child: ClipRRect(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(100),
-                            ),
-                            child: Image.asset('images/admin.png')),
-                      ),)
-
+                          radius: 18,
+                          child: ClipRRect(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(100),
+                              ),
+                              child: Image.asset('images/admin.png')),
+                        ),
+                      )
                     ],
                   ),
                 )),
