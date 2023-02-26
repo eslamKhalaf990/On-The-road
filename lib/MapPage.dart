@@ -333,6 +333,6 @@ class MapScreenState extends State<MapScreen> {
   }
 
   Widget floatingItem() {
-    return const Camera();
+    return Camera(updateSignsOnMap);
   }
 }

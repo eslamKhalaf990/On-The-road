@@ -5,7 +5,11 @@ import 'package:tflite/tflite.dart';
 import 'package:on_the_road/Services/MapServices.dart';
 
 class Camera extends StatefulWidget {
-  const Camera({Key? key}) : super(key: key);
+  Function updateMap;
+  // const Camera({Key? key}) : super(key: key);
+
+  Camera(this.updateMap, {super.key});
+
   @override
   _CameraState createState() => _CameraState();
 }
@@ -59,12 +63,13 @@ class _CameraState extends State<Camera> {
           numResults: 5,
           threshold: 0.9,
           asynch: true);
-      predictions!.forEach((element) {
+      predictions!.forEach((element) async {
         // if (element['confidence'] < 0.999) element['label'] = '???';
         if (element['label'] == 'Stop Sign') {
           //call the api...
           MapServices addSign = MapServices();
-          var response = addSign.addSignHere(element['label']);
+          var response = await addSign.addSignHere(element['label']);
+          widget.updateMap();
         }
         setState(() {
           output = element['label'];
