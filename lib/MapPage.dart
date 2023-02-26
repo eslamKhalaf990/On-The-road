@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
+import 'package:on_the_road/UI/Settings.dart';
 import 'package:tilt/tilt.dart';
 import 'package:on_the_road/UI/Profile.dart';
 
@@ -9,6 +10,7 @@ import 'Services/MapServices.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
+import 'cam_model.dart';
 
 late double longitude;
 late double latitude;
@@ -42,6 +44,8 @@ class MapScreenState extends State<MapScreen> {
   late Color _activeColor = Colors.grey;
   late double _apiSpeed = 0.0;
   late StreamSubscription<Position> positionStream;
+  OverlayEntry? camEntry;
+  Offset camOffset = const Offset(15, 20);
 
   void customizeBitmap() async {
     bitmap = await BitmapDescriptor.fromAssetImage(
@@ -60,7 +64,7 @@ class MapScreenState extends State<MapScreen> {
     positionStream =
         Geolocator.getPositionStream(locationSettings: locationSettings)
             .listen((Position position) async {
-          double zoomLevel = await controller.getZoomLevel();
+      double zoomLevel = await controller.getZoomLevel();
       setState(() {
         markersOnMap =
             services.bitmapLiveLocation(markersOnMap, position, currentBitmap);
@@ -93,11 +97,18 @@ class MapScreenState extends State<MapScreen> {
     customizeBitmap();
     // getLiveLocation();
     update(widget.longitude, widget.latitude);
+
+    if (camMood) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        showFloatingCam();
+      });
+    }
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
+    hideFloatingCam();
     positionStream.cancel();
   }
 
@@ -147,17 +158,18 @@ class MapScreenState extends State<MapScreen> {
               margin: const EdgeInsets.only(left: 2, right: 2, bottom: 0),
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(
-                  Radius.circular(
-                      30),
+                  Radius.circular(30),
                 ),
                 child: GoogleMap(
-                  onTap: (LatLng l){
+                  onTap: (LatLng l) {
                     setState(() {
                       markersOnMap.add(
                         Marker(
-                          markerId: MarkerId('markerToAdd ${l.longitude}, ${l.latitude}'),
+                          markerId: MarkerId(
+                              'markerToAdd ${l.longitude}, ${l.latitude}'),
                           position: LatLng(
-                            l.latitude, l.longitude,
+                            l.latitude,
+                            l.longitude,
                           ),
                           icon: currentBitmap,
                         ),
@@ -173,24 +185,7 @@ class MapScreenState extends State<MapScreen> {
                   ),
                   onMapCreated: (GoogleMapController controller) async {
                     _controller.complete(controller);
-                    MapServices services = MapServices();
-
-                    var response = await services.getSigns(widget.token);
-                    var data = json.decode(response.body);
-
-                    setState(() {
-                      for (int i = 0; i < data.length; i++) {
-                        markersOnMap.add(
-                          Marker(
-                            markerId: MarkerId('$i'),
-                            position: LatLng(
-                                data[i]['location']['coordinates'][1],
-                                data[i]['location']['coordinates'][0]),
-                            icon: bitmap,
-                          ),
-                        );
-                      }
-                    });
+                    await updateSignsOnMap();
                   },
                   markers: markersOnMap,
                 ),
@@ -265,7 +260,7 @@ class MapScreenState extends State<MapScreen> {
                       const Expanded(child: SizedBox()),
                       IconButton(
                         onPressed: () {
-                          if(_activeColor == Colors.green){
+                          if (_activeColor == Colors.green) {
                             positionStream.cancel();
                           }
                           setState(() {
@@ -294,5 +289,50 @@ class MapScreenState extends State<MapScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> updateSignsOnMap() async {
+    MapServices services = MapServices();
+
+    var response = await services.getSigns(widget.token);
+    var data = json.decode(response.body);
+
+    setState(() {
+      for (int i = 0; i < data.length; i++) {
+        markersOnMap.add(
+          Marker(
+            markerId: MarkerId('$i'),
+            position: LatLng(data[i]['location']['coordinates'][1],
+                data[i]['location']['coordinates'][0]),
+            icon: bitmap,
+          ),
+        );
+      }
+    });
+  }
+
+  void showFloatingCam() {
+    camEntry = OverlayEntry(
+        builder: (context) => Positioned(
+            right: camOffset.dx,
+            bottom: camOffset.dy,
+            child: GestureDetector(
+              onPanUpdate: (details) {
+                camOffset -= details.delta;
+                camEntry!.markNeedsBuild();
+              },
+              child: floatingItem(),
+            )));
+    final overlay = Overlay.of(context)!;
+    overlay.insert(camEntry!);
+  }
+
+  hideFloatingCam() {
+    camEntry?.remove();
+    camEntry = null;
+  }
+
+  Widget floatingItem() {
+    return const Camera();
   }
 }

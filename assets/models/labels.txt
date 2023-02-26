@@ -1,0 +1,5 @@
+Stop Sign
+speed 80
+speed 60
+speed 50
+other
