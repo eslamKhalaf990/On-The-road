@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:on_the_road/LoadingSignIn.dart';
 import '/main.dart';
 import 'package:tflite/tflite.dart';
 import 'package:on_the_road/Services/MapServices.dart';
@@ -68,7 +69,10 @@ class _CameraState extends State<Camera> {
         if (element['label'] == 'Stop Sign') {
           //call the api...
           MapServices addSign = MapServices();
-          var response = await addSign.addSignHere(element['label']);
+          await addSign.getCurrentLocation();
+          var response = await addSign.addSignForUser(element['label'],
+              addSign.long.toString(), addSign.lat.toString(), global_token);
+          // var response = await addSign.addSignHere();
           widget.updateMap();
         }
         setState(() {
@@ -89,15 +93,20 @@ class _CameraState extends State<Camera> {
     return Column(children: [
       Padding(
         padding: EdgeInsets.all(20),
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.35,
-          width: MediaQuery.of(context).size.width * 0.35,
-          child: !cameraController!.value.isInitialized
-              ? Container()
-              : AspectRatio(
-                  aspectRatio: cameraController!.value.aspectRatio,
-                  child: CameraPreview(cameraController!),
-                ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(25),
+          ),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.18,
+            width: MediaQuery.of(context).size.width * 0.24,
+            child: !cameraController!.value.isInitialized
+                ? Container()
+                : AspectRatio(
+                    aspectRatio: cameraController!.value.aspectRatio,
+                    child: CameraPreview(cameraController!),
+                  ),
+          ),
         ),
       ),
       Text(

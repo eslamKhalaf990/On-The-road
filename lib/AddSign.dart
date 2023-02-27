@@ -56,10 +56,10 @@ class _AddSignState extends State<AddSign> {
                 margin: const EdgeInsets.only(top: 7),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Colors.white,
+                  color: Colors.black12,
                   boxShadow: const [
                     BoxShadow(
-                      color: Colors.grey,
+                      color: Colors.black12,
                       spreadRadius: 1,
                       blurRadius: 2,
                       offset: Offset(0, 0.1), // changes position of shadow
@@ -235,10 +235,11 @@ class _AddSignState extends State<AddSign> {
                           onPressed: () async {
                             MapServices services = MapServices();
                             var response = await services.addSign(
-                                _controllerSignName.text,
-                                _controllerLongitude.text,
-                                _controllerLatitude.text,
-                                widget.token,);
+                              _controllerSignName.text,
+                              _controllerLongitude.text,
+                              _controllerLatitude.text,
+                              widget.token,
+                            );
                             print(response.statusCode);
                             if (response.statusCode == 200 ||
                                 response.statusCode == 201) {

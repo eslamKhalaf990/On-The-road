@@ -35,8 +35,9 @@ class MapScreenState extends State<MapScreen> {
       Completer<GoogleMapController>();
   MapServices services = MapServices();
   Set<Marker> markersOnMap = {};
-  late BitmapDescriptor bitmap;
+  late BitmapDescriptor stopSignbitmap;
   late BitmapDescriptor currentBitmap;
+  late BitmapDescriptor trafficLightBitmap;
   late Position position;
   late double speed = 0.0;
   double pastLong = 0.0;
@@ -48,10 +49,12 @@ class MapScreenState extends State<MapScreen> {
   Offset camOffset = const Offset(15, 20);
 
   void customizeBitmap() async {
-    bitmap = await BitmapDescriptor.fromAssetImage(
+    stopSignbitmap = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration.empty, 'images/stopSign.png');
     currentBitmap = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration.empty, 'images/currentLocation.png');
+    trafficLightBitmap = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration.empty, 'images/TrafficLight.png');
   }
 
   Future<void> getLiveLocation() async {
@@ -97,12 +100,6 @@ class MapScreenState extends State<MapScreen> {
     customizeBitmap();
     // getLiveLocation();
     update(widget.longitude, widget.latitude);
-
-    if (camMood) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
-        showFloatingCam();
-      });
-    }
   }
 
   @override
@@ -139,7 +136,7 @@ class MapScreenState extends State<MapScreen> {
                     borderRadius: const BorderRadius.all(Radius.circular(35)),
                     child: Center(
                       child: Text(
-                        "Current Speed: ${_apiSpeed.toStringAsFixed(2)},\n Manual Speed: ${speed.toStringAsFixed(2)}",
+                        "Current Speed: ${_apiSpeed.toStringAsFixed(2)}",
                         style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -215,8 +212,13 @@ class MapScreenState extends State<MapScreen> {
                     children: [
                       IconButton(
                         onPressed: () {
-                          _activeColor = Colors.green;
-                          getLiveLocation();
+                          if (_activeColor != Colors.green) {
+                            WidgetsBinding.instance!.addPostFrameCallback((_) {
+                              showFloatingCam();
+                            });
+                            _activeColor = Colors.green;
+                            getLiveLocation();
+                          }
                           // MapServices services = MapServices();
                           // await services.getCurrentLocation();
                           // var x = services.long;
@@ -260,6 +262,7 @@ class MapScreenState extends State<MapScreen> {
                       const Expanded(child: SizedBox()),
                       IconButton(
                         onPressed: () {
+                          hideFloatingCam();
                           if (_activeColor == Colors.green) {
                             positionStream.cancel();
                           }
@@ -298,13 +301,19 @@ class MapScreenState extends State<MapScreen> {
     var data = json.decode(response.body);
 
     setState(() {
+      BitmapDescriptor bitmapIcon = stopSignbitmap;
       for (int i = 0; i < data.length; i++) {
+        if (data[i]['name'] == 'traffic light') {
+          bitmapIcon = trafficLightBitmap;
+        } else if (data[i]['name'] == 'Stop Sign') {
+          bitmapIcon = stopSignbitmap;
+        }
         markersOnMap.add(
           Marker(
             markerId: MarkerId('$i'),
             position: LatLng(data[i]['location']['coordinates'][1],
                 data[i]['location']['coordinates'][0]),
-            icon: bitmap,
+            icon: bitmapIcon,
           ),
         );
       }

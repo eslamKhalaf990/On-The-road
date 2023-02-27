@@ -16,12 +16,11 @@ double global_lat = 0.0;
 class LoadingScreen extends StatefulWidget {
   String name;
   String password;
-  LoadingScreen(
-      {super.key,
-        required this.name,
-        required this.password,
-      }
-      );
+  LoadingScreen({
+    super.key,
+    required this.name,
+    required this.password,
+  });
   @override
   State<LoadingScreen> createState() => _LoadingScreenState();
 }
@@ -32,27 +31,30 @@ class _LoadingScreenState extends State<LoadingScreen> {
     super.initState();
     signIn(widget.name, widget.password);
   }
+
   void signIn(String name, String password) async {
     SignIn signIn = SignIn();
     var response = await signIn.signIn(name, password);
     print(response.statusCode);
-    if(response.statusCode == 200 || response.statusCode ==201){
+    if (response.statusCode == 200 || response.statusCode == 201) {
       String token = jsonDecode(response.body)['accessToken'];
       global_token = token;
-      if(name == "admin"){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+      if (name == "admin") {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) {
           return Admin(token: token);
         }));
-      }
-      else{
+      } else {
         getLocation(token);
       }
-    }else{
+    } else {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) {
-            return SignInScreen(signedIn: "failed",);
+            return SignInScreen(
+              signedIn: "failed",
+            );
           },
         ),
       );
@@ -78,7 +80,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
         },
       ),
     );
-
   }
 
   @override
