@@ -11,6 +11,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'cam_model.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+
+import 'checks.dart';
 
 late double longitude;
 late double latitude;
@@ -38,7 +41,7 @@ class MapScreenState extends State<MapScreen> {
   late BitmapDescriptor stopSignbitmap;
   late BitmapDescriptor currentBitmap;
   late BitmapDescriptor trafficLightBitmap;
-  late Position position;
+  late Position currentPosition;
   late double speed = 0.0;
   double pastLong = 0.0;
   double pastLat = 0.0;
@@ -47,6 +50,8 @@ class MapScreenState extends State<MapScreen> {
   late String warning = "";
   late Color warningColor = Colors.grey;
   late StreamSubscription<Position> positionStream;
+  late var signsOnMap;
+  late List<DateTime> lastNotified;
   OverlayEntry? camEntry;
   Offset camOffset = const Offset(15, 20);
 
@@ -71,30 +76,8 @@ class MapScreenState extends State<MapScreen> {
             .listen((Position position) async {
       double zoomLevel = await controller.getZoomLevel();
 
-      var response = await services.getSigns(widget.token);
-      var data = json.decode(response.body);
-      for (int i = 0; i < data.length; i++) {
-        double distance = Geolocator.distanceBetween(
-            position.latitude,
-            position.longitude,
-            data[i]['location']['coordinates'][1],
-            data[i]['location']['coordinates'][0]);
-        if (distance < 100) {
-          setState(() {
-            warningColor = Colors.red;
-            warning = "There Is A Stop Sign\n In Less Than 100 meters";
-          });
-        }
-        // markersOnMap.add(
-        //   Marker(
-        //     markerId: MarkerId('$i'),
-        //     position: LatLng(
-        //         data[i]['location']['coordinates'][1]*1.0,
-        //         data[i]['location']['coordinates'][0]*1.0),
-        //     icon: bitmap,
-        //   ),
-        // );
-      }
+      // var response = await services.getSigns(widget.token);
+      // var data = json.decode(response.body);
 
       setState(() {
         markersOnMap =
@@ -103,7 +86,7 @@ class MapScreenState extends State<MapScreen> {
         if (_apiSpeed < 2) {
           _apiSpeed = 0.0;
         }
-
+        currentPosition = position;
         controller.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
@@ -118,6 +101,75 @@ class MapScreenState extends State<MapScreen> {
     });
   }
 
+  void checkForNotifications() {
+    double currentLat = 0.0;
+    double currentLong = 0.0;
+
+    Timer? checkNotificationsTimer; //to be changed
+    checkNotificationsTimer =
+        Timer.periodic(const Duration(seconds: 5), (Timer t) {
+      try {
+        currentLat = currentPosition.latitude;
+        currentLong = currentPosition.longitude;
+      } catch (e) {}
+      for (int i = 0; i < signsOnMap.length; i++) {
+        double distance = Geolocator.distanceBetween(
+            currentLat,
+            currentLong,
+            signsOnMap[i]['location']['coordinates'][1],
+            signsOnMap[i]['location']['coordinates'][0]);
+        if (distance < 100 &&
+            (DateTime.now().difference(lastNotified[i]).inMinutes > 1)) {
+          notify(i);
+        }
+      }
+    });
+  }
+
+  void notify(int index) {
+    String text =
+        "There Is A ${signsOnMap[index]['name']}\n In Less Than 100 meters";
+    setState(() {
+      warningColor = Colors.red;
+      warning = text;
+    });
+    speak(text);
+    clearWarning();
+    lastNotified[index] = DateTime.now();
+  }
+
+  void clearWarning() async {
+    await Future.delayed(Duration(seconds: 7));
+    setState(() {
+      warningColor = Colors.grey;
+      warning = "";
+    });
+  }
+
+  final FlutterTts flutterTts = FlutterTts();
+  speak(String text) async {
+    await flutterTts.setLanguage('en-US');
+    await flutterTts.setPitch(1.5);
+    await flutterTts.speak(text);
+  }
+
+  Future<void> checkForNewSigns() async {
+    await requestSigns();
+    updateSignsOnMap();
+    Timer? requestSignsTimer; //to be changed
+    requestSignsTimer =
+        Timer.periodic(const Duration(minutes: 5), (Timer t) async {
+      await requestSigns();
+      updateSignsOnMap();
+    });
+  }
+
+  Future<void> requestSigns() async {
+    var response = await services.getSigns(widget.token);
+    signsOnMap = json.decode(response.body);
+    lastNotified = List.filled(signsOnMap.length, DateTime(2000));
+  }
+
   void update(double long, double lat) {
     setState(() {
       longitude = long;
@@ -125,10 +177,15 @@ class MapScreenState extends State<MapScreen> {
     });
   }
 
+  void showPopUp() =>
+      showDialog(context: context, builder: (context) => checksDialog());
   @override
   void initState() {
+    checkForNewSigns();
     super.initState();
     customizeBitmap();
+    checkForNotifications();
+
     // getLiveLocation();
     update(widget.longitude, widget.latitude);
   }
@@ -241,9 +298,8 @@ class MapScreenState extends State<MapScreen> {
                     target: LatLng(latitude, longitude),
                     zoom: 25,
                   ),
-                  onMapCreated: (GoogleMapController controller) async {
+                  onMapCreated: (GoogleMapController controller) {
                     _controller.complete(controller);
-                    await updateSignsOnMap();
                   },
                   markers: markersOnMap,
                 ),
@@ -274,6 +330,7 @@ class MapScreenState extends State<MapScreen> {
                       IconButton(
                         onPressed: () {
                           if (_activeColor != Colors.green) {
+                            showPopUp();
                             WidgetsBinding.instance!.addPostFrameCallback((_) {
                               showFloatingCam();
                             });
@@ -356,24 +413,19 @@ class MapScreenState extends State<MapScreen> {
   }
 
   Future<void> updateSignsOnMap() async {
-    MapServices services = MapServices();
-
-    var response = await services.getSigns(widget.token);
-    var data = json.decode(response.body);
-
     setState(() {
       BitmapDescriptor bitmapIcon = stopSignbitmap;
-      for (int i = 0; i < data.length; i++) {
-        if (data[i]['name'] == 'Traffic Light') {
+      for (int i = 0; i < signsOnMap.length; i++) {
+        if (signsOnMap[i]['name'] == 'Traffic Light') {
           bitmapIcon = trafficLightBitmap;
-        } else if (data[i]['name'] == 'Stop Sign') {
+        } else if (signsOnMap[i]['name'] == 'Stop Sign') {
           bitmapIcon = stopSignbitmap;
         }
         markersOnMap.add(
           Marker(
             markerId: MarkerId('$i'),
-            position: LatLng(data[i]['location']['coordinates'][1] * 1.0,
-                data[i]['location']['coordinates'][0] * 1.0),
+            position: LatLng(signsOnMap[i]['location']['coordinates'][1] * 1.0,
+                signsOnMap[i]['location']['coordinates'][0] * 1.0),
             icon: bitmapIcon,
           ),
         );

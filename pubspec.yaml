@@ -43,6 +43,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   camera: ^0.10.0+4
   tflite: any
+  flutter_tts: ^3.6.3
 
 dev_dependencies:
   flutter_test:
