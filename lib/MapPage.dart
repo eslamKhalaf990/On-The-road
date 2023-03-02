@@ -44,6 +44,8 @@ class MapScreenState extends State<MapScreen> {
   double pastLat = 0.0;
   late Color _activeColor = Colors.grey;
   late double _apiSpeed = 0.0;
+  late String warning = "";
+  late Color warningColor = Colors.grey;
   late StreamSubscription<Position> positionStream;
   OverlayEntry? camEntry;
   Offset camOffset = const Offset(15, 20);
@@ -68,10 +70,39 @@ class MapScreenState extends State<MapScreen> {
         Geolocator.getPositionStream(locationSettings: locationSettings)
             .listen((Position position) async {
       double zoomLevel = await controller.getZoomLevel();
+
+      var response = await services.getSigns(widget.token);
+      var data = json.decode(response.body);
+      for (int i = 0; i < data.length; i++) {
+        double distance = Geolocator.distanceBetween(
+            position.latitude,
+            position.longitude,
+            data[i]['location']['coordinates'][1],
+            data[i]['location']['coordinates'][0]);
+        if (distance < 100) {
+          setState(() {
+            warningColor = Colors.red;
+            warning = "There Is A Stop Sign\n In Less Than 100 meters";
+          });
+        }
+        // markersOnMap.add(
+        //   Marker(
+        //     markerId: MarkerId('$i'),
+        //     position: LatLng(
+        //         data[i]['location']['coordinates'][1]*1.0,
+        //         data[i]['location']['coordinates'][0]*1.0),
+        //     icon: bitmap,
+        //   ),
+        // );
+      }
+
       setState(() {
         markersOnMap =
             services.bitmapLiveLocation(markersOnMap, position, currentBitmap);
         _apiSpeed = position.speed * 3.6;
+        if (_apiSpeed < 2) {
+          _apiSpeed = 0.0;
+        }
 
         controller.animateCamera(
           CameraUpdate.newCameraPosition(
@@ -121,29 +152,59 @@ class MapScreenState extends State<MapScreen> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
                       color: Colors.white,
-                      boxShadow: const [
+                      boxShadow: [
                         BoxShadow(
-                          color: Colors.grey,
+                          color: warningColor,
                           spreadRadius: 1,
                           blurRadius: 2,
                           offset: Offset(0, 0.1), // changes position of shadow
                         ),
                       ]),
-                  height: 75,
+                  height: 100,
                   margin: const EdgeInsets.only(
                       left: 2, right: 2, top: 5, bottom: 3),
                   child: ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(35)),
-                    child: Center(
-                      child: Text(
-                        "Current Speed: ${_apiSpeed.toStringAsFixed(2)}",
-                        style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'tajawal',
-                            color: Colors.red),
-                        textAlign: TextAlign.center,
-                      ),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(30)),
+                          child: Material(
+                            color: Colors.grey[50],
+                            elevation: 20,
+                            child: SizedBox(
+                              height: 98,
+                              width: 98,
+                              child: Center(
+                                child: Text(
+                                  _apiSpeed.toStringAsFixed(2),
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'tajawal',
+                                    color: Colors.black54,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            warning,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'tajawal',
+                              color: Colors.red,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -303,7 +364,7 @@ class MapScreenState extends State<MapScreen> {
     setState(() {
       BitmapDescriptor bitmapIcon = stopSignbitmap;
       for (int i = 0; i < data.length; i++) {
-        if (data[i]['name'] == 'traffic light') {
+        if (data[i]['name'] == 'Traffic Light') {
           bitmapIcon = trafficLightBitmap;
         } else if (data[i]['name'] == 'Stop Sign') {
           bitmapIcon = stopSignbitmap;
@@ -311,8 +372,8 @@ class MapScreenState extends State<MapScreen> {
         markersOnMap.add(
           Marker(
             markerId: MarkerId('$i'),
-            position: LatLng(data[i]['location']['coordinates'][1],
-                data[i]['location']['coordinates'][0]),
+            position: LatLng(data[i]['location']['coordinates'][1] * 1.0,
+                data[i]['location']['coordinates'][0] * 1.0),
             icon: bitmapIcon,
           ),
         );
