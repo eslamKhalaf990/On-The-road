@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:on_the_road/welcome.dart';
-import 'LoadingSignIn.dart';
+import 'view/sign_in_view/loading_sign_in.dart';
 
 class AutoLogIn extends StatefulWidget {
   const AutoLogIn({Key? key}) : super(key: key);
@@ -26,7 +26,7 @@ class _AutoLogInState extends State<AutoLogIn> {
 
     if(await _storage.read(key: "Logged_In") == "true"){
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
-        return LoadingScreen(name: username.toString(),
+        return LoadingSignIn(name: username.toString(),
             password: password.toString());
       }));
     }

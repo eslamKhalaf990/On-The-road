@@ -3,8 +3,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'Services/MapServices.dart';
-import 'MapPage.dart';
+import 'package:on_the_road/constants/constants_on_map.dart';
+import '../../Services/map_services.dart';
+import '../home_view/home.dart';
 
 class AddSign extends StatefulWidget {
   late String token;
@@ -19,8 +20,9 @@ class AddSign extends StatefulWidget {
 
 class _AddSignState extends State<AddSign> {
   final TextEditingController _controllerSignName = TextEditingController();
-  late TextEditingController _controllerLongitude = TextEditingController();
-  late TextEditingController _controllerLatitude = TextEditingController();
+  final TextEditingController _controllerLongitude = TextEditingController();
+  final TextEditingController _controllerLatitude = TextEditingController();
+  Constants constants = Constants();
   late BitmapDescriptor currentBitmap;
   late BitmapDescriptor bitmap;
   final Completer<GoogleMapController> _controller =
@@ -38,19 +40,12 @@ class _AddSignState extends State<AddSign> {
   late Color color = Colors.black;
   late double _longitude = 0.0;
   late double _latitude = 0.0;
-  var icons = [
-    "Stop Sign",
-    "Traffic Light",
-    "Speed Limit",
-    "Radar",
-    "Speed Bumps",
-  ];
-  late String dropdownValue = icons.first;
+  late String dropdownValue = constants.icons.first;
   @override
   void initState() {
     super.initState();
-    longitude = 0.0;
-    latitude = 0.0;
+    // longitude = 0.0;
+    // latitude = 0.0;
     getAdminLocation();
     customizeBitmap();
   }
@@ -73,7 +68,7 @@ class _AddSignState extends State<AddSign> {
       _latitude = services.lat;
     });
 
-    print(latitude);
+    // print(latitude);
   }
 
   @override
@@ -121,32 +116,82 @@ class _AddSignState extends State<AddSign> {
                         borderRadius: const BorderRadius.all(
                           Radius.circular(30),
                         ),
-                        child: buildGoogleMap(),
+                        child: GoogleMap(
+                          onTap: (LatLng l) {
+                            setState(() {
+                              _controllerLongitude.text =
+                                  l.longitude.toString();
+                              _controllerLatitude.text = l.latitude.toString();
+                              markersOnMap.add(
+                                Marker(
+                                  markerId: MarkerId(
+                                      'markerToAdd ${l.longitude}, ${l.latitude}'),
+                                  position: LatLng(
+                                    l.latitude,
+                                    l.longitude,
+                                  ),
+                                  icon: currentBitmap,
+                                ),
+                              );
+                            });
+                          },
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(_latitude, _longitude),
+                            zoom: 17,
+                          ),
+                          onMapCreated: (GoogleMapController controller) async {
+                            _controller.complete(controller);
+                            MapServices services = MapServices();
+
+                            var response =
+                                await services.getSigns(widget.token);
+                            var data = json.decode(response.body);
+                            print(response.statusCode);
+
+                            setState(() {
+                              for (int i = 0; i < data.length; i++) {
+                                print(data[i]['location']['coordinates'][1] *
+                                    1.0);
+                                print(data[i]['location']['coordinates'][0] *
+                                    1.0);
+                                markersOnMap.add(
+                                  Marker(
+                                    markerId: MarkerId('$i'),
+                                    position: LatLng(
+                                        data[i]['location']['coordinates'][1] *
+                                            1.0,
+                                        data[i]['location']['coordinates'][0] *
+                                            1.0),
+                                    icon: bitmap,
+                                  ),
+                                );
+                              }
+                            });
+                          },
+                          markers: markersOnMap,
+                        ),
                       ),
                     ),
                     DropdownButton<String>(
                       // itemHeight: 100,
                       value: dropdownValue,
                       icon: const Icon(Icons.arrow_drop_down_outlined),
-                      // elevation: 16,
-                      // style: const TextStyle(color: Colors.deepPurple),
                       underline: Container(
                         height: 1,
                         color: Colors.black12,
                       ),
                       onChanged: (String? value) {
-                        // This is called when the user selects an item.
                         setState(() {
                           dropdownValue = value!;
                         });
                       },
-                      items:
-                          icons.map<DropdownMenuItem<String>>((String value) {
+                      items: constants.icons
+                          .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(
                             value,
-                            style: TextStyle(fontSize: 20),
+                            style: const TextStyle(fontSize: 20),
                           ),
                         );
                       }).toList(),
@@ -244,10 +289,11 @@ class _AddSignState extends State<AddSign> {
                               MapServices services = MapServices();
                               await services.getCurrentLocation();
                               var response = await services.addSign(
-                                  dropdownValue.toString(),
-                                  services.long.toString(),
-                                  services.lat.toString(),
-                                  widget.token);
+                                dropdownValue.toString(),
+                                services.long.toString(),
+                                services.lat.toString(),
+                                widget.token,
+                              );
                               print(response.statusCode);
                               if (response.statusCode == 200 ||
                                   response.statusCode == 201) {
@@ -297,58 +343,6 @@ class _AddSignState extends State<AddSign> {
           ],
         ),
       )),
-    );
-  }
-
-  GoogleMap buildGoogleMap() {
-    return GoogleMap(
-      onTap: (LatLng l) {
-        setState(() {
-          _controllerLongitude.text = l.longitude.toString();
-          _controllerLatitude.text = l.latitude.toString();
-          markersOnMap.add(
-            Marker(
-              markerId: MarkerId('markerToAdd ${l.longitude}, ${l.latitude}'),
-              position: LatLng(
-                l.latitude,
-                l.longitude,
-              ),
-              icon: currentBitmap,
-            ),
-          );
-        });
-      },
-      initialCameraPosition: CameraPosition(
-        // target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-        // tilt: 90,
-        // bearing: 0,
-        target: LatLng(_latitude, _longitude),
-        zoom: 17,
-      ),
-      onMapCreated: (GoogleMapController controller) async {
-        _controller.complete(controller);
-        MapServices services = MapServices();
-
-        var response = await services.getSigns(widget.token);
-        var data = json.decode(response.body);
-        print(response.statusCode);
-
-        setState(() {
-          for (int i = 0; i < data.length; i++) {
-            print(data[i]['location']['coordinates'][1] * 1.0);
-            print(data[i]['location']['coordinates'][0] * 1.0);
-            markersOnMap.add(
-              Marker(
-                markerId: MarkerId('$i'),
-                position: LatLng(data[i]['location']['coordinates'][1] * 1.0,
-                    data[i]['location']['coordinates'][0] * 1.0),
-                icon: bitmap,
-              ),
-            );
-          }
-        });
-      },
-      markers: markersOnMap,
     );
   }
 }

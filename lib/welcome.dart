@@ -1,9 +1,7 @@
-import 'LoadingSignIn.dart';
-import 'SignUp.dart';
-import 'SignIn.dart';
+import 'view/sign_in_view/sign_up.dart';
+import 'view/sign_in_view/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -13,7 +11,6 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  ImageProvider logo = const AssetImage("images/2.png");
   @override
   void initState() {
     super.initState();
@@ -28,20 +25,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         child: Column(
           children: [
             Container(
-              margin:
-                  const EdgeInsets.only(left: 1, right: 1, bottom: 7),
+              margin: const EdgeInsets.only(left: 1, right: 1, bottom: 7),
               child: const ClipRRect(
                   borderRadius: BorderRadius.all(
                     Radius.circular(25),
                   ),
-                  child: Image(image: AssetImage('images/n.jpg'),)),
+                  child: Image(
+                    image: AssetImage('images/n.jpg'),
+                  )),
             ),
             Container(
               margin: const EdgeInsets.only(top: 30),
               child: Column(
                 children: [
                   Text(
-                    'ON ROAD',
+                    'ON THE ROAD',
                     style: GoogleFonts.tajawal(
                         textStyle: const TextStyle(
                             fontSize: 50, fontWeight: FontWeight.bold)),
@@ -66,18 +64,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     margin: const EdgeInsets.all(5),
                     width: 140,
                     height: 50,
-                    child:  ClipRRect(
-                      borderRadius:const BorderRadius.all(
-                           Radius.circular(17)
-                      ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(17)),
                       child: TextButton(
                         style: const ButtonStyle(
                             backgroundColor:
-                            MaterialStatePropertyAll(Colors.grey)),
+                                MaterialStatePropertyAll(Colors.grey)),
                         onPressed: () {
                           // read();
-                          Navigator.push(context, MaterialPageRoute(builder: (context){
-                            return SignInScreen(signedIn: "sign in",);
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const SignInScreen(
+                              signedIn: "sign in",
+                            );
                           }));
                         },
                         child: Text(
@@ -96,8 +95,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     width: 140,
                     height: 50,
                     child: ClipRRect(
-                      borderRadius:const BorderRadius.all(
-                           Radius.circular(17),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(17),
                       ),
                       child: TextButton(
                         style: const ButtonStyle(
@@ -105,8 +104,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 MaterialStatePropertyAll(Colors.grey)),
                         onPressed: () {
                           // save();
-                          Navigator.push(context, MaterialPageRoute(builder: (context){
-                            return SignUpScreen(signedIn: "sign up",);
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return SignUpScreen(
+                              signedIn: "sign up",
+                            );
                           }));
                         },
                         child: Text(
