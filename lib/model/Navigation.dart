@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-class Navigation{
+class Navigation extends ChangeNotifier{
   late double currentSpeed = 0.0;
   late String warning = "";
   late Position position;

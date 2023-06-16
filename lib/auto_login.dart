@@ -2,7 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:on_the_road/Services/position_stream.dart';
 import 'package:on_the_road/welcome.dart';
+import 'package:provider/provider.dart';
+import 'model/user.dart';
 import 'view/sign_in_view/loading_sign_in.dart';
 
 class AutoLogIn extends StatefulWidget {
@@ -18,13 +21,14 @@ class _AutoLogInState extends State<AutoLogIn> {
     super.initState();
     autoLogIn();
   }
-  void autoLogIn()async{
-    const _storage = FlutterSecureStorage();
-    String? username = await _storage.read(key: "Key_Username");
-    String? password = await _storage.read(key: "Key_Password");
-    print(await _storage.read(key: "Logged_In"));
 
-    if(await _storage.read(key: "Logged_In") == "true"){
+  void autoLogIn()async{
+    const storage = FlutterSecureStorage();
+    String? username = await storage.read(key: "Key_Username");
+    String? password = await storage.read(key: "Key_Password");
+    print(await storage.read(key: "Logged_In"));
+
+    if(await storage.read(key: "Logged_In") == "true"){
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
         return LoadingSignIn(name: username.toString(),
             password: password.toString());

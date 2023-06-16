@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
@@ -9,7 +10,6 @@ import '../constants/constants_on_map.dart';
 class MapServices{
   late double long;
   late double lat;
-  bool firstTime = true;
 
   //Get User Current Location
   Future<void> getCurrentLocation()async{
@@ -61,57 +61,10 @@ class MapServices{
     );
     return (response);
   }
-  //BitMapLiveLocation
-  Set<Marker> bitmapLiveLocation(var markersOnMap, Position position, BitmapDescriptor currentBitmap){
-    double pastLong = 0.0;
-    double pastLat = 0.0;
-    if (firstTime) {
-      pastLong = position.longitude;
-      pastLat = position.latitude;
-      markersOnMap.add(
-        Marker(
-          markerId: const MarkerId('currentLocation'),
-          position: LatLng(
-            position.latitude,
-            position.longitude,
-          ),
-          icon: currentBitmap,
-        ),
-      );
-      print("mark added first time");
-      firstTime = false;
-    }
-    else {
-      markersOnMap.remove(
-        Marker(
-          markerId: const MarkerId('currentLocation'),
-          position: LatLng(
-            pastLat,
-            pastLong,
-          ),
-          icon: currentBitmap,
-        ),
-      );
-      print("mark removed");
-      pastLong = position.longitude;
-      pastLat = position.latitude;
-      markersOnMap.add(
-        Marker(
-          markerId: const MarkerId('currentLocation'),
-          position: LatLng(
-            pastLat,
-            pastLong,
-          ),
-          icon: currentBitmap,
-        ),
-      );
-      print("mark added");
-    }
-    return markersOnMap;
+  void startStreaming(BuildContext context){
+
   }
-  //set Road Signs On Map
   Set<Marker> setMarkers (Set<Marker> markersOnMap, var data, Constants constants){
-    // print(response.statusCode);
     for (int i = 0; i < data.length; i++) {
       print(data[i]['location']['coordinates'][1] * 1.0);
       print(data[i]['location']['coordinates'][0] * 1.0);
@@ -120,7 +73,7 @@ class MapServices{
           markerId: MarkerId('$i'),
           position: LatLng(data[i]['location']['coordinates'][1] * 1.0,
               data[i]['location']['coordinates'][0] * 1.0),
-          icon: constants.bitmap,
+          icon: constants.stopSign,
         ),
       );
     }

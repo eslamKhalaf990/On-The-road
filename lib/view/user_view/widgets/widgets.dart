@@ -5,9 +5,11 @@ import '../../../model/user.dart';
 class UserData extends StatelessWidget {
   const UserData({
     super.key,
-    required this.info,
+    required this.info, required this.icon,
+
   });
   final String info;
+  final Icon icon;
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +32,7 @@ class UserData extends StatelessWidget {
         children:[
           Container(
             margin: const EdgeInsets.only(bottom: 4, right: 10),
-            child: const Icon(Icons.mail_rounded, size: 20,
-            ),
+            child: icon,
           ),
           Text(
             info,
@@ -56,28 +57,44 @@ class UserAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left:1, right: 1, bottom: 1),
+      margin: const EdgeInsets.all(20),
       child: Container(
         margin: const EdgeInsets.all(1),
         child: Padding(
           padding: const EdgeInsets.all(1.0),
           child: Container(
             margin: const EdgeInsets.all(2),
-            child: Column(
+            child: Row(
               children: [
-                CircleAvatar(
-                  radius: 50,
-                  child: ClipRRect(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(100),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100.0),
+                    color: Colors.white,
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 3.0,
+                        spreadRadius: 3,
+                        blurStyle: BlurStyle.normal,
+                        offset: Offset(0.0, 3.0,),
                       ),
-                      child: Image.asset('images/user.jpg')),
+                    ],
+                  ),
+                  child: CircleAvatar(
+                    radius: 50,
+                    child: ClipRRect(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(100),
+                        ),
+                        child: Image.asset('images/user.jpg')),
+                  ),
                 ),
                 Container(
-                  margin: const EdgeInsets.all(10),
+                  margin: const EdgeInsets.only(top: 50, left: 20),
                   child: Text(
                     user.name,
-                    style: const TextStyle(fontSize: 30,color: Colors.grey, fontFamily: 'tajawal', fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 30,color: Colors.grey, fontFamily: 'tajawal',
+                        fontWeight: FontWeight.bold),
                     textAlign: TextAlign.left,
                   ),
                 ),

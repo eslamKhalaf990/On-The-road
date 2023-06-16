@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../model/user.dart';
-import '../road_sign_view/AddSign.dart';
-import '../../AutoLogin.dart';
+import '../road_sign_view/add_sign.dart';
+import '../../auto_login.dart';
 
 class Admin extends StatefulWidget {
   late User user;

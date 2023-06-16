@@ -1,6 +1,6 @@
-// ignore_for_file: use_build_context_synchronously
 import 'package:on_the_road/Services/map_services.dart';
 import 'package:on_the_road/view_model/sign_in_view_model.dart';
+import 'package:provider/provider.dart';
 import '../../model/location.dart';
 import '../../model/user.dart';
 import 'sign_in.dart';
@@ -29,48 +29,60 @@ class _LoadingSignInState extends State<LoadingSignIn> {
     super.initState();
     signIn(widget.name, widget.password);
   }
+  pushToAdminScreen(User user){
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (context) {
+          return Admin(user: user);
+        }));
+  }
+  pushToHome(User user){
+    Provider.of<User>(context, listen: false).updateUser(user);
+    print(Provider.of<User>(context, listen: false).email);
 
-  void signIn(String name, String password) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return const Home();
+        },
+      ),
+    );
+  }
+  pushToSignUp(){
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return const SignInScreen(
+            signedIn: "failed",
+          );
+        },
+      ),
+    );
+  }
+  void signIn(String name, String password) async{
     SignInViewModel signIn = SignInViewModel();
     User user = await signIn.getUserInformation(name, password);
+    MapServices services = MapServices();
 
     if (user.exist) {
       if (user.isAdmin) {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) {
-          return Admin(user: user);
-        }));
+        pushToAdminScreen(user);
       } else {
-        MapServices services = MapServices();
+
+
         Location currentLocation = Location();
         await services.getCurrentLocation();
+
         currentLocation.longitude = services.long;
         currentLocation.latitude = services.lat;
+        user.location = currentLocation;
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return MapScreen(
-                stream: streamController.stream,
-                currentLocation: currentLocation,
-                user: user,
-              );
-            },
-          ),
-        );
+        pushToHome(user);
+
       }
     } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return const SignInScreen(
-              signedIn: "failed",
-            );
-          },
-        ),
-      );
+      pushToSignUp();
     }
   }
   @override
