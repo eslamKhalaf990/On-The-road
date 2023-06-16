@@ -11,9 +11,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../model/user.dart';
 import '../user_view/Profile.dart';
+import 'package:on_the_road/detection_model/RunModelByCameraDemo.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key,}) : super(key: key);
+  const Home({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -132,7 +135,8 @@ class _HomeState extends State<Home> {
                       },
                       mapType: Provider.of<SettingsModel>(context).mapTheme,
                       initialCameraPosition: CameraPosition(
-                        target: LatLng(Provider.of<User>(context).location.latitude,
+                        target: LatLng(
+                            Provider.of<User>(context).location.latitude,
                             Provider.of<User>(context).location.longitude),
                         // tilt: 90,
                         zoom: 14,
@@ -154,8 +158,13 @@ class _HomeState extends State<Home> {
                               )
                             : Marker(
                                 markerId: const MarkerId('currentLocation'),
-                                position: LatLng(Provider.of<User>(context).location.latitude,
-                                    Provider.of<User>(context).location.longitude),
+                                position: LatLng(
+                                    Provider.of<User>(context)
+                                        .location
+                                        .latitude,
+                                    Provider.of<User>(context)
+                                        .location
+                                        .longitude),
                                 icon: BitmapDescriptor.defaultMarkerWithHue(10),
                               ),
                       },
@@ -187,15 +196,38 @@ class _HomeState extends State<Home> {
                           IconButton(
                             onPressed: () {
                               constants.activeColor = Colors.green;
-                              stream.streamPosition(_controller, services,
-                                  Provider.of<User>(context, listen: false).token, constants, Provider.of<SettingsModel>(context, listen: false).locationAccuracy);
-                              stream.addMarkers(constants,
-                                  Provider.of<User>(context, listen: false).token);
+                              stream.streamPosition(
+                                  _controller,
+                                  services,
+                                  Provider.of<User>(context, listen: false)
+                                      .token,
+                                  constants,
+                                  Provider.of<SettingsModel>(context,
+                                          listen: false)
+                                      .locationAccuracy);
+                              stream.addMarkers(
+                                  constants,
+                                  Provider.of<User>(context, listen: false)
+                                      .token);
                             },
                             icon: Icon(
                               Icons.home,
                               size: 30,
                               color: constants.activeColor,
+                            ),
+                          ),
+                          const Expanded(child: SizedBox()),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return RunModelByCameraDemo();
+                              }));
+                            },
+                            icon: const Icon(
+                              Icons.camera_alt,
+                              size: 30,
+                              color: Colors.grey,
                             ),
                           ),
                           const Expanded(child: SizedBox()),
@@ -217,8 +249,8 @@ class _HomeState extends State<Home> {
                             onPressed: () {
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
-                                    return const SettingsView();
-                                  }));
+                                return const SettingsView();
+                              }));
                               // Provider.of<SettingsModel>(context, listen: false).setMapTheme(MapType.satellite);
                               // Provider.of<SettingsModel>(context, listen: false).setLocationAccuracy(LocationAccuracy.low);
                             },
@@ -246,7 +278,6 @@ class _HomeState extends State<Home> {
                                 child: Image.asset('images/admin.png'),
                               ),
                             ),
-
                           )
                         ],
                       ),

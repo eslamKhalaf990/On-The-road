@@ -38,6 +38,9 @@ dependencies:
   flutter_polyline_points: ^1.0.0
   flutter_secure_storage: ^8.0.0
   provider: ^6.0.5
+
+  camera: ^0.9.8+1
+  flutter_pytorch:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
@@ -74,6 +77,8 @@ flutter:
   # https://flutter.dev/assets-and-images/#resolution-aware
   assets:
     - images/
+    - assets/models/
+    - assets/labels/
 #    - assets/
 
   # For details regarding adding assets from package dependencies, see
