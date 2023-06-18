@@ -22,10 +22,6 @@ class _RunModelByCameraDemoState extends State<RunModelByCameraDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text('Camera Detection'),
-      ),
       body: Stack(
         children: <Widget>[
           // Camera View

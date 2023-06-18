@@ -36,6 +36,7 @@ class _LoadingSignInState extends State<LoadingSignIn> {
         }));
   }
   pushToHome(User user){
+    constants.customizeBitmap();
     Provider.of<User>(context, listen: false).updateUser(user);
     print(Provider.of<User>(context, listen: false).email);
 
@@ -43,7 +44,7 @@ class _LoadingSignInState extends State<LoadingSignIn> {
       context,
       MaterialPageRoute(
         builder: (context) {
-          return const Home();
+          return Home();
         },
       ),
     );

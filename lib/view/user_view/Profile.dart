@@ -95,7 +95,7 @@ class Profile extends StatelessWidget {
                               Row(
                                 children: [
                                   UserData(
-                                      info: user.name,
+                                      info: "${user.name} USER 1",
                                       icon: const Icon(
                                         Icons.person,
                                       )),
@@ -111,9 +111,9 @@ class Profile extends StatelessWidget {
                                   Icons.email,
                                 ),
                               ),
-                              UserData(
-                                info: user.email,
-                                icon: const Icon(
+                              const UserData(
+                                info: "ABCQWEF123",
+                                icon: Icon(
                                   Icons.abc,
                                   size: 40,
                                 ),

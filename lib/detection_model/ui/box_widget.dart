@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pytorch/pigeon.dart';
+import '../detection_services.dart';
 import 'camera_view_singleton.dart';
 
 /// Individual bounding box
@@ -17,6 +18,7 @@ class BoxWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // Color for bounding box
     //print(MediaQuery.of(context).size);
+    var detectServices = new detectionServices();
     Color? usedColor;
     //Size screenSize = CameraViewSingleton.inputImageSize;
     Size screenSize = CameraViewSingleton.actualPreviewSizeH;
@@ -56,7 +58,9 @@ class BoxWidget extends StatelessWidget {
             alignment: Alignment.centerRight,
             color: usedColor,
             child: Text(
-              (result.className ?? result.classIndex.toString()) +
+              (detectServices.calculateDistance(result)).toString() +
+                  " m " +
+                  (result.className ?? result.classIndex.toString()) +
                   "_" +
                   (showPercentage
                       ? (result.score * 100).toStringAsFixed(2) + "%"
