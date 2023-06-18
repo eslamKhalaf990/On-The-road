@@ -47,29 +47,38 @@ class SettingsView extends StatelessWidget {
                           itemBuilder: (BuildContext ctx, k) {
                             return Container(
                               margin:
-                                  const EdgeInsets.only(right: 30, left: 30),
+                                  const EdgeInsets.only(right: 1, left: 1),
                               child: Row(
                                 children: [
                                   settingsModel.options[index][k] is String
-                                      ? MaterialButton(onPressed: () {  },
+                                      ? MaterialButton(onPressed: () {
+                                    print(settingsModel.options[index].length,);
+                                    if(index == 0 && k==0){
+                                      settingsModel.locationAccuracy = LocationAccuracy.bestForNavigation;
+                                    }
+                                    else if(index == 0 && k==1){
+                                      settingsModel.locationAccuracy = LocationAccuracy.lowest;
+                                    }
+                                  },
                                       child: Text(settingsModel.options[index][k]))
-                                      : IconButton(
+                                      : MaterialButton(
                                           onPressed: () {
-                                            if(index == 0 && k==0){
-                                              settingsModel.locationAccuracy = LocationAccuracy.bestForNavigation;
-                                            }
-                                            else if(index == 0 && k==1){
-                                              settingsModel.locationAccuracy = LocationAccuracy.lowest;
-                                            }
-                                            else if(index == 1 && k==0){
-                                              settingsModel.mapTheme = MapType.satellite;
-                                            }
-                                            else if(index == 1 && k==1){
+                                            if(index == 1 && k==0){
                                               settingsModel.mapTheme = MapType.normal;
                                             }
+                                            else if(index == 1 && k==1){
+
+                                              settingsModel.mapTheme = MapType.satellite;
+                                            }
                                           },
-                                          icon: Icon(
-                                              settingsModel.options[index][k]),
+                                          child: ClipRRect(
+                                            borderRadius: const BorderRadius.all(
+                                              Radius.circular(13),
+                                            ),
+                                            child: Image(
+                                              height: 45,
+                                              image: settingsModel.options[index][k],),
+                                          ),
                                         ),
                                 ],
                               ),

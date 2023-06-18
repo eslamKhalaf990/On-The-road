@@ -18,7 +18,8 @@ class HomeAppBar extends StatelessWidget {
               blurRadius: 2,
               offset: Offset(0, 0.1), // changes position of shadow
             ),
-          ]),
+          ],
+      ),
       height: 70,
       margin: const EdgeInsets.only(left: 2, right: 2, top: 3, bottom: 3),
       child: ClipRRect(

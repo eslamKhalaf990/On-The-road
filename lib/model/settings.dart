@@ -15,8 +15,8 @@ class SettingsModel extends ChangeNotifier{
     Icons.map_outlined,
   ];
   List<List>options = [
-    ["BEST", "Lowest"],
-    [Icons.map_rounded, Icons.map_outlined],
+    ["HIGH", "MEDIUM", "LOW"],
+    [const AssetImage("images/ic_launcher.png"), const AssetImage("images/ic_launcher_color.png")],
   ];
 
   setLocationAccuracy(LocationAccuracy accuracy){

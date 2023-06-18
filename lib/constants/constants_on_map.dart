@@ -14,7 +14,7 @@ class Constants{
   late BitmapDescriptor forbidden;
 
 
-  late Color activeColor = Colors.grey;
+  late Color activeColor = Colors.white;
   var icons = [
     "Stop Sign",
     "Traffic Light",

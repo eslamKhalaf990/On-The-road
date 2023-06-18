@@ -16,6 +16,7 @@ class ChartData {
 class PositionStream extends ChangeNotifier {
   Navigation navigation = Navigation();
   List<ChartData> chartData = <ChartData>[];
+  late StreamSubscription positionStream;
   Set<Marker> markersOnMap = {};
   late
   bool analyze = false;
@@ -23,11 +24,11 @@ class PositionStream extends ChangeNotifier {
 
   int i = 0;
 
-  Future<void> streamPosition(Completer<GoogleMapController> controller,
+  Future<void> streamPosition(Completer<GoogleMapController> _controller,
       MapServices services, String token, Constants constants, locationAccuracy) async {
     int cnt = 0;
     double sum = 0.0;
-    final GoogleMapController mapController = await controller.future;
+    final GoogleMapController mapController = await _controller.future;
 
     LocationSettings locationSettings = LocationSettings(
       accuracy: locationAccuracy,
@@ -35,18 +36,19 @@ class PositionStream extends ChangeNotifier {
     );
 
 
-    Geolocator.getPositionStream(locationSettings: locationSettings)
+    positionStream = Geolocator.getPositionStream(locationSettings: locationSettings)
         .listen((Position position) async {
 
-      navigation.zoomLevel = await mapController.getZoomLevel();
+
       navigation.currentSpeed = position.speed * 3.6;
       navigation.position = position;
+      // navigation.zoomLevel = await mapController.getZoomLevel();
       isStreaming = true;
 
       mapController.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(
             target: LatLng(navigation.position.latitude, navigation.position.longitude),
-            zoom: navigation.zoomLevel,
+            zoom: await mapController.getZoomLevel(),
           ),
         ),
       );
