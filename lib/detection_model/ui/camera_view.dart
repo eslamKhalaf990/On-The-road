@@ -104,12 +104,16 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
       return Container();
     }
 
-    return CameraPreview(cameraController!);
-    //return cameraController!.buildPreview();
-
-    // return AspectRatio(
-    //     // aspectRatio: cameraController.value.aspectRatio,
-    //     child: CameraPreview(cameraController));
+    return SafeArea(
+      child: Container(
+        margin: const EdgeInsets.all(10),
+        child: ClipRRect(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(30),
+            ),
+            child: CameraPreview(cameraController!)),
+      ),
+    );
   }
 
   /// Callback to receive each frame [CameraImage] perform inference on it
