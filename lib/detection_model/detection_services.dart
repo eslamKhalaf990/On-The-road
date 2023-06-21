@@ -34,7 +34,6 @@ class DetectionServices {
   Future<double> calculateDistance(ResultObjectDetection object) async {
     double FL = await getFocalLength();
     double distance = (0.51 * FL * 0.25) / object.rect.width;
-    print(distance);
     return distance;
   }
 
