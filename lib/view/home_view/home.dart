@@ -65,7 +65,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  void _showMessageBox(String message) {
+  void _showMessageBox() {
     setState(() {
       _isVisible = true;
     });
@@ -324,7 +324,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               const Expanded(child: SizedBox()),
                               IconButton(
                                 onPressed: () {
-                                  _showMessageBox("speed pumb");
+                                  _showMessageBox();
                                 },
                                 // onPressed: _showMessageBox,
                                 icon: const Icon(
