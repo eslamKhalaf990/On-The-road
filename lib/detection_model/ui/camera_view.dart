@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:image/image.dart';
 import 'package:flutter_pytorch/pigeon.dart';
 import 'package:flutter_pytorch/flutter_pytorch.dart';
+import 'package:on_the_road/Services/position_stream.dart';
 import 'package:on_the_road/detection_model/utils/image_utils.dart';
+import 'package:provider/provider.dart';
 import 'camera_view_singleton.dart';
 
 /// [CameraView] sends each frame for inference
@@ -39,7 +41,6 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
     super.initState();
     initStateAsync();
   }
-
   //load your model
   Future loadModel() async {
     //String pathCustomModel = "assets/models/custom_model.ptl";
@@ -75,7 +76,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
 
     // cameras[0] for rear-camera
     cameraController =
-        CameraController(cameras[0], ResolutionPreset.high, enableAudio: false);
+        CameraController(cameras[0], ResolutionPreset.max, enableAudio: false);
 
     cameraController?.initialize().then((_) async {
       // Stream of image passed to [onLatestImageAvailable] callback
@@ -164,10 +165,13 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
     }
   }
 
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    cameraController?.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   print("killing stream");
+  //   // cameraController?.dispose();
+  //   // Provider.of<PositionStream>(context, listen: false).fun();
+  //   // WidgetsBinding.instance.removeObserver(this);
+  //
+  //   super.dispose();
+  // }
 }

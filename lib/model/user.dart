@@ -1,7 +1,4 @@
-
-
 import 'package:flutter/foundation.dart';
-
 import 'location.dart';
 
 class User extends ChangeNotifier{
@@ -16,6 +13,7 @@ class User extends ChangeNotifier{
   late String id;
   late Location location = Location();
   late bool exist;
+
   updateUser(User user){
     name = user.name;
     email = user.email;

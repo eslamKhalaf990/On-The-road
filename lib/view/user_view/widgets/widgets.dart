@@ -80,13 +80,16 @@ class UserAvatar extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: CircleAvatar(
-                    radius: 50,
-                    child: ClipRRect(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(100),
-                        ),
-                        child: Image.asset('images/user.jpg')),
+                  child: Hero(
+                    tag: "profile",
+                    child: CircleAvatar(
+                      radius: 50,
+                      child: ClipRRect(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(100),
+                          ),
+                          child: Image.asset('images/admin.png')),
+                    ),
                   ),
                 ),
                 Container(

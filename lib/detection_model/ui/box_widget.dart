@@ -24,16 +24,17 @@ class BoxWidget extends StatelessWidget {
 
     if (boxesColor == null) {
       usedColor = Colors.primaries[
-          ((result.className ?? result.classIndex.toString()).length +
-                  (result.className ?? result.classIndex.toString())
-                      .codeUnitAt(0) +
-                  result.classIndex) %
-              Colors.primaries.length];
+      ((result.className ?? result.classIndex.toString()).length +
+          (result.className ?? result.classIndex.toString())
+              .codeUnitAt(0) +
+          result.classIndex) %
+          Colors.primaries.length];
     } else {
       usedColor = boxesColor;
     }
 
-    DetectionServices detectServices = DetectionServices();
+    DetectionServices detectServices =
+    DetectionServices(); // Create an instance of DetectionServices
 
     return Positioned(
       left: result.rect.left * factorX,
@@ -44,29 +45,34 @@ class BoxWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FutureBuilder<double>(
-            future: detectServices.calculateDistance(result),
+            future: detectServices
+                .calculateDistance(result), // Call the calculateDistance method
             builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Container();
+                return Container(); // Placeholder container while waiting for the result
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
                 double distance = snapshot.data ?? 0.0;
                 return Container(
-                  height: 2,
-                  width: result.rect.width.toDouble() * factorX,
-                  color: Colors.black,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      width: snapshot.data! *
-                          (result.rect.width.toDouble() * factorX),
-                      color: usedColor,
-                    ),
+                  height: 20,
+                  alignment: Alignment.centerRight,
+                  color: usedColor,
+                  child: Text(
+                    '$distance m ${result.className ?? result.classIndex.toString()}_${showPercentage ? "${(result.score * 100).toStringAsFixed(2)}%" : ""}',
                   ),
                 );
               }
             },
+          ),
+          Container(
+            width: result.rect.width.toDouble() * factorX,
+            height: result.rect.height.toDouble() * factorY,
+            decoration: BoxDecoration(
+              border: Border.all(color: usedColor!, width: 3),
+              borderRadius: const BorderRadius.all(Radius.circular(2)),
+            ),
+            child: Container(),
           ),
         ],
       ),

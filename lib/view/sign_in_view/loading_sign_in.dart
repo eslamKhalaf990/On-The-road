@@ -40,7 +40,7 @@ class _LoadingSignInState extends State<LoadingSignIn> {
     Provider.of<User>(context, listen: false).updateUser(user);
     print(Provider.of<User>(context, listen: false).email);
 
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) {

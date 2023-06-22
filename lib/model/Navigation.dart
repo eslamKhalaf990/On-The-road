@@ -8,4 +8,7 @@ class Navigation extends ChangeNotifier{
   late Color warningColor = Colors.black;
   late double zoomLevel;
   late double avgSpeed = 0.0;
+  late double distanceTraveled = 0.0;
+  late double maxSpeed = -1.0;
+  late bool showDialog = false;
 }

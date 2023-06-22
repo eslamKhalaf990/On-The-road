@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
@@ -61,9 +60,7 @@ class MapServices{
     );
     return (response);
   }
-  void startStreaming(BuildContext context){
 
-  }
   Set<Marker> setMarkers (Set<Marker> markersOnMap, var data, Constants constants){
     for (int i = 0; i < data.length; i++) {
       print(data[i]['location']['coordinates'][1] * 1.0);

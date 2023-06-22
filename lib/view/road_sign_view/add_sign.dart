@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:on_the_road/constants/constants_on_map.dart';
 import '../../Services/map_services.dart';
-import '../home_view/home.dart';
 
 class AddSign extends StatefulWidget {
   late String token;
@@ -67,8 +65,6 @@ class _AddSignState extends State<AddSign> {
       _longitude = services.long;
       _latitude = services.lat;
     });
-
-    // print(latitude);
   }
 
   @override

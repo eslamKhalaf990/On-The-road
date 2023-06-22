@@ -141,7 +141,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           child: TextButton(
                             style: const ButtonStyle(
                                 backgroundColor:
-                                    MaterialStatePropertyAll(Colors.grey)),
+                                    MaterialStatePropertyAll(Colors.grey),
+                            ),
                             onPressed: () {
 
                               securedUserStorage.saveCredentials(_controllerName, _controllerPassword);

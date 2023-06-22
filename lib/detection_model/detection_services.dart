@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_pytorch/pigeon.dart';
 
 class DetectionServices {
+  //to be decided in settings
+
   final objectsWidth = {'Car': 1.9, 'tv': 0.51, 'laptop': 0.51};
   final objectsToReport = ['Stop Sign', 'Speed Pump'];
   final reportAccuracy = 0.85;
   final ttsAccuracy = 0.80;
-  final channel = MethodChannel('java_channel');
+  final channel = const MethodChannel('java_channel');
   final safeDistanceTime = 2.0; // 2 seconds
   double focalLength = 0;
 
@@ -21,7 +23,7 @@ class DetectionServices {
       if (objectsWidth.containsKey(obj.className) && obj.score >= ttsAccuracy) {
         calculateDistance(obj).then((distance) {
           double safeDistance = calculateSafeDistance();
-          if (distance > safeDistance) {
+          if (distance < safeDistance) {
             notKeepingSafeDistance(obj.className!, distance);
           }
         });
@@ -32,8 +34,8 @@ class DetectionServices {
   }
 
   Future<double> calculateDistance(ResultObjectDetection object) async {
-    double FL = await getFocalLength();
-    double distance = (0.51 * FL * 0.25) / object.rect.width;
+    double fL = await getFocalLength();
+    double distance = (0.51 * fL * 0.25) / object.rect.width;
     return distance;
   }
 
@@ -45,8 +47,8 @@ class DetectionServices {
 
   Future<double> getFocalLength() async {
     if (focalLength == 0) {
-      double FL = await channel.invokeMethod('getFocalLength');
-      focalLength = FL;
+      double fL = await channel.invokeMethod('getFocalLength');
+      focalLength = fL;
     }
     return focalLength;
   }
