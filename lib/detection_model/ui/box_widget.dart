@@ -4,11 +4,11 @@ import '../detection_services.dart';
 import 'camera_view_singleton.dart';
 
 class BoxWidget extends StatelessWidget {
-  ResultObjectDetection result;
-  Color? boxesColor;
-  bool showPercentage;
+  final ResultObjectDetection result;
+  final Color? boxesColor;
+  final bool showPercentage;
 
-  BoxWidget({
+  const BoxWidget({
     Key? key,
     required this.result,
     this.boxesColor,
@@ -54,12 +54,19 @@ class BoxWidget extends StatelessWidget {
                 return Text('Error: ${snapshot.error}');
               } else {
                 double distance = snapshot.data ?? 0.0;
-                return Container(
-                  height: 20,
-                  alignment: Alignment.centerRight,
-                  color: usedColor,
-                  child: Text(
-                    '$distance m ${result.className ?? result.classIndex.toString()}_${showPercentage ? "${(result.score * 100).toStringAsFixed(2)}%" : ""}',
+                return ClipRRect(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(13),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    height: 50,
+                    alignment: Alignment.centerRight,
+                    color: usedColor,
+                    //change Design
+                    child: Text(
+                      '${distance.toStringAsFixed(2)}m ${result.className ?? result.classIndex.toString()}_${showPercentage ? "${(result.score * 100).toStringAsFixed(2)}%" : ""}',
+                    ),
                   ),
                 );
               }

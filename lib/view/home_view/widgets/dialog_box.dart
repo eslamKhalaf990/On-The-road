@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:on_the_road/constants/design_constants.dart';
 
 void showAutoDismissDialog(BuildContext context, String message) {
   Timer t;
@@ -24,6 +25,7 @@ void showAutoDismissDialog(BuildContext context, String message) {
             content: Center(
               child: Text(
                   'Did you find a $message?',
+                style: TextStyle(fontFamily: DesignConstants.fontFamily),
               ),
             ),
             actions: <Widget>[
@@ -44,7 +46,7 @@ void showAutoDismissDialog(BuildContext context, String message) {
                       t.cancel();
                       Navigator.of(context).pop();
                     },
-                    child: const Text('Yes'),
+                    child: Text('Yes', style: TextStyle(fontFamily: DesignConstants.fontFamily),),
                   ),
                   ElevatedButton(
                     style: ButtonStyle(
@@ -60,7 +62,7 @@ void showAutoDismissDialog(BuildContext context, String message) {
                       t.cancel();
                       Navigator.of(context).pop();
                     },
-                    child: const Text('No'),
+                    child: Text('No', style: TextStyle(fontFamily: DesignConstants.fontFamily),),
                   ),
                 ],
               ),

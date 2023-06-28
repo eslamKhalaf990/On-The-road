@@ -1,30 +1,36 @@
 import 'dart:async';
+// import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:on_the_road/Services/position_stream.dart';
 import 'package:on_the_road/constants/constants_on_map.dart';
+import 'package:on_the_road/constants/design_constants.dart';
 import 'package:on_the_road/model/settings.dart';
-import 'package:on_the_road/view/home_view/widgets/dialog_box.dart';
-import 'package:on_the_road/view/settings/settings.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:on_the_road/view/home_view/search_autocomplete.dart';
 import 'package:on_the_road/view/statistics_view/statistics.dart';
 import 'package:provider/provider.dart';
 import '../../Services/map_services.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../model/user.dart';
+import '../settings/settings.dart';
 import '../user_view/Profile.dart';
 import 'package:on_the_road/detection_model/RunModelByCameraDemo.dart';
+
 final Constants constants = Constants();
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   Home({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   final MapServices services = MapServices();
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -37,18 +43,7 @@ class Home extends StatelessWidget {
                 child: Column(
                   children: [
                     Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: Colors.black12,
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black12,
-                              // color: stream.navigation.warningColor,
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: Offset(0, 0.1),
-                            ),
-                          ]),
+                      decoration: DesignConstants.roundedBorder,
                       height: 100,
                       margin: const EdgeInsets.only(
                           left: 2, right: 2, top: 5, bottom: 3),
@@ -62,7 +57,7 @@ class Home extends StatelessWidget {
                                   const BorderRadius.all(Radius.circular(30)),
                               child: Material(
                                 // color: Colors.grey[50],
-                                color: Colors.black12,
+                                color: DesignConstants.dark,
                                 elevation: 20,
                                 child: SizedBox(
                                   height: 98,
@@ -71,11 +66,10 @@ class Home extends StatelessWidget {
                                     child: Text(
                                       "${stream.navigation.currentSpeed.toStringAsFixed(2)} km/h\n"
                                       "${stream.navigation.distanceTraveled.toStringAsFixed(2)} km",
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        fontFamily: 'tajawal',
-                                        // color: Colors.black54,
+                                        fontFamily: DesignConstants.fontFamily,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
@@ -87,10 +81,10 @@ class Home extends StatelessWidget {
                               margin: const EdgeInsets.only(left: 10),
                               child: Text(
                                 stream.navigation.warning,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  fontFamily: 'tajawal',
+                                  fontFamily: DesignConstants.fontFamily,
                                   color: Colors.red,
                                 ),
                                 textAlign: TextAlign.center,
@@ -109,7 +103,8 @@ class Home extends StatelessWidget {
                   child: Stack(
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(left: 2, right: 2, bottom: 0),
+                        margin:
+                            const EdgeInsets.only(left: 2, right: 2, bottom: 0),
                         child: ClipRRect(
                           borderRadius: const BorderRadius.all(
                             Radius.circular(30),
@@ -128,16 +123,31 @@ class Home extends StatelessWidget {
                                 ),
                               );
                             },
-                            mapType: Provider.of<SettingsModel>(context).mapTheme,
+                            mapType:
+                                Provider.of<SettingsModel>(context).mapTheme,
                             initialCameraPosition: CameraPosition(
                               target: LatLng(
                                   Provider.of<User>(context).location.latitude,
-                                  Provider.of<User>(context).location.longitude),
+                                  Provider.of<User>(context)
+                                      .location
+                                      .longitude),
                               // tilt: 90,
                               zoom: 14,
                             ),
+                            // initialCameraPosition: const CameraPosition(
+                            //   zoom: 15.0,
+                            //   target: LatLng(45.82917150748776, 14.63705454546316),
+                            // ),
                             onMapCreated: (controller) async {
                               _controller.complete(controller);
+                            },
+                            polylines: {
+                              Polyline(
+                                polylineId: const PolylineId("route"),
+                                points: stream.coordinates,
+                                color: Colors.pink.shade600,
+                                width: 5,
+                              )
                             },
                             markers: {
                               ...Set<Marker>.from(
@@ -145,24 +155,46 @@ class Home extends StatelessWidget {
                               ),
                               stream.isStreaming
                                   ? Marker(
-                                markerId: const MarkerId('currentLocation'),
-                                position: LatLng(
-                                    stream.navigation.position.latitude,
-                                    stream.navigation.position.longitude),
-                                icon: constants.userLocation,
-                              )
+                                      markerId:
+                                          const MarkerId('currentLocation'),
+                                      position: LatLng(
+                                          stream.navigation.position.latitude,
+                                          stream.navigation.position.longitude),
+                                      icon: constants.userLocation,
+                                    )
                                   : Marker(
-                                markerId: const MarkerId('currentLocation'),
-                                position: LatLng(
-                                    Provider.of<User>(context)
-                                        .location
-                                        .latitude,
-                                    Provider.of<User>(context)
-                                        .location
-                                        .longitude),
-                                icon: BitmapDescriptor.defaultMarkerWithHue(10),
-                              ),
+                                      markerId:
+                                          const MarkerId('currentLocation'),
+                                      position: LatLng(
+                                          Provider.of<User>(context)
+                                              .location
+                                              .latitude,
+                                          Provider.of<User>(context)
+                                              .location
+                                              .longitude),
+                                      icon:
+                                          BitmapDescriptor.defaultMarkerWithHue(
+                                              10),
+                                    ),
                             },
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.all(8),
+                        alignment: Alignment.topRight,
+                        child: FloatingActionButton(
+                          heroTag: null,
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                                  return const SearchAutocomplete();
+                                }));
+                          },
+                          backgroundColor: Colors.grey[800],
+                          child: const Icon(
+                            Icons.location_on_rounded,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -170,7 +202,7 @@ class Home extends StatelessWidget {
                         bottom: 16.0,
                         left: 2.0,
                         right: 2.0,
-                        child:  Container(
+                        child: Container(
                           width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(40),
@@ -180,7 +212,8 @@ class Home extends StatelessWidget {
                                 color: Colors.black54,
                                 spreadRadius: 4,
                                 blurRadius: 2,
-                                offset: Offset(0, 0.1), // changes position of shadow
+                                offset: Offset(
+                                    0, 0.1), // changes position of shadow
                               ),
                             ],
                           ),
@@ -189,25 +222,24 @@ class Home extends StatelessWidget {
                             children: [
                               IconButton(
                                 onPressed: () {
-                                  if(!stream.isStreaming){
+                                  if (!stream.isStreaming) {
                                     constants.activeColor = Colors.green;
                                     stream.streamPosition(
-                                        _controller,
-                                        context,
-                                        services,
-                                        Provider.of<User>(context, listen: false)
-                                            .token,
-                                        constants,
-                                        Provider.of<SettingsModel>(context,
-                                            listen: false)
-                                            .locationAccuracy,
+                                      _controller,
+                                      context,
+                                      services,
+                                      Provider.of<User>(context, listen: false)
+                                          .token,
+                                      constants,
+                                      Provider.of<SettingsModel>(context,
+                                              listen: false)
+                                          .locationAccuracy,
                                     );
                                     stream.addMarkers(
-                                        constants,
-                                        Provider.of<User>(context, listen: false)
-                                            .token,
+                                      constants,
+                                      Provider.of<User>(context, listen: false)
+                                          .token,
                                     );
-
                                   }
                                 },
                                 icon: Icon(
@@ -219,15 +251,15 @@ class Home extends StatelessWidget {
                               const Expanded(child: SizedBox()),
                               IconButton(
                                 onPressed: () {
-                                  if(stream.isStreaming) {
+                                  if (stream.isStreaming) {
                                     stream.positionStream.cancel();
                                     stream.isStreaming = false;
                                     constants.activeColor = Colors.white;
                                   }
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
-                                        return RunModelByCameraDemo();
-                                      }));
+                                    return RunModelByCameraDemo();
+                                  }));
                                 },
                                 icon: const Icon(
                                   Icons.camera_alt,
@@ -240,8 +272,8 @@ class Home extends StatelessWidget {
                                 onPressed: () {
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
-                                        return const Statistics();
-                                      }));
+                                    return const Statistics();
+                                  }));
                                 },
                                 icon: const Icon(
                                   Icons.analytics_outlined,
@@ -252,12 +284,11 @@ class Home extends StatelessWidget {
                               const Expanded(child: SizedBox()),
                               IconButton(
                                 onPressed: () {
-
-                                  // Navigator.push(context,
-                                  //     MaterialPageRoute(builder: (context) {
-                                  //       return const SettingsView();
-                                  //     }));
-                                  showAutoDismissDialog(context, "Radar");
+                                  // print("drawing route");
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                        return const SettingsView();
+                                      }));
                                 },
                                 icon: const Icon(
                                   Icons.settings,
@@ -268,13 +299,14 @@ class Home extends StatelessWidget {
                               const Expanded(child: SizedBox()),
                               IconButton(
                                 onPressed: () {
-                                  // if (constants.activeColor == Colors.green) {}
-                                  Navigator.push(context,
+                                  Navigator.push(
+                                      context,
                                       PageRouteBuilder(
-                                          transitionDuration: const Duration(milliseconds: 800),
-                                          pageBuilder: (_,__,___) {
-                                        return Profile();
-                                      }));
+                                          transitionDuration:
+                                              const Duration(seconds: 1),
+                                          pageBuilder: (_, __, ___) {
+                                            return Profile();
+                                          }));
                                 },
                                 icon: Hero(
                                   tag: "profile",

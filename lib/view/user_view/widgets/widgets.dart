@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../constants/design_constants.dart';
 import '../../../model/user.dart';
 
 class UserData extends StatelessWidget {
@@ -15,18 +16,7 @@ class UserData extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.black12,
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            spreadRadius: 1,
-            blurRadius: 2,
-            offset: Offset(0, 0.1), // changes position of shadow
-          ),
-        ],
-      ),
+      decoration: DesignConstants.roundedBorder,
       margin: const EdgeInsets.all(5),
       child: Row(
         children:[

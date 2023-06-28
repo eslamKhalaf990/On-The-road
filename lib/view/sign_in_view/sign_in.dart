@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:on_the_road/model/secure_storage.dart';
+import '../../constants/design_constants.dart';
 import 'Widgets/widgets.dart';
 import 'loading_sign_in.dart';
 
@@ -53,18 +54,7 @@ class _SignInScreenState extends State<SignInScreen> {
               child: Container(
                 padding: const EdgeInsets.all(5),
                 margin: const EdgeInsets.only(top: 7),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.black12,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: Offset(0, 0.1), // changes position of shadow
-                    ),
-                  ],
-                ),
+                decoration: DesignConstants.roundedBorder,
                 child: ListView(
                   children: [
                     Container(

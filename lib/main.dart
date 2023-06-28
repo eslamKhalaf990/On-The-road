@@ -3,8 +3,8 @@ import 'package:on_the_road/Services/position_stream.dart';
 import 'package:on_the_road/auto_login.dart';
 import 'package:on_the_road/model/settings.dart';
 import 'package:provider/provider.dart';
-
 import 'model/user.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());

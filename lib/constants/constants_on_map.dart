@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Constants {
+  late String googleApiKey = "AIzaSyA10i_LPMic7RByXKoYmbskcR89Fw7erus";
   late BitmapDescriptor userLocation;
   late BitmapDescriptor mph100;
   late BitmapDescriptor mph60;

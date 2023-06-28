@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:on_the_road/constants/text-speach.dart';
 import 'package:on_the_road/view/home_view/widgets/dialog_box.dart';
 import '../constants/constants_on_map.dart';
 import '../model/Navigation.dart';
+import '../view/home_view/home.dart';
 import 'map_services.dart';
 
 class ChartData {
@@ -18,13 +21,12 @@ class PositionStream extends ChangeNotifier {
   Navigation navigation = Navigation();
   List<ChartData> chartData = <ChartData>[];
   late StreamSubscription positionStream;
-  late StreamSubscription positionStreamForCamera;
+  late List<LatLng> coordinates = [];
   Set<Marker> markersOnMap = {};
-  bool analyze = false;
   bool isStreaming = false;
-  int time = 0;
+  bool analyze = false;
   var signsOnRoad;
-
+  int time = 0;
   int i = 0;
 
   Future<void> streamPosition(Completer<GoogleMapController> _controller, BuildContext ctx,
@@ -94,25 +96,53 @@ class PositionStream extends ChangeNotifier {
     notifyListeners();
   }
 
+
+
+  getPloyLine(LatLng source, LatLng destination) async {
+    PolylinePoints polylinePoints = PolylinePoints();
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      constants.googleApiKey,
+      PointLatLng(
+        source.latitude,
+        source.longitude,
+      ),
+      PointLatLng(
+          destination.latitude,
+          destination.longitude,
+      ),
+    );
+    print("points length: ${result.points.length}");
+    if(coordinates.isNotEmpty){
+      coordinates.removeRange(0, coordinates.length);
+    }
+    result.points.forEach((PointLatLng point) =>
+        coordinates.add(LatLng(point.latitude, point.longitude)));
+    notifyListeners();
+  }
+
   getNearestSign(BuildContext ctx){
-    Timer.periodic(const Duration(seconds: 10), (timer) async{
+
+    Timer.periodic(const Duration(seconds: 15), (timer) async{
     for (int i = 0; i < signsOnRoad.length; i++) {
+      signsOnRoad[i]['last_notified'] = -120;
       double distance = Geolocator.distanceBetween(
         navigation.position.latitude,
         navigation.position.longitude,
         signsOnRoad[i]['location']['coordinates'][1],
         signsOnRoad[i]['location']['coordinates'][0],
       );
-
+      if(distance<5 ){
+        showAutoDismissDialog(ctx, "traffic light");
+      }
       if (distance < 100) {
         print("distance: $distance");
-        navigation.warning = "There Is A Stop Sign\n In Less Than 100 meters";
-        navigation.warningColor = Colors.red;
-        showAutoDismissDialog(ctx, "traffic light");
-        break;
-      }
-      else if(distance<5){
+        navigation.warning = "There Is A ${signsOnRoad[i]['name']}\n In ${distance.toStringAsFixed(1)} meters";
 
+        Text_Speach.speak(navigation.warning);
+
+        signsOnRoad[i]['last_notified'] = time;
+        navigation.warningColor = Colors.red;
+        break;
       }
       else {
         navigation.warning = "";

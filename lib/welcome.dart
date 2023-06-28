@@ -38,7 +38,8 @@ class WelcomeScreen extends StatelessWidget {
                     'Increasing use of computer technology in transportation'
                     ' will provide us with much greater levels of safety and reliability',
                     style: GoogleFonts.tajawal(
-                        textStyle: const TextStyle(fontSize: 20)),
+                        textStyle: const TextStyle(fontSize: 20),
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],

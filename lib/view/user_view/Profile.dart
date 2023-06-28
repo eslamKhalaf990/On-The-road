@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:on_the_road/auto_login.dart';
 import 'package:provider/provider.dart';
+import '../../constants/design_constants.dart';
 import '../../model/secure_storage.dart';
 import '../../model/user.dart';
 import 'widgets/widgets.dart';
@@ -74,18 +75,7 @@ class Profile extends StatelessWidget {
                 ),
                 Expanded(
                   child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(40),
-                      color: Colors.black12,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          spreadRadius: 1,
-                          blurRadius: 2,
-                          offset: Offset(0, 0.1),
-                        ),
-                      ],
-                    ),
+                    decoration: DesignConstants.roundedBorder,
                     child: ListView(
                       children: [
                         Container(

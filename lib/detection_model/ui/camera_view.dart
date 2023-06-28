@@ -44,12 +44,12 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   //load your model
   Future loadModel() async {
     //String pathCustomModel = "assets/models/custom_model.ptl";
-    String pathObjectDetectionModel = "assets/models/yolov5s.torchscript";
+    String pathObjectDetectionModel = "assets/models/detection_v1.0.torchscript";
     try {
       //_customModel = await PytorchLite.loadCustomModel(pathCustomModel);
       _objectModel = await FlutterPytorch.loadObjectDetectionModel(
-          pathObjectDetectionModel, 80, 640, 640,
-          labelPath: "assets/labels/labels_objectDetection_Coco.txt");
+          pathObjectDetectionModel, 32, 640, 640,
+          labelPath: "assets/labels/labels_v1.0.txt");
     } catch (e) {
       if (e is PlatformException) {
         print("only supported for android, Error is $e");

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../constants/design_constants.dart';
 import '../../model/user.dart';
 import '../road_sign_view/add_sign.dart';
 import '../../auto_login.dart';
@@ -63,22 +64,11 @@ class _AdminState extends State<Admin> {
                   child: Container(
                     padding:const EdgeInsets.all(5),
                     margin: const EdgeInsets.only(top: 7),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.black12,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          spreadRadius: 1,
-                          blurRadius: 2,
-                          offset: Offset(0, 0.1), // changes position of shadow
-                        ),
-                      ],
-                    ),
+                    decoration: DesignConstants.roundedBorder,
                     child: ListView(
                       children: [
                         Container(
-                          margin: EdgeInsets.all(10),
+                          margin: const EdgeInsets.all(10),
                           child: Row(
                             children:[
                               const Expanded(child: SizedBox()),
