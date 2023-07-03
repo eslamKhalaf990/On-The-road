@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:on_the_road/constants/design_constants.dart';
 
@@ -12,7 +11,6 @@ void showAutoDismissDialog(BuildContext context, String message) {
       t = Timer(const Duration(seconds: 5), () {
         Navigator.of(context).pop();
       });
-
       return Column(
         // alignment: Alignment.topCenter,
         children: [

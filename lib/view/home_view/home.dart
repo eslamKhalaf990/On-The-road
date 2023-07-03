@@ -1,19 +1,18 @@
 import 'dart:async';
-// import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:on_the_road/Services/position_stream.dart';
+import 'package:on_the_road/view_model/navigation_on_road_v_m.dart';
 import 'package:on_the_road/constants/constants_on_map.dart';
-import 'package:on_the_road/constants/design_constants.dart';
 import 'package:on_the_road/model/settings.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:on_the_road/view/home_view/search_autocomplete.dart';
-import 'package:on_the_road/view/statistics_view/statistics.dart';
+import 'package:on_the_road/view/home_view/widgets/bottom_bar.dart';
+import 'package:on_the_road/view/home_view/widgets/warning.dart';
 import 'package:provider/provider.dart';
-import '../../Services/map_services.dart';
+import '../../services/map_services.dart';
 import 'package:flutter/material.dart';
 import '../../model/user.dart';
-import '../settings/settings.dart';
-import '../user_view/Profile.dart';
-import 'package:on_the_road/detection_model/RunModelByCameraDemo.dart';
+import '../../test.dart';
+import '../../tree_accelaration/gyroscope.dart';
+import 'widgets/add_fav_location.dart';
 
 final Constants constants = Constants();
 
@@ -32,71 +31,24 @@ class _HomeState extends State<Home> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
+  void listenToNotification()async{
+    await Test.initFirebase(context);
+  }
+
+  @override
+  void initState() {
+    gyroscope gyro = gyroscope();
+    listenToNotification();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    return Consumer<PositionStream>(
+    return Consumer<NavigationOnRoad>(
       builder: (BuildContext context, stream, child) {
         return Scaffold(
           body: Column(
             children: [
-              SafeArea(
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: DesignConstants.roundedBorder,
-                      height: 100,
-                      margin: const EdgeInsets.only(
-                          left: 2, right: 2, top: 5, bottom: 3),
-                      child: ClipRRect(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(35)),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(30)),
-                              child: Material(
-                                // color: Colors.grey[50],
-                                color: DesignConstants.dark,
-                                elevation: 20,
-                                child: SizedBox(
-                                  height: 98,
-                                  width: 120,
-                                  child: Center(
-                                    child: Text(
-                                      "${stream.navigation.currentSpeed.toStringAsFixed(2)} km/h\n"
-                                      "${stream.navigation.distanceTraveled.toStringAsFixed(2)} km",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: DesignConstants.fontFamily,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(left: 10),
-                              child: Text(
-                                stream.navigation.warning,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: DesignConstants.fontFamily,
-                                  color: Colors.red,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              const Warning(),
               Expanded(
                 child: ClipRRect(
                   borderRadius: const BorderRadius.all(Radius.circular(25)),
@@ -111,10 +63,9 @@ class _HomeState extends State<Home> {
                           ),
                           child: GoogleMap(
                             onTap: (LatLng l) {
-                              stream.markersOnMap.add(
+                              stream.addMarker(
                                 Marker(
-                                  markerId: MarkerId(
-                                      'markerToAdd ${l.longitude}, ${l.latitude}'),
+                                  markerId: const MarkerId('favorite place'),
                                   position: LatLng(
                                     l.latitude,
                                     l.longitude,
@@ -122,6 +73,7 @@ class _HomeState extends State<Home> {
                                   icon: constants.userLocation,
                                 ),
                               );
+                              addFavLocation(context, l);
                             },
                             mapType:
                                 Provider.of<SettingsModel>(context).mapTheme,
@@ -131,21 +83,17 @@ class _HomeState extends State<Home> {
                                   Provider.of<User>(context)
                                       .location
                                       .longitude),
-                              // tilt: 90,
-                              zoom: 14,
+                              tilt: 90,
+                              zoom: 18,
                             ),
-                            // initialCameraPosition: const CameraPosition(
-                            //   zoom: 15.0,
-                            //   target: LatLng(45.82917150748776, 14.63705454546316),
-                            // ),
                             onMapCreated: (controller) async {
                               _controller.complete(controller);
                             },
                             polylines: {
                               Polyline(
                                 polylineId: const PolylineId("route"),
-                                points: stream.coordinates,
-                                color: Colors.pink.shade600,
+                                points: stream.navigation.coordinates,
+                                color: Colors.pink.shade700,
                                 width: 5,
                               )
                             },
@@ -166,15 +114,14 @@ class _HomeState extends State<Home> {
                                       markerId:
                                           const MarkerId('currentLocation'),
                                       position: LatLng(
-                                          Provider.of<User>(context)
-                                              .location
-                                              .latitude,
-                                          Provider.of<User>(context)
-                                              .location
-                                              .longitude),
-                                      icon:
-                                          BitmapDescriptor.defaultMarkerWithHue(
-                                              10),
+                                        Provider.of<User>(context)
+                                            .location
+                                            .latitude,
+                                        Provider.of<User>(context)
+                                            .location
+                                            .longitude,
+                                      ),
+                                      icon: constants.userLocation,
                                     ),
                             },
                           ),
@@ -188,8 +135,8 @@ class _HomeState extends State<Home> {
                           onPressed: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                                  return const SearchAutocomplete();
-                                }));
+                              return const SearchAutocomplete();
+                            }));
                           },
                           backgroundColor: Colors.grey[800],
                           child: const Icon(
@@ -218,111 +165,8 @@ class _HomeState extends State<Home> {
                             ],
                           ),
                           margin: const EdgeInsets.only(left: 40, right: 40),
-                          child: Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  if (!stream.isStreaming) {
-                                    constants.activeColor = Colors.green;
-                                    stream.streamPosition(
-                                      _controller,
-                                      context,
-                                      services,
-                                      Provider.of<User>(context, listen: false)
-                                          .token,
-                                      constants,
-                                      Provider.of<SettingsModel>(context,
-                                              listen: false)
-                                          .locationAccuracy,
-                                    );
-                                    stream.addMarkers(
-                                      constants,
-                                      Provider.of<User>(context, listen: false)
-                                          .token,
-                                    );
-                                  }
-                                },
-                                icon: Icon(
-                                  Icons.home,
-                                  size: 30,
-                                  color: constants.activeColor,
-                                ),
-                              ),
-                              const Expanded(child: SizedBox()),
-                              IconButton(
-                                onPressed: () {
-                                  if (stream.isStreaming) {
-                                    stream.positionStream.cancel();
-                                    stream.isStreaming = false;
-                                    constants.activeColor = Colors.white;
-                                  }
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return RunModelByCameraDemo();
-                                  }));
-                                },
-                                icon: const Icon(
-                                  Icons.camera_alt,
-                                  size: 30,
-                                  // color: Colors.grey,
-                                ),
-                              ),
-                              const Expanded(child: SizedBox()),
-                              IconButton(
-                                onPressed: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return const Statistics();
-                                  }));
-                                },
-                                icon: const Icon(
-                                  Icons.analytics_outlined,
-                                  size: 30,
-                                  // color: Colors.grey,
-                                ),
-                              ),
-                              const Expanded(child: SizedBox()),
-                              IconButton(
-                                onPressed: () {
-                                  // print("drawing route");
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                        return const SettingsView();
-                                      }));
-                                },
-                                icon: const Icon(
-                                  Icons.settings,
-                                  size: 30,
-                                  // color: Colors.wh,
-                                ),
-                              ),
-                              const Expanded(child: SizedBox()),
-                              IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                          transitionDuration:
-                                              const Duration(seconds: 1),
-                                          pageBuilder: (_, __, ___) {
-                                            return Profile();
-                                          }));
-                                },
-                                icon: Hero(
-                                  tag: "profile",
-                                  child: CircleAvatar(
-                                    radius: 30,
-                                    child: ClipRRect(
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(100),
-                                      ),
-                                      child: Image.asset('images/admin.png'),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
+                          child: BottomBar(
+                              controller: _controller, services: services),
                         ),
                       ),
                     ],

@@ -1,36 +1,24 @@
-import 'dart:typed_data';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image/image.dart';
 import 'package:flutter_pytorch/pigeon.dart';
 import 'package:flutter_pytorch/flutter_pytorch.dart';
-import 'package:on_the_road/Services/position_stream.dart';
-import 'package:on_the_road/detection_model/utils/image_utils.dart';
-import 'package:provider/provider.dart';
 import 'camera_view_singleton.dart';
 
-/// [CameraView] sends each frame for inference
 class CameraView extends StatefulWidget {
-  /// Callback to pass results after inference to [HomeView]
   final Function(List<ResultObjectDetection?> recognitions) resultsCallback;
-  final Function(String classification) resultsCallbackClassification; //abdo
+  final Function(String classification) resultsCallbackClassification;
 
-  /// Constructor
   const CameraView(this.resultsCallback, this.resultsCallbackClassification);
   @override
   _CameraViewState createState() => _CameraViewState();
 }
 
 class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
-  /// List of available cameras
   late List<CameraDescription> cameras;
 
-  /// Controller
   CameraController? cameraController;
 
-  /// true when inference is ongoing
   late bool predicting;
 
   ModelObjectDetection? _objectModel;
@@ -44,12 +32,12 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   //load your model
   Future loadModel() async {
     //String pathCustomModel = "assets/models/custom_model.ptl";
-    String pathObjectDetectionModel = "assets/models/detection_v1.0.torchscript";
+    String pathObjectDetectionModel = "assets/models/model_v2.0.torchscript";
     try {
       //_customModel = await PytorchLite.loadCustomModel(pathCustomModel);
       _objectModel = await FlutterPytorch.loadObjectDetectionModel(
-          pathObjectDetectionModel, 32, 640, 640,
-          labelPath: "assets/labels/labels_v1.0.txt");
+          pathObjectDetectionModel, 10, 640, 640,
+          labelPath: "assets/labels/labels_v2.0.txt");
     } catch (e) {
       if (e is PlatformException) {
         print("only supported for android, Error is $e");
@@ -76,7 +64,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
 
     // cameras[0] for rear-camera
     cameraController =
-        CameraController(cameras[0], ResolutionPreset.max, enableAudio: false);
+        CameraController(cameras[0], ResolutionPreset.high, enableAudio: false);
 
     cameraController?.initialize().then((_) async {
       // Stream of image passed to [onLatestImageAvailable] callback

@@ -40,12 +40,18 @@ dependencies:
   provider: ^6.0.5
   camera: ^0.10.5+2
   flutter_pytorch: ^1.0.1
-  flutter:
-    sdk: flutter
+  firebase_messaging: ^14.6.4
+  firebase_core: ^2.14.0
+  sensors_plus: ^2.0.2
+  intl: ^0.18.0
+  statistics: ^1.0.24
   cupertino_icons: ^1.0.2
   syncfusion_flutter_charts: ^21.2.3
   google_maps_routes: ^1.1.2
   flutter_tts: ^3.7.0
+  speech_to_text: ^6.1.1
+  flutter:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

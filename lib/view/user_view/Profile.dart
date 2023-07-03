@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:on_the_road/auto_login.dart';
 import 'package:provider/provider.dart';
@@ -6,13 +7,61 @@ import '../../model/secure_storage.dart';
 import '../../model/user.dart';
 import 'widgets/widgets.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
   Profile({
     super.key,
   });
 
-  final SecuredUserStorage securedUserStorage = SecuredUserStorage();
+  @override
+  State<Profile> createState() => _ProfileState();
+}
 
+class _ProfileState extends State<Profile> {
+  final SecuredUserStorage securedUserStorage = SecuredUserStorage();
+  void configureFirebaseMessaging() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Received notification:');
+      print('Title: ${message.notification?.title}');
+      print('Body: ${message.notification?.body}');
+      // Additional data can be accessed using message.data
+      print('Data: ${message.data}');
+    });
+  }
+
+
+  Future<void> sendPushNotificationToAll(String title, String body) async {
+    try {
+      // Initialize Firebase Messaging
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+      // Create the notification message
+      RemoteNotification notification = RemoteNotification(
+        title: title,
+        body: body,
+      );
+      Map<String, String> data1 = {
+        "event":"Accident"
+      };
+      RemoteMessage message = RemoteMessage(
+        notification: notification,
+        data: data1,
+      );
+      // Create the data message
+      Map<String, RemoteMessage> data2 = {
+        "event":message
+      };
+
+      // Create the message
+
+
+      // Send the message to all registered devices
+      // await messaging.send(to:(await messaging.getToken()).toString(), data: data2);
+
+      print('Push notification sent to all users successfully.');
+    } catch (e) {
+      print('Error sending push notification: $e');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Consumer<User>(
@@ -33,6 +82,21 @@ class Profile extends StatelessWidget {
                     const Expanded(child: SizedBox()),
                     Row(
                       children: [
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 30, right: 5),
+                          child: FloatingActionButton(
+                            heroTag: null,
+                            onPressed: () {
+                                configureFirebaseMessaging();
+
+                            },
+                            backgroundColor: Colors.black38,
+                            child: const Icon(
+                              Icons.add_location_alt_outlined,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                         Container(
                           margin: const EdgeInsets.only(bottom: 30, right: 5),
                           child: FloatingActionButton(

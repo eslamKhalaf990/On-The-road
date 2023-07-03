@@ -27,6 +27,7 @@ class _LoadingSignInState extends State<LoadingSignIn> {
   @override
   void initState() {
     super.initState();
+    constants.customizeBitmap();
     signIn(widget.name, widget.password);
   }
   pushToAdminScreen(User user){
@@ -36,7 +37,7 @@ class _LoadingSignInState extends State<LoadingSignIn> {
         }));
   }
   pushToHome(User user){
-    constants.customizeBitmap();
+
     Provider.of<User>(context, listen: false).updateUser(user);
     print(Provider.of<User>(context, listen: false).email);
 

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "7474796886",
+    "project_id": "pushingnotifications-38c05",
+    "storage_bucket": "pushingnotifications-38c05.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:7474796886:android:ac1a01a970c0f567b3def7",
+        "android_client_info": {
+          "package_name": "com.ontheroad.on_the_road"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "7474796886-7j2o6nja62q5ftvpp42pmsam36qpn15e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaDpVwpJ39vqyLgRda6oXRkZLUSkAxvPE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "7474796886-7j2o6nja62q5ftvpp42pmsam36qpn15e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

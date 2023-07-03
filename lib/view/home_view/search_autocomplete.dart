@@ -3,7 +3,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:on_the_road/Services/map_services.dart';
-import 'package:on_the_road/Services/position_stream.dart';
+import 'package:on_the_road/view_model/navigation_on_road_v_m.dart';
+import 'package:on_the_road/constants/design_constants.dart';
 import 'package:provider/provider.dart';
 
 class SearchAutocomplete extends StatefulWidget {
@@ -15,15 +16,16 @@ class SearchAutocomplete extends StatefulWidget {
 
 class _SearchAutocompleteState extends State<SearchAutocomplete> {
   final TextEditingController _source = TextEditingController();
-  late bool sourceFocus = false;
-  late bool destinationFocus = false;
-  late bool sourcePicked = false;
-  late bool destinationPicked = false;
-  late LatLng sourceLatLng;
-  late LatLng destinationLatLng;
   final TextEditingController _destination = TextEditingController();
   late List<dynamic> _predictions = [];
-  var result;
+  late bool sourceFocus = false;
+  late bool destinationFocus = false;
+
+  late bool sourcePicked = false;
+  late bool destinationPicked = false;
+
+  late LatLng sourceLatLng;
+  late LatLng destinationLatLng;
 
   Future<LatLng> getLocationDetails(String placeId) async {
     LatLng place = const LatLng(-1.0, -1.0);
@@ -55,8 +57,7 @@ class _SearchAutocompleteState extends State<SearchAutocomplete> {
 
   Future<void> _autocompletePlace(String input) async {
     String apiKey = 'AIzaSyA10i_LPMic7RByXKoYmbskcR89Fw7erus';
-    String baseUrl =
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+    String baseUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
 
     String url = '$baseUrl?input=$input&key=$apiKey';
 
@@ -131,7 +132,7 @@ class _SearchAutocompleteState extends State<SearchAutocomplete> {
                       ),
                       IconButton(
                         onPressed: () async{
-                          _source.text = "Current Location";
+                          _source.text = "Your Location";
                           MapServices service = MapServices();
                           await service.getCurrentLocation();
                           sourceLatLng = LatLng(service.lat, service.long) ;
@@ -141,7 +142,7 @@ class _SearchAutocompleteState extends State<SearchAutocomplete> {
                           Icons.my_location,
                           size: 30,
                         ),
-                      )
+                      ),
                     ],
                   ),
                   Container(
@@ -189,41 +190,48 @@ class _SearchAutocompleteState extends State<SearchAutocomplete> {
               child: ListView.builder(
                 itemCount: _predictions.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(
-                      _predictions[index]['description'],
-                      style: const TextStyle(fontFamily: 'tajawal'),
+                  return Container(
+                    decoration: DesignConstants.roundedBorder,
+                    margin: const EdgeInsets.all(3),
+                    padding: const EdgeInsets.all(3),
+                    child: ListTile(
+                      title: Text(
+                        _predictions[index]['description'],
+                        style: const TextStyle(fontFamily: 'tajawal'),
+                      ),
+                      onTap: () async {
+                        if (sourceFocus) {
+                          sourceLatLng = await getLocationDetails(
+                              _predictions[index]['place_id']);
+                          if (sourceLatLng.latitude != -1.0) {
+                            sourcePicked = true;
+                            _source.text =  _predictions[index]['description'];
+                          }
+                        }
+                        if (destinationFocus) {
+                          destinationLatLng = await getLocationDetails(
+                              _predictions[index]['place_id']);
+                          if (destinationLatLng.latitude != -1.0) {
+                            destinationPicked = true;
+                            _destination.text =  _predictions[index]['description'];
+                          }
+                        }
+                        if (sourcePicked &&
+                            destinationPicked &&
+                            sourceLatLng.latitude != -1.0) {
+                          if (context.mounted){
+                            Provider.of<NavigationOnRoad>(context, listen: false)
+                                .getPloyLine(sourceLatLng, destinationLatLng);
+                            Navigator.pop(context);
+                          }
+                        }
+                        // print('Selected place: ${_predictions[index]}');
+                        // print("src focus: $sourceFocus");
+                        // print("dest focus: $destinationFocus");
+                        // getLocationDetails(_predictions[index]['place_id']);
+                      },
+                      trailing: IconButton(onPressed: (){}, icon: Icon(Icons.favorite)),
                     ),
-                    onTap: () async {
-                      if (sourceFocus) {
-                        sourceLatLng = await getLocationDetails(
-                            _predictions[index]['place_id']);
-                        if (sourceLatLng.latitude != -1.0) {
-                          sourcePicked = true;
-                          _source.text =  _predictions[index]['description'];
-                        }
-                      }
-                      if (destinationFocus) {
-                        destinationLatLng = await getLocationDetails(
-                            _predictions[index]['place_id']);
-                        if (destinationLatLng.latitude != -1.0) {
-                          destinationPicked = true;
-                          _destination.text =  _predictions[index]['description'];
-                        }
-                      }
-                      if (sourcePicked &&
-                          destinationPicked &&
-                          sourceLatLng.latitude != -1.0) {
-                        print("both picked");
-                        Provider.of<PositionStream>(context, listen: false)
-                            .getPloyLine(sourceLatLng, destinationLatLng);
-                        Navigator.pop(context);
-                      }
-                      print('Selected place: ${_predictions[index]}');
-                      print("src focus: $sourceFocus");
-                      print("dest focus: $destinationFocus");
-                      getLocationDetails(_predictions[index]['place_id']);
-                    },
                   );
                 },
               ),

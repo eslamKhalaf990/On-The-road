@@ -1,0 +1,10 @@
+Sign
+Bus
+Children
+Car
+Truck
+Motorcycle
+Awake eyes
+Awake mouth
+Doze eyes
+Doze mouth

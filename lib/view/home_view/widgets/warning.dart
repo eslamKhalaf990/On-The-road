@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../view_model/navigation_on_road_v_m.dart';
+import '../../../constants/design_constants.dart';
 class Warning extends StatelessWidget {
   const Warning({
     super.key,
@@ -7,66 +10,66 @@ class Warning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          color: Colors.white,
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.redAccent,
-              spreadRadius: 1,
-              blurRadius: 2,
-              offset: Offset(
-                  0, 0.1), // changes position of shadow
-            ),
-          ]),
-      height: 100,
-      margin: const EdgeInsets.only(
-          left: 2, right: 2, top: 5, bottom: 3),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(35)),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius:
-              const BorderRadius.all(Radius.circular(30)),
-              child: Material(
-                color: Colors.grey[50],
-                elevation: 20,
-                child: const SizedBox(
-                  height: 98,
-                  width: 98,
-                  child: Center(
-                    child: Text(
-                      "32",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'tajawal',
-                        color: Colors.black54,
+    return Consumer<NavigationOnRoad>(
+      builder: (BuildContext context, stream, child) {
+        return SafeArea(
+          child: Column(
+            children: [
+              Container(
+                decoration: DesignConstants.roundedBorder,
+                height: 100,
+                margin: const EdgeInsets.only(
+                    left: 2, right: 2, top: 5, bottom: 3),
+                child: ClipRRect(
+                  borderRadius:
+                  const BorderRadius.all(Radius.circular(35)),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius:
+                        const BorderRadius.all(Radius.circular(30)),
+                        child: Material(
+                          color: DesignConstants.dark,
+                          elevation: 20,
+                          child: SizedBox(
+                            height: 98,
+                            width: 120,
+                            child: Center(
+                              child: Text(
+                                "${stream.navigation.currentSpeed.toStringAsFixed(2)} km/h\n"
+                                    "${stream.navigation.distanceTraveled.toStringAsFixed(2)} km",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: DesignConstants.fontFamily,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
+                      Container(
+                        margin: const EdgeInsets.only(left: 10),
+                        child: Text(
+                          stream.navigation.warning,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: DesignConstants.fontFamily,
+                            color: Colors.red,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(left: 10),
-              child: const Text(
-                "warning",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'tajawal',
-                  color: Colors.red,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
