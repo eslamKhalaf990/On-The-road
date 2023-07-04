@@ -9,7 +9,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../home_view/home.dart';
 import '../user_view/Admin.dart';
 
-
 class LoadingSignIn extends StatefulWidget {
   final String name;
   final String password;
@@ -30,14 +29,14 @@ class _LoadingSignInState extends State<LoadingSignIn> {
     constants.customizeBitmap();
     signIn(widget.name, widget.password);
   }
-  pushToAdminScreen(User user){
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) {
-          return Admin(user: user);
-        }));
-  }
-  pushToHome(User user){
 
+  pushToAdminScreen(User user) {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+      return Admin(user: user);
+    }));
+  }
+
+  pushToHome(User user) {
     Provider.of<User>(context, listen: false).updateUser(user);
     print(Provider.of<User>(context, listen: false).email);
 
@@ -50,7 +49,8 @@ class _LoadingSignInState extends State<LoadingSignIn> {
       ),
     );
   }
-  pushToSignUp(){
+
+  pushToSignUp() {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -62,7 +62,8 @@ class _LoadingSignInState extends State<LoadingSignIn> {
       ),
     );
   }
-  void signIn(String name, String password) async{
+
+  void signIn(String name, String password) async {
     SignInViewModel signIn = SignInViewModel();
     User user = await signIn.getUserInformation(name, password);
     MapServices services = MapServices();
@@ -71,8 +72,6 @@ class _LoadingSignInState extends State<LoadingSignIn> {
       if (user.isAdmin) {
         pushToAdminScreen(user);
       } else {
-
-
         Location currentLocation = Location();
         await services.getCurrentLocation();
 
@@ -81,12 +80,12 @@ class _LoadingSignInState extends State<LoadingSignIn> {
         user.location = currentLocation;
 
         pushToHome(user);
-
       }
     } else {
       pushToSignUp();
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(

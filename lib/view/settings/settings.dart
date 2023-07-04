@@ -5,10 +5,11 @@ import 'package:on_the_road/model/settings.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/design_constants.dart';
+import '../../tree_accelaration/gyroscope.dart';
 
 class SettingsView extends StatelessWidget {
-  const SettingsView({Key? key}) : super(key: key);
-
+  SettingsView({Key? key}) : super(key: key);
+  gyroscope gyro = gyroscope();
   @override
   Widget build(BuildContext context) {
     return Consumer<SettingsModel>(
@@ -44,33 +45,47 @@ class SettingsView extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       settingsModel.options[index][k] is String
-                                          ? MaterialButton(onPressed: () {
-                                        print(settingsModel.options[index].length,);
-                                        if(index == 0 && k==0){
-                                          settingsModel.locationAccuracy = LocationAccuracy.bestForNavigation;
-                                        }
-                                        else if(index == 0 && k==1){
-                                          settingsModel.locationAccuracy = LocationAccuracy.lowest;
-                                        }
-                                      },
-                                          child: Text(settingsModel.options[index][k]))
+                                          ? MaterialButton(
+                                              onPressed: () {
+                                                print(
+                                                  settingsModel
+                                                      .options[index].length,
+                                                );
+                                                if (index == 0 && k == 0) {
+                                                  settingsModel
+                                                          .locationAccuracy =
+                                                      LocationAccuracy
+                                                          .bestForNavigation;
+                                                } else if (index == 0 &&
+                                                    k == 1) {
+                                                  settingsModel
+                                                          .locationAccuracy =
+                                                      LocationAccuracy.lowest;
+                                                }
+                                              },
+                                              child: Text(settingsModel
+                                                  .options[index][k]))
                                           : MaterialButton(
                                               onPressed: () {
-                                                if(index == 1 && k==0){
-                                                  settingsModel.mapTheme = MapType.normal;
-                                                }
-                                                else if(index == 1 && k==1){
-
-                                                  settingsModel.mapTheme = MapType.satellite;
+                                                if (index == 1 && k == 0) {
+                                                  settingsModel.mapTheme =
+                                                      MapType.normal;
+                                                } else if (index == 1 &&
+                                                    k == 1) {
+                                                  settingsModel.mapTheme =
+                                                      MapType.satellite;
                                                 }
                                               },
                                               child: ClipRRect(
-                                                borderRadius: const BorderRadius.all(
+                                                borderRadius:
+                                                    const BorderRadius.all(
                                                   Radius.circular(13),
                                                 ),
                                                 child: Image(
                                                   height: 45,
-                                                  image: settingsModel.options[index][k],),
+                                                  image: settingsModel
+                                                      .options[index][k],
+                                                ),
                                               ),
                                             ),
                                     ],
@@ -83,7 +98,14 @@ class SettingsView extends StatelessWidget {
                   );
                 },
               ),
-
+              TextButton(
+                  onPressed: () {
+                    if (gyro.working)
+                      gyro.end();
+                    else
+                      gyro.start();
+                  },
+                  child: Text("gyro"))
             ],
           ),
         );

@@ -14,20 +14,21 @@ class Statistics extends StatefulWidget {
 
 class _StatisticsState extends State<Statistics> {
   late List<PieData> data;
-  List<PieData> getData(){
+  List<PieData> getData() {
     return [
-      PieData("High Risk", 15, const Color.fromARGB(1, 199,31,45)),
+      PieData("High Risk", 15, const Color.fromARGB(1, 199, 31, 45)),
       PieData("Low Risk", 45, const Color(0xffFFBA00)),
-      PieData("Medium Risk", 40,const Color(0xff0A0390)),
+      PieData("Medium Risk", 40, const Color(0xff0A0390)),
     ];
   }
 
-@override
+  @override
   void initState() {
     data = getData();
     tooltip = TooltipBehavior(enable: true);
     super.initState();
   }
+
   late TooltipBehavior tooltip;
   final int i = 0;
 
@@ -38,7 +39,8 @@ class _StatisticsState extends State<Statistics> {
         children: [
           MaterialButton(
             onPressed: () {
-              Provider.of<NavigationOnRoad>(context, listen: false).analyzeAvg();
+              Provider.of<NavigationOnRoad>(context, listen: false)
+                  .analyzeAvg();
             },
             child: Column(
               children: [
@@ -63,13 +65,17 @@ class _StatisticsState extends State<Statistics> {
                     Expanded(
                       child: AnalysisCard(
                         title: "Max Speed",
-                        value: Provider.of<NavigationOnRoad>(context).navigation.maxSpeed,
+                        value: Provider.of<NavigationOnRoad>(context)
+                            .navigation
+                            .maxSpeed,
                       ),
                     ),
                     Expanded(
                       child: AnalysisCard(
                         title: "Avg Speed",
-                        value: Provider.of<NavigationOnRoad>(context).navigation.avgSpeed,
+                        value: Provider.of<NavigationOnRoad>(context)
+                            .navigation
+                            .avgSpeed,
                       ),
                     ),
                   ],
@@ -79,13 +85,17 @@ class _StatisticsState extends State<Statistics> {
                     Expanded(
                       child: AnalysisCard(
                         title: "Current Speed",
-                        value: Provider.of<NavigationOnRoad>(context).navigation.currentSpeed,
+                        value: Provider.of<NavigationOnRoad>(context)
+                            .navigation
+                            .currentSpeed,
                       ),
                     ),
                     Expanded(
                       child: AnalysisCard(
                         title: "Distance",
-                        value: Provider.of<NavigationOnRoad>(context).navigation.distanceTraveled,
+                        value: Provider.of<NavigationOnRoad>(context)
+                            .navigation
+                            .distanceTraveled,
                       ),
                     ),
                   ],
@@ -102,17 +112,16 @@ class _StatisticsState extends State<Statistics> {
                     series: <CircularSeries>[
                       PieSeries<PieData, String>(
                         dataSource: data,
-                        xValueMapper: (PieData d, _)=>d.x,
-                        yValueMapper: (PieData d, _)=>d.y,
-                        pointColorMapper:(PieData color,  _) => color.color,
-                        dataLabelSettings: const DataLabelSettings(isVisible: true),
+                        xValueMapper: (PieData d, _) => d.x,
+                        yValueMapper: (PieData d, _) => d.y,
+                        pointColorMapper: (PieData color, _) => color.color,
+                        dataLabelSettings:
+                            const DataLabelSettings(isVisible: true),
                         enableTooltip: true,
-
                       )
                     ],
                   ),
                 ),
-
               ],
             ),
           ),
@@ -123,7 +132,6 @@ class _StatisticsState extends State<Statistics> {
 }
 
 class PieData {
-
   late String x;
   late int y;
   late Color color;

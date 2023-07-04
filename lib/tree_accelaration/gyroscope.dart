@@ -12,13 +12,10 @@ class gyroscope {
   List<List<double>>? _gyroscopeValues = [];
   var params0;
   final _streamSubscriptions = <StreamSubscription<dynamic>>[];
-
-  gyroscope() {
-    start();
-  }
-
+  bool working = false;
   Future<void> start() async {
-    params0 = await readJsonFile('assets/models/DT_os_22_6.json'); //make sure to wait
+    params0 =
+        await readJsonFile('assets/models/DT_os_22_6.json'); //make sure to wait
     DecisionTreeClassifier classifier = DecisionTreeClassifier.fromMap(params0);
 
     _streamSubscriptions.add(
@@ -50,6 +47,7 @@ class gyroscope {
         print(" Sudden Left Turn ");
       else if (classification == 4) print("Sudden Break");
     });
+    working = true;
   }
 
   void end() {
@@ -57,6 +55,7 @@ class gyroscope {
     for (final subscription in _streamSubscriptions) {
       subscription.cancel();
     }
+    working = false;
   }
 
   List<double> CalculateStats() {

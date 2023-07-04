@@ -6,21 +6,22 @@ class DetectionServices {
   //to be decided in settings
 
   final objectsWidth = {'Car': 1.9, 'tv': 0.51, 'laptop': 0.51};
-  final objectsToReport = ['Stop Sign', 'Speed Pump'];
-  final reportAccuracy = 0.85;
-  final ttsAccuracy = 0.80;
+  final objectsToReport = ['Stop Sign', 'Speed Pump', 'tv', 'laptop'];
+  final reportAccuracy = 0.085;
+  final ttsAccuracy = 0.080;
   final channel = const MethodChannel('java_channel');
   final safeDistanceTime = 2.0; // 2 seconds
   double focalLength = 0;
 
   void objectDetected(
-      CameraImage cameraImage, List<ResultObjectDetection> objDetect) {
+      CameraImage cameraImage, List<ResultObjectDetection?> objDetect) {
     for (var obj in objDetect) {
-      if (objectsToReport.contains(obj.className) &&
-          obj.score >= reportAccuracy) {
+      if (objectsToReport.contains(obj?.className?.trim()) &&
+          obj!.score >= reportAccuracy) {
         sendToServer(cameraImage);
       }
-      if (objectsWidth.containsKey(obj.className) && obj.score >= ttsAccuracy) {
+      if (objectsWidth.containsKey(obj?.className?.trim()) &&
+          obj!.score >= ttsAccuracy) {
         calculateDistance(obj).then((distance) {
           double safeDistance = calculateSafeDistance();
           if (distance < safeDistance) {
@@ -64,4 +65,6 @@ class DetectionServices {
   void tts(String text) {
     // call text-to-speech method
   }
+
+  DetectionServices();
 }

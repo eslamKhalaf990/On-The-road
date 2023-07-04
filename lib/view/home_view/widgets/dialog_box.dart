@@ -8,7 +8,7 @@ void showAutoDismissDialog(BuildContext context, String message) {
     context: context,
     builder: (BuildContext context) {
       // Set up a Timer to dismiss the dialog after 10 seconds
-      t = Timer(const Duration(seconds: 5), () {
+      t = Timer(const Duration(seconds: 10), () {
         Navigator.of(context).pop();
       });
       return Column(
@@ -22,7 +22,7 @@ void showAutoDismissDialog(BuildContext context, String message) {
             // title: const Text('Auto Dismiss Dialog'),
             content: Center(
               child: Text(
-                  'Did you find a $message?',
+                'Did you find a $message?',
                 style: TextStyle(fontFamily: DesignConstants.fontFamily),
               ),
             ),
@@ -44,7 +44,10 @@ void showAutoDismissDialog(BuildContext context, String message) {
                       t.cancel();
                       Navigator.of(context).pop();
                     },
-                    child: Text('Yes', style: TextStyle(fontFamily: DesignConstants.fontFamily),),
+                    child: Text(
+                      'Yes',
+                      style: TextStyle(fontFamily: DesignConstants.fontFamily),
+                    ),
                   ),
                   ElevatedButton(
                     style: ButtonStyle(
@@ -60,7 +63,10 @@ void showAutoDismissDialog(BuildContext context, String message) {
                       t.cancel();
                       Navigator.of(context).pop();
                     },
-                    child: Text('No', style: TextStyle(fontFamily: DesignConstants.fontFamily),),
+                    child: Text(
+                      'No',
+                      style: TextStyle(fontFamily: DesignConstants.fontFamily),
+                    ),
                   ),
                 ],
               ),
@@ -71,3 +77,58 @@ void showAutoDismissDialog(BuildContext context, String message) {
     },
   );
 }
+// void showCustomDialog(BuildContext context, String message) {
+//   showDialog(
+//     barrierColor: Colors.transparent,
+//     context: context,
+//     builder: (BuildContext cxt) {
+//       return Align(
+//         alignment: Alignment.topCenter,
+//         child: Padding(
+//           padding: const EdgeInsets.all(16),
+//           child: Material(
+//             color: Colors.black,
+//             shape: RoundedRectangleBorder(
+//                 borderRadius: BorderRadius.circular(15)),
+//             child: Padding(
+//               padding: const EdgeInsets.all(16),
+//               child: Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   Text(
+//                     "Did You Found a $message",
+//                     style: const TextStyle(
+//                       fontSize: 19,
+//                       color: Colors.white,
+//                     ),
+//                   ),
+//                   const SizedBox(height: 7.0),
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     crossAxisAlignment: CrossAxisAlignment.center,
+//                     children: [
+//                       ElevatedButton(
+//                         onPressed: () {
+//                           Navigator.of(context).pop();
+//                         },
+//                         child: const Text('yes'),
+//                       ),
+//                       const SizedBox(width: 17.0),
+//                       ElevatedButton(
+//                         onPressed: () {
+//                           Navigator.of(context).pop();
+//                         },
+//                         child: const Text('Close'),
+//                       )
+//                     ],
+//                   ),
+//                   // const ShrinkingLine()
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//       );
+//     },
+//   );
+// }

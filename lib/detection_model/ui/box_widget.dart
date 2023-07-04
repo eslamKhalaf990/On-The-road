@@ -24,17 +24,17 @@ class BoxWidget extends StatelessWidget {
 
     if (boxesColor == null) {
       usedColor = Colors.primaries[
-      ((result.className ?? result.classIndex.toString()).length +
-          (result.className ?? result.classIndex.toString())
-              .codeUnitAt(0) +
-          result.classIndex) %
-          Colors.primaries.length];
+          ((result.className ?? result.classIndex.toString()).length +
+                  (result.className ?? result.classIndex.toString())
+                      .codeUnitAt(0) +
+                  result.classIndex) %
+              Colors.primaries.length];
     } else {
       usedColor = boxesColor;
     }
 
     DetectionServices detectServices =
-    DetectionServices(); // Create an instance of DetectionServices
+        DetectionServices(); // Create an instance of DetectionServices
 
     return Positioned(
       left: result.rect.left * factorX,

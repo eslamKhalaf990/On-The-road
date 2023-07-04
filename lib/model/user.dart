@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'location.dart';
 
-class User extends ChangeNotifier{
+class User extends ChangeNotifier {
   late String name;
   late String email;
   late String token;
@@ -14,9 +14,9 @@ class User extends ChangeNotifier{
   late String id;
   late Location location = Location();
   late bool exist;
-  late List<LatLng> favoritePlaces;
+  late var favoritePlaces;
 
-  updateUser(User user){
+  updateUser(User user) {
     name = user.name;
     email = user.email;
     token = user.token;

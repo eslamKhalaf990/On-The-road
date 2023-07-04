@@ -31,16 +31,16 @@ class _HomeState extends State<Home> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  void listenToNotification()async{
+  void listenToNotification() async {
     await Test.initFirebase(context);
   }
 
   @override
   void initState() {
-    gyroscope gyro = gyroscope();
     listenToNotification();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<NavigationOnRoad>(

@@ -13,7 +13,8 @@ import 'package:on_the_road/view/statistics_view/statistics.dart';
 import 'package:on_the_road/view/user_view/Profile.dart';
 import 'package:on_the_road/view/home_view/home.dart';
 
-void startNavigation(BuildContext context, Completer<GoogleMapController> _controller, MapServices services){
+void startNavigation(BuildContext context,
+    Completer<GoogleMapController> _controller, MapServices services) {
   constants.activeColor = Colors.green;
   Provider.of<NavigationOnRoad>(context, listen: false).navigateOnRoad(
     _controller,
@@ -28,6 +29,7 @@ void startNavigation(BuildContext context, Completer<GoogleMapController> _contr
     Provider.of<User>(context, listen: false).token,
   );
 }
+
 class BottomBar extends StatelessWidget {
   const BottomBar({
     super.key,
@@ -64,10 +66,9 @@ class BottomBar extends StatelessWidget {
                   stream.isStreaming = false;
                   constants.activeColor = Colors.white;
                 }
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) {
-                      return RunModelByCameraDemo();
-                    }));
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return RunModelByCameraDemo();
+                }));
               },
               icon: const Icon(
                 Icons.camera_alt,
@@ -87,10 +88,9 @@ class BottomBar extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) {
-                      return const Statistics();
-                    }));
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const Statistics();
+                }));
               },
               icon: const Icon(
                 Icons.analytics_outlined,
@@ -101,10 +101,9 @@ class BottomBar extends StatelessWidget {
             IconButton(
               onPressed: () {
                 // print("drawing route");
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) {
-                      return const SettingsView();
-                    }));
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return SettingsView();
+                }));
               },
               icon: const Icon(
                 Icons.settings,
@@ -117,8 +116,7 @@ class BottomBar extends StatelessWidget {
                 Navigator.push(
                     context,
                     PageRouteBuilder(
-                        transitionDuration:
-                        const Duration(seconds: 1),
+                        transitionDuration: const Duration(seconds: 1),
                         pageBuilder: (_, __, ___) {
                           return Profile();
                         }));
