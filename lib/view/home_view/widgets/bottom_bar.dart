@@ -24,10 +24,6 @@ void startNavigation(BuildContext context,
     constants,
     Provider.of<SettingsModel>(context, listen: false).locationAccuracy,
   );
-  Provider.of<NavigationOnRoad>(context, listen: false).addMarkers(
-    constants,
-    Provider.of<User>(context, listen: false).token,
-  );
 }
 
 class BottomBar extends StatelessWidget {

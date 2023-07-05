@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:on_the_road/view_model/navigation_on_road_v_m.dart';
-import '../../constants/design_constants.dart';
-import 'widgets/widgets.dart';
-import 'package:provider/provider.dart';
+import '../../Services/stats_services.dart';
+import 'FirstTab.dart';
+import 'FourthTab.dart';
+import 'SecondTab.dart';
+import 'ThirdTab.dart';
+
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class Statistics extends StatefulWidget {
@@ -13,18 +15,19 @@ class Statistics extends StatefulWidget {
 }
 
 class _StatisticsState extends State<Statistics> {
-  late List<PieData> data;
-  List<PieData> getData() {
-    return [
-      PieData("High Risk", 15, const Color.fromARGB(1, 199, 31, 45)),
-      PieData("Low Risk", 45, const Color(0xffFFBA00)),
-      PieData("Medium Risk", 40, const Color(0xff0A0390)),
-    ];
-  }
+  List<dynamic> data = [];
+  late List<PieData> pie_1_data;
+  late StatServices statServices;
 
   @override
   void initState() {
-    data = getData();
+    statServices = StatServices();
+    data.add(statServices.pie1());
+    data.add(statServices.histogram1());
+    data.add(statServices.pie2());
+    data.add(statServices.histogram2());
+    data.add(statServices.lineChart1());
+    data.add(statServices.doubleHistogram1());
     tooltip = TooltipBehavior(enable: true);
     super.initState();
   }
@@ -34,98 +37,28 @@ class _StatisticsState extends State<Statistics> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: [
-          MaterialButton(
-            onPressed: () {
-              Provider.of<NavigationOnRoad>(context, listen: false)
-                  .analyzeAvg();
-            },
-            child: Column(
-              children: [
-                Container(
-                  height: 150,
-                  // margin: EdgeInsets.all(5),
-                  padding: const EdgeInsets.all(10),
-                  decoration: DesignConstants.roundedBorder,
-                  child: SfCartesianChart(
-                    primaryXAxis: CategoryAxis(),
-                    series: <ChartSeries>[
-                      LineSeries<ChartData, String>(
-                          dataSource:
-                              Provider.of<NavigationOnRoad>(context).chartData,
-                          xValueMapper: (ChartData data, _) => data.x,
-                          yValueMapper: (ChartData data, _) => data.y)
-                    ],
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: AnalysisCard(
-                        title: "Max Speed",
-                        value: Provider.of<NavigationOnRoad>(context)
-                            .navigation
-                            .maxSpeed,
-                      ),
-                    ),
-                    Expanded(
-                      child: AnalysisCard(
-                        title: "Avg Speed",
-                        value: Provider.of<NavigationOnRoad>(context)
-                            .navigation
-                            .avgSpeed,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: AnalysisCard(
-                        title: "Current Speed",
-                        value: Provider.of<NavigationOnRoad>(context)
-                            .navigation
-                            .currentSpeed,
-                      ),
-                    ),
-                    Expanded(
-                      child: AnalysisCard(
-                        title: "Distance",
-                        value: Provider.of<NavigationOnRoad>(context)
-                            .navigation
-                            .distanceTraveled,
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  margin: const EdgeInsets.all(5),
-                  padding: const EdgeInsets.all(20),
-                  height: 350,
-                  width: 350,
-                  alignment: Alignment.center,
-                  decoration: DesignConstants.roundedBorder,
-                  child: SfCircularChart(
-                    tooltipBehavior: tooltip,
-                    series: <CircularSeries>[
-                      PieSeries<PieData, String>(
-                        dataSource: data,
-                        xValueMapper: (PieData d, _) => d.x,
-                        yValueMapper: (PieData d, _) => d.y,
-                        pointColorMapper: (PieData color, _) => color.color,
-                        dataLabelSettings:
-                            const DataLabelSettings(isVisible: true),
-                        enableTooltip: true,
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Statistics'),
+          bottom: TabBar(
+            tabs: [
+              Tab(icon: Icon(Icons.today), text: "Today's data"),
+              Tab(icon: Icon(Icons.pie_chart), text: "Frequency"),
+              Tab(icon: Icon(Icons.timeline), text: "Time-based"),
+              Tab(icon: Icon(Icons.map_outlined), text: "Location-based"),
+            ],
           ),
-        ],
+        ),
+        body: TabBarView(
+          children: [
+            buildFirstTab(context),
+            buildSecondTab(tooltip, data),
+            buildThirdTab(data),
+            buildFourthTab(),
+          ],
+        ),
       ),
     );
   }
@@ -137,4 +70,34 @@ class PieData {
   late Color color;
 
   PieData(this.x, this.y, this.color);
+}
+
+class HistogramData {
+  late Color color;
+  late String range;
+  late int value;
+
+  HistogramData(
+      this.range, this.value, this.color); // Include color in the constructor
+}
+
+class DoubleHistogramData {
+  final String range;
+  final double startValue;
+  final double endValue;
+  DoubleHistogramData(this.range, this.startValue, this.endValue);
+}
+
+class LieData {
+  final String x;
+  final double y;
+  LieData(this.x, this.y);
+}
+
+class MapBubbleData {
+  final double latitude;
+  final double longitude;
+  final double value;
+
+  MapBubbleData(this.latitude, this.longitude, this.value);
 }

@@ -8,7 +8,7 @@ import '../../model/user.dart';
 import 'widgets/widgets.dart';
 
 class Profile extends StatefulWidget {
-  Profile({
+  const Profile({
     super.key,
   });
 
@@ -18,50 +18,52 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final SecuredUserStorage securedUserStorage = SecuredUserStorage();
-  void configureFirebaseMessaging() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Received notification:');
-      print('Title: ${message.notification?.title}');
-      print('Body: ${message.notification?.body}');
-      // Additional data can be accessed using message.data
-      print('Data: ${message.data}');
-    });
-  }
 
+  // void configureFirebaseMessaging() {
+  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //     print('Received notification:');
+  //     print('Title: ${message.notification?.title}');
+  //     print('Body: ${message.notification?.body}');
+  //     // Additional data can be accessed using message.data
+  //     print('Data: ${message.data}');
+  //   });
+  // }
+  //
+  //
+  // Future<void> sendPushNotificationToAll(String title, String body) async {
+  //   try {
+  //     // Initialize Firebase Messaging
+  //     FirebaseMessaging messaging = FirebaseMessaging.instance;
+  //
+  //     // Create the notification message
+  //     RemoteNotification notification = RemoteNotification(
+  //       title: title,
+  //       body: body,
+  //     );
+  //     Map<String, String> data1 = {
+  //       "event":"Accident"
+  //     };
+  //     RemoteMessage message = RemoteMessage(
+  //       notification: notification,
+  //       data: data1,
+  //     );
+  //     // Create the data message
+  //     Map<String, RemoteMessage> data2 = {
+  //       "event":message
+  //     };
+  //
+  //     // Create the message
+  //
+  //
+  //     // Send the message to all registered devices
+  //     // await messaging.send(to:(await messaging.getToken()).toString(), data: data2);
+  //
+  //     print('Push notification sent to all users successfully.');
+  //   } catch (e) {
+  //     print('Error sending push notification: $e');
+  //   }
+  // }
 
-  Future<void> sendPushNotificationToAll(String title, String body) async {
-    try {
-      // Initialize Firebase Messaging
-      FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-      // Create the notification message
-      RemoteNotification notification = RemoteNotification(
-        title: title,
-        body: body,
-      );
-      Map<String, String> data1 = {
-        "event":"Accident"
-      };
-      RemoteMessage message = RemoteMessage(
-        notification: notification,
-        data: data1,
-      );
-      // Create the data message
-      Map<String, RemoteMessage> data2 = {
-        "event":message
-      };
-
-      // Create the message
-
-
-      // Send the message to all registered devices
-      // await messaging.send(to:(await messaging.getToken()).toString(), data: data2);
-
-      print('Push notification sent to all users successfully.');
-    } catch (e) {
-      print('Error sending push notification: $e');
-    }
-  }
   @override
   Widget build(BuildContext context) {
     return Consumer<User>(
@@ -87,7 +89,6 @@ class _ProfileState extends State<Profile> {
                           child: FloatingActionButton(
                             heroTag: null,
                             onPressed: () {
-                                configureFirebaseMessaging();
 
                             },
                             backgroundColor: Colors.black38,

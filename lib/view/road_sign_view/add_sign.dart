@@ -138,9 +138,10 @@ class _AddSignState extends State<AddSign> {
                           onMapCreated: (GoogleMapController controller) async {
                             _controller.complete(controller);
                             MapServices services = MapServices();
+                            await services.getCurrentLocation();
 
                             var response =
-                                await services.getSigns(widget.token);
+                                await services.getSigns(widget.token, services.lat, services.long);
                             var data = json.decode(response.body);
                             print(response.statusCode);
 

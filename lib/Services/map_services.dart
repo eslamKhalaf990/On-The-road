@@ -4,8 +4,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import '../constants/constants_on_map.dart';
-
 class MapServices {
   late double long;
   late double lat;
@@ -49,7 +47,7 @@ class MapServices {
   }
 
   //Retrieve all signs from Database
-  Future<http.Response> getSigns(String token) async {
+  Future<http.Response> getSigns(String token, double latitude, double longitude) async {
     var response = await http.get(
       Uri.parse('https://nodeapi-35lq.onrender.com/api/sign/'),
       // https://ontheroad.onrender.com/api/sign/getSign
@@ -58,6 +56,7 @@ class MapServices {
         'Authorization': 'Bearer $token',
       },
     );
+
     return (response);
   }
 
@@ -79,19 +78,4 @@ class MapServices {
     return (response);
   }
 
-  // Set<Marker> setMarkers (Set<Marker> markersOnMap, var data, Constants constants){
-  //   for (int i = 0; i < data.length; i++) {
-  //     print(data[i]['location']['coordinates'][1] * 1.0);
-  //     print(data[i]['location']['coordinates'][0] * 1.0);
-  //     markersOnMap.add(
-  //       Marker(
-  //         markerId: MarkerId('$i'),
-  //         position: LatLng(data[i]['location']['coordinates'][1] * 1.0,
-  //             data[i]['location']['coordinates'][0] * 1.0),
-  //         icon: constants.stopSign,
-  //       ),
-  //     );
-  //   }
-  //   return markersOnMap;
-  // }
 }

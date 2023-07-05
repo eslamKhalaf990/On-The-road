@@ -11,13 +11,12 @@ import '../../services/map_services.dart';
 import 'package:flutter/material.dart';
 import '../../model/user.dart';
 import '../../test.dart';
-import '../../tree_accelaration/gyroscope.dart';
 import 'widgets/add_fav_location.dart';
 
 final Constants constants = Constants();
 
 class Home extends StatefulWidget {
-  Home({
+  const Home({
     Key? key,
   }) : super(key: key);
 
@@ -80,9 +79,7 @@ class _HomeState extends State<Home> {
                             initialCameraPosition: CameraPosition(
                               target: LatLng(
                                   Provider.of<User>(context).location.latitude,
-                                  Provider.of<User>(context)
-                                      .location
-                                      .longitude),
+                                  Provider.of<User>(context).location.longitude),
                               tilt: 90,
                               zoom: 18,
                             ),

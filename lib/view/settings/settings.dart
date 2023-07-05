@@ -3,13 +3,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:on_the_road/model/settings.dart';
 import 'package:provider/provider.dart';
-
 import '../../constants/design_constants.dart';
 import '../../tree_accelaration/gyroscope.dart';
 
 class SettingsView extends StatelessWidget {
+
   SettingsView({Key? key}) : super(key: key);
-  gyroscope gyro = gyroscope();
+  final gyroscope gyro = gyroscope();
   @override
   Widget build(BuildContext context) {
     return Consumer<SettingsModel>(
@@ -100,12 +100,14 @@ class SettingsView extends StatelessWidget {
               ),
               TextButton(
                   onPressed: () {
-                    if (gyro.working)
+                    if (gyro.working) {
                       gyro.end();
-                    else
+                    } else {
                       gyro.start();
+                    }
                   },
-                  child: Text("gyro"))
+                  child: const Text("Gyroscope"),
+              )
             ],
           ),
         );

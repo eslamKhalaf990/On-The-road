@@ -7,13 +7,15 @@ class User extends ChangeNotifier {
   late String email;
   late String token;
   late String password;
-  late String drivingLicense;
+  late String carType;
   late String profilePicture;
   late String phoneNumber;
   late bool isAdmin;
+  late bool gender;
+  late int age;
   late String id;
   late Location location = Location();
-  late bool exist;
+  late bool exist = false;
   late var favoritePlaces;
 
   updateUser(User user) {
@@ -22,7 +24,6 @@ class User extends ChangeNotifier {
     token = user.token;
     isAdmin = user.isAdmin;
     exist = user.exist;
-    id = user.id;
     location = user.location;
     notifyListeners();
   }

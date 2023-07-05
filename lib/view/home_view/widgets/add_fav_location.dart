@@ -77,7 +77,7 @@ void addFavLocation(BuildContext context, LatLng latLng) {
                     onPressed: () {
                       if (controller.text.isNotEmpty) {
                         mapServices.addFavLocation(
-                            Provider.of<User>(context).token,
+                            Provider.of<User>(context, listen: false).token,
                             latLng,
                             controller.text);
                         Navigator.of(context).pop();
