@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:on_the_road/speech_text/speak_to.dart';
+import 'package:on_the_road/ai_models/speech_text/speak_to.dart';
 import 'package:on_the_road/view_model/navigation_on_road_v_m.dart';
 import 'package:provider/provider.dart';
 import 'package:on_the_road/services/map_services.dart';
-import 'package:on_the_road/detection_model/RunModelByCameraDemo.dart';
+import 'package:on_the_road/ai_models/detection_model/RunModelByCameraDemo.dart';
 import 'package:on_the_road/model/settings.dart';
 import 'package:on_the_road/model/user.dart';
 import 'package:on_the_road/view/settings/settings.dart';

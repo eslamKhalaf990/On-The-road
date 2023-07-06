@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:on_the_road/constants/text-speech.dart';
-import 'package:on_the_road/speech_text/speak_to.dart';
+import 'package:on_the_road/ai_models/speech_text/speak_to.dart';
 import 'package:on_the_road/view/home_view/widgets/dialog_box.dart';
 import '../constants/constants_on_map.dart';
 import '../model/navigation.dart';
@@ -93,8 +92,12 @@ class NavigationOnRoad extends ChangeNotifier {
 
       if (analyze) {
         i++;
+        if(chartData.length>19){
+          chartData.removeRange(0,1);
+        }
+        print(chartData.length);
         chartData.add(
-          ChartData(i.toString(), navigation.currentSpeed),
+          ChartData("t$i", navigation.currentSpeed),
         );
       }
       notifyListeners();
@@ -106,7 +109,7 @@ class NavigationOnRoad extends ChangeNotifier {
     // var response = await services.getSigns(token, );
     // var data = json.decode(response.body);
     if(markersOnMap.isNotEmpty){
-      markersOnMap.removeAll(markersOnMap);
+      markersOnMap.clear();
     }
     for (int i = 0; i < signsOnRoad.length; i++) {
       markersOnMap.add(

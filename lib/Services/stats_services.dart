@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import '../view/statistics_view/statistics.dart';
 
 class StatServices {
-  List<PieData> piew = [
-    PieData("Risky", 15, const Color.fromARGB(1, 199, 31, 45)),
-    PieData("Not Risky", 85, const Color(0xffFFBA00)),
-  ];
   List<PieData> pie1() {
     return [
       PieData("Risky", 15, const Color.fromARGB(1, 199, 31, 45)),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:on_the_road/tree_accelaration/tree/tree.dart';
+import 'package:on_the_road/ai_models/tree_accelaration/tree/tree.dart';
+import 'package:on_the_road/ai_models/tree_accelaration/tree/tree.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:statistics/statistics.dart';
 import 'dart:convert';

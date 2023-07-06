@@ -16,7 +16,12 @@ class SignInViewModel {
       user.email = jsonDecode(response.body)['user']['email'];
       user.isAdmin = jsonDecode(response.body)['user']['isAdmin'];
       user.exist = true;
-      user.favoritePlaces = jsonDecode(response.body)['favouritPlaces'];
+      user.favoritePlaces = jsonDecode(response.body)['user']['favouritPlaces'];
+      print("---------------------------");
+      print("---------------------------");
+      print(jsonDecode(response.body));
+      print("---------------------------");
+      print("---------------------------");
       if (jsonDecode(response.body)['user']['phone'] == null) {
         user.phoneNumber = "NaN";
       } else {

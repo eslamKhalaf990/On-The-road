@@ -6,81 +6,77 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 Widget buildFirstTab(BuildContext context) {
+  Provider.of<NavigationOnRoad>(context, listen: false).analyzeAvg();
   return ListView(
     children: [
-      MaterialButton(
-        onPressed: () {
-          Provider.of<NavigationOnRoad>(context, listen: false).analyzeAvg();
-        },
-        child: Column(
-          children: [
-            SizedBox(
-              height: 25,
+      Column(
+        children: [
+          const SizedBox(
+            height: 25,
+          ),
+          Container(
+            height: 150,
+            padding: const EdgeInsets.all(10),
+            decoration: DesignConstants.roundedBorder,
+            child: SfCartesianChart(
+              primaryXAxis: CategoryAxis(),
+              series: <ChartSeries>[
+                LineSeries<ChartData, String>(
+                  dataSource:
+                      Provider.of<NavigationOnRoad>(context).chartData,
+                  xValueMapper: (ChartData data, _) => data.x,
+                  yValueMapper: (ChartData data, _) => data.y,
+                ),
+              ],
             ),
-            Container(
-              height: 150,
-              padding: const EdgeInsets.all(10),
-              decoration: DesignConstants.roundedBorder,
-              child: SfCartesianChart(
-                primaryXAxis: CategoryAxis(),
-                series: <ChartSeries>[
-                  LineSeries<ChartData, String>(
-                    dataSource:
-                        Provider.of<NavigationOnRoad>(context).chartData,
-                    xValueMapper: (ChartData data, _) => data.x,
-                    yValueMapper: (ChartData data, _) => data.y,
-                  ),
-                ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: AnalysisCard(
+                  title: "Max Speed",
+                  value: Provider.of<NavigationOnRoad>(context)
+                      .navigation
+                      .maxSpeed,
+                ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: AnalysisCard(
-                    title: "Max Speed",
-                    value: Provider.of<NavigationOnRoad>(context)
-                        .navigation
-                        .maxSpeed,
-                  ),
+              Expanded(
+                child: AnalysisCard(
+                  title: "Avg Speed",
+                  value: Provider.of<NavigationOnRoad>(context)
+                      .navigation
+                      .avgSpeed,
                 ),
-                Expanded(
-                  child: AnalysisCard(
-                    title: "Avg Speed",
-                    value: Provider.of<NavigationOnRoad>(context)
-                        .navigation
-                        .avgSpeed,
-                  ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: AnalysisCard(
+                  title: "Current Speed",
+                  value: Provider.of<NavigationOnRoad>(context)
+                      .navigation
+                      .currentSpeed,
                 ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: AnalysisCard(
-                    title: "Current Speed",
-                    value: Provider.of<NavigationOnRoad>(context)
-                        .navigation
-                        .currentSpeed,
-                  ),
+              ),
+              Expanded(
+                child: AnalysisCard(
+                  title: "Distance",
+                  value: Provider.of<NavigationOnRoad>(context)
+                      .navigation
+                      .distanceTraveled,
                 ),
-                Expanded(
-                  child: AnalysisCard(
-                    title: "Distance",
-                    value: Provider.of<NavigationOnRoad>(context)
-                        .navigation
-                        .distanceTraveled,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   );

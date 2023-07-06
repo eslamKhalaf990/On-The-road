@@ -25,6 +25,7 @@ class User extends ChangeNotifier {
     isAdmin = user.isAdmin;
     exist = user.exist;
     location = user.location;
+    favoritePlaces = user.favoritePlaces;
     notifyListeners();
   }
 }

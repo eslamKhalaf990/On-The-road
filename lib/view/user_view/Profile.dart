@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../constants/design_constants.dart';
 import '../../model/secure_storage.dart';
 import '../../model/user.dart';
+import 'favorite_location.dart';
 import 'widgets/widgets.dart';
 
 class Profile extends StatefulWidget {
@@ -89,7 +90,9 @@ class _ProfileState extends State<Profile> {
                           child: FloatingActionButton(
                             heroTag: null,
                             onPressed: () {
-
+                              Navigator.push(context, MaterialPageRoute(builder: (context){
+                                return const FavoriteLocation();
+                              }));
                             },
                             backgroundColor: Colors.black38,
                             child: const Icon(
@@ -148,13 +151,13 @@ class _ProfileState extends State<Profile> {
                           child: Column(
                             children: [
                               Row(
-                                children: [
+                                children: const [
                                   UserData(
-                                      info: "${user.name} USER 1",
-                                      icon: const Icon(
+                                      info: "    USER 1",
+                                      icon: Icon(
                                         Icons.person,
                                       )),
-                                  const UserData(
+                                  UserData(
                                     info: "01234567890",
                                     icon: Icon(Icons.phone_android_outlined),
                                   ),

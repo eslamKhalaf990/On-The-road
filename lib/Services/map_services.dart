@@ -77,5 +77,20 @@ class MapServices {
     );
     return (response);
   }
+  Future<http.Response> removeFavLocation(String token, String name) async {
+    var response = await http.delete(
+      Uri.parse('https://ontheroad.onrender.com/api/fPlace'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(
+        {
+          "name": name
+        },
+      ),
+    );
+    return (response);
+  }
 
 }

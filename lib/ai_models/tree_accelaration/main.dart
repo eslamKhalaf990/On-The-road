@@ -1,9 +1,6 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-// ignore_for_file: public_member_api_docs
-
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -13,12 +10,8 @@ import 'package:statistics/statistics.dart';
 import 'gyroscope.dart';
 
 void main() {
-  // var params0 = readJsonFile("new/DT_os_22_6.json");
-  // gyroscope gyro = gyroscope();
   runApp(const MyApp1());
 }
-
-/////////////////////////////////////////////////empty page
 class MyApp1 extends StatelessWidget {
   const MyApp1({Key? key}) : super(key: key);
 
