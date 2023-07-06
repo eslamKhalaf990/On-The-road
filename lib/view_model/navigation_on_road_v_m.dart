@@ -30,8 +30,12 @@ class NavigationOnRoad extends ChangeNotifier {
   int i = 0;
 
   Future<void> navigateOnRoad(
-      Completer<GoogleMapController> _controller, BuildContext ctx, MapServices services,
-      String token, Constants constants, locationAccuracy) async {
+      Completer<GoogleMapController> _controller,
+      BuildContext ctx,
+      MapServices services,
+      String token,
+      Constants constants,
+      locationAccuracy) async {
     int cnt = 0;
     double sum = 0.0;
     final GoogleMapController mapController = await _controller.future;
@@ -108,20 +112,21 @@ class NavigationOnRoad extends ChangeNotifier {
     // MapServices services = MapServices();
     // var response = await services.getSigns(token, );
     // var data = json.decode(response.body);
-    if(markersOnMap.isNotEmpty){
+    if (markersOnMap.isNotEmpty) {
       markersOnMap.clear();
     }
     for (int i = 0; i < signsOnRoad.length; i++) {
       markersOnMap.add(
         Marker(
-          markerId: MarkerId('$i'),
-          position: LatLng(signsOnRoad[i]['startLocation']['coordinates'][1] * 1.0,
-              signsOnRoad[i]['startLocation']['coordinates'][0] * 1.0),
-          icon:
-          // signsOnRoad[i]['name'] == "Traffic Light"
-               constants.trafficLights
-              // : constants.stopSign,
-        ),
+            markerId: MarkerId('$i'),
+            position: LatLng(
+                signsOnRoad[i]['startLocation']['coordinates'][1] * 1.0,
+                signsOnRoad[i]['startLocation']['coordinates'][0] * 1.0),
+            icon:
+                // signsOnRoad[i]['name'] == "Traffic Light"
+                constants.trafficLights
+            // : constants.stopSign,
+            ),
       );
     }
     notifyListeners();
@@ -149,7 +154,8 @@ class NavigationOnRoad extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getNearestSign(BuildContext ctx, Completer<GoogleMapController> _controller, MapServices services) {
+  void getNearestSign(BuildContext ctx,
+      Completer<GoogleMapController> _controller, MapServices services) {
     Timer.periodic(const Duration(seconds: 15), (timer) async {
       for (int i = 0; i < signsOnRoad.length; i++) {
         double distance = Geolocator.distanceBetween(
@@ -160,7 +166,6 @@ class NavigationOnRoad extends ChangeNotifier {
         );
 
         if (distance < 5) {
-
           TextSpeech.speak("Did you find a ${signsOnRoad[i]['name']}");
           showAutoDismissDialog(ctx, "${signsOnRoad[i]['name']}");
           toggleListening(ctx, _controller, services);
@@ -180,6 +185,7 @@ class NavigationOnRoad extends ChangeNotifier {
       }
     });
   }
+
   getSignsAroundUser(MapServices services, String token) async {
     await services.getCurrentLocation();
     // signsOnRoad  = services.getSigns(token, services.lat, services.long);
@@ -189,15 +195,10 @@ class NavigationOnRoad extends ChangeNotifier {
         "startLocation": {
           "crs": {
             "type": "name",
-            "properties": {
-              "name": "EPSG:4326"
-            }
+            "properties": {"name": "EPSG:4326"}
           },
           "type": "Point",
-          "coordinates": [
-            31.21063763465604,
-            30.03129769641675
-          ]
+          "coordinates": [31.21063763465604, 30.03129769641675]
         },
         "endLocation": null,
         "reportedCount": 10,
@@ -213,15 +214,10 @@ class NavigationOnRoad extends ChangeNotifier {
         "startLocation": {
           "crs": {
             "type": "name",
-            "properties": {
-              "name": "EPSG:4326"
-            }
+            "properties": {"name": "EPSG:4326"}
           },
           "type": "Point",
-          "coordinates": [
-            31.209076589162546,
-            30.027512555235536
-          ]
+          "coordinates": [31.209076589162546, 30.027512555235536]
         },
         "endLocation": null,
         "reportedCount": 20,
@@ -242,15 +238,10 @@ class NavigationOnRoad extends ChangeNotifier {
           "startLocation": {
             "crs": {
               "type": "name",
-              "properties": {
-                "name": "EPSG:4326"
-              }
+              "properties": {"name": "EPSG:4326"}
             },
             "type": "Point",
-            "coordinates": [
-              31.21063763465604,
-              30.03129769641675
-            ]
+            "coordinates": [31.21063763465604, 30.03129769641675]
           },
           "endLocation": null,
           "reportedCount": 10,
@@ -266,15 +257,10 @@ class NavigationOnRoad extends ChangeNotifier {
           "startLocation": {
             "crs": {
               "type": "name",
-              "properties": {
-                "name": "EPSG:4326"
-              }
+              "properties": {"name": "EPSG:4326"}
             },
             "type": "Point",
-            "coordinates": [
-              31.209076589162546,
-              30.027512555235536
-            ]
+            "coordinates": [31.209076589162546, 30.027512555235536]
           },
           "endLocation": null,
           "reportedCount": 20,

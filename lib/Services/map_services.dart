@@ -47,7 +47,8 @@ class MapServices {
   }
 
   //Retrieve all signs from Database
-  Future<http.Response> getSigns(String token, double latitude, double longitude) async {
+  Future<http.Response> getSigns(
+      String token, double latitude, double longitude) async {
     var response = await http.get(
       Uri.parse('https://nodeapi-35lq.onrender.com/api/sign/'),
       // https://ontheroad.onrender.com/api/sign/getSign
@@ -59,6 +60,13 @@ class MapServices {
 
     return (response);
   }
+
+  // Future<Response> getNearSigns(String token, double lat, double lng) async {
+  //   dio.options.headers['Authorization'] = '$token';
+  //   return await dio.get<dynamic>(
+  //       'https://ontheroad.onrender.com/api/sign/getSign',
+  //       queryParameters: <String, dynamic>{"lat": lat, "long": lng});
+  // }
 
   Future<http.Response> addFavLocation(
       String token, LatLng loc, String name) async {
@@ -77,6 +85,7 @@ class MapServices {
     );
     return (response);
   }
+
   Future<http.Response> removeFavLocation(String token, String name) async {
     var response = await http.delete(
       Uri.parse('https://ontheroad.onrender.com/api/fPlace'),
@@ -85,12 +94,9 @@ class MapServices {
         'Authorization': 'Bearer $token',
       },
       body: jsonEncode(
-        {
-          "name": name
-        },
+        {"name": name},
       ),
     );
     return (response);
   }
-
 }

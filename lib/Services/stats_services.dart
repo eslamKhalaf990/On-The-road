@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../view/statistics_view/statistics.dart';
 
 class StatServices {
@@ -19,7 +20,7 @@ class StatServices {
   List<HistogramData> histogram1() {
     return [
       HistogramData("Low Risk", 10, Colors.blue),
-      HistogramData("Medium Risk", 20, const Color(0xffFFBA00)),
+      HistogramData("Medium Risk", 20, Color(0xffFFBA00)),
       HistogramData("High Risk", 5, Colors.red),
     ];
   }
