@@ -47,7 +47,7 @@ class MapServices {
   }
 
   int getSpeedLimit() {
-    return 5;
+    return 60;
   }
 
   Future<void> sendDailyStat(
@@ -61,7 +61,6 @@ class MapServices {
       int distance) async {
     await http.post(
       Uri.parse('https://ontheroad.onrender.com/api/userStats/addDailyStat'),
-      // https://ontheroad.onrender.com/api/sign/getSign
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
@@ -81,30 +80,28 @@ class MapServices {
   }
 
   //Retrieve all signs from Database
-  Future<http.Response> getSigns(
-      String token, double latitude, double longitude) async {
+  Future<http.Response> getSigns(String token, double latitude, double longitude) async {
     var response = await http.get(
       Uri.parse(
           'https://ontheroad.onrender.com/api/sign/getSign?lat=$latitude&long=$longitude'),
-      // https://ontheroad.onrender.com/api/sign/getSign
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
     );
-    print("------------------------");
-    print(response.body);
-    print("------------------------");
-
-    return (response);
+    return response;
   }
 
-  // Future<Response> getNearSigns(String token, double lat, double lng) async {
-  //   dio.options.headers['Authorization'] = '$token';
-  //   return await dio.get<dynamic>(
-  //       'https://ontheroad.onrender.com/api/sign/getSign',
-  //       queryParameters: <String, dynamic>{"lat": lat, "long": lng});
-  // }
+  Future<http.Response> getFavLocations(String token) async {
+    var response = await http.get(
+      Uri.parse('https://ontheroad.onrender.com/api/fPlace'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    return response;
+  }
 
   Future<http.Response> addFavLocation(
       String token, LatLng loc, String name) async {

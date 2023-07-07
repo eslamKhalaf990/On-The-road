@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import '../Services/map_services.dart';
 import 'location.dart';
 
 class User extends ChangeNotifier {
@@ -17,6 +18,7 @@ class User extends ChangeNotifier {
   late Location location = Location();
   late bool exist = false;
   late var favoritePlaces;
+  late List<FavoriteLoc> favList = [];
 
   updateUser(User user) {
     name = user.name;
@@ -28,4 +30,27 @@ class User extends ChangeNotifier {
     favoritePlaces = user.favoritePlaces;
     notifyListeners();
   }
+
+  var favoriteLocations;
+
+  void getFavLocation()async{
+    MapServices services = MapServices();
+    favoriteLocations = jsonDecode((await services.getFavLocations(token)).body);
+    int len = favoriteLocations.length;
+    if(favList.isNotEmpty){
+      favList.clear();
+    }
+    for(int i=0;i<len;i++){
+      FavoriteLoc f = FavoriteLoc();
+      f.name = favoriteLocations[i]['name'].toString();
+      f.color = Colors.red.shade700;
+      favList.add(f);
+    }
+    notifyListeners();
+  }
+}
+
+class FavoriteLoc{
+  late String name;
+  late Color color;
 }

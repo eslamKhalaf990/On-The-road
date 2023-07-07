@@ -162,13 +162,13 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
     }
   }
 
-  // @override
-  // void dispose() {
-  //   print("killing stream");
-  //   // cameraController?.dispose();
-  //   // Provider.of<PositionStream>(context, listen: false).fun();
-  //   // WidgetsBinding.instance.removeObserver(this);
-  //
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    // print("killing stream");
+    cameraController?.dispose();
+    // Provider.of<PositionStream>(context, listen: false).fun();
+    WidgetsBinding.instance.removeObserver(this);
+
+    super.dispose();
+  }
 }

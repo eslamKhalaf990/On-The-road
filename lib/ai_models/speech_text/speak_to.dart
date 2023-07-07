@@ -40,4 +40,18 @@ Future<void> toggleListening(BuildContext context,
           .getPloyLine(source, destination);
     }
   }
+
+  if (word.toString() == 'home') {
+    TextSpeech.speak("Going to your home from your current location");
+
+    MapServices service = MapServices();
+    await service.getCurrentLocation();
+
+    LatLng source = LatLng(service.lat, service.long);
+    LatLng destination = const LatLng(29.988858, 31.187835);
+
+    if (context.mounted) {
+      Provider.of<NavigationOnRoad>(context, listen: false).getPloyLine(source, destination);
+    }
+  }
 }

@@ -29,7 +29,7 @@ class NavigationOnRoad extends ChangeNotifier {
   var signsOnRoad;
   int time = 0;
   int i = 0;
-  Future<void> navigateOnRoad(
+  Future <void> navigateOnRoad(
       Completer<GoogleMapController> _controller,
       BuildContext ctx,
       MapServices services,
@@ -53,15 +53,12 @@ class NavigationOnRoad extends ChangeNotifier {
     if (ctx.mounted) {
       getNearestSign(ctx, _controller, services);
     }
-    positionStream =
-        Geolocator.getPositionStream(locationSettings: locationSettings)
-            .listen((Position position) async {
+    positionStream = Geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position) async {
       if ((position.speed * 3.6) < 3) {
         navigation.currentSpeed = 0.0;
       } else {
         navigation.currentSpeed = position.speed * 3.6;
       }
-
       if (navigation.currentSpeed > navigation.maxSpeed) {
         navigation.maxSpeed = navigation.currentSpeed;
       }
@@ -100,9 +97,8 @@ class NavigationOnRoad extends ChangeNotifier {
       if (analyze) {
         i++;
         if (chartData.length > 19) {
-          chartData.removeRange(0, 1);
+          chartData.removeAt(0);
         }
-        print(chartData.length);
         chartData.add(
           ChartData("t$i", navigation.currentSpeed),
         );
@@ -156,9 +152,13 @@ class NavigationOnRoad extends ChangeNotifier {
                 signsOnRoad[i]['startLocation']['coordinates'][1] * 1.0,
                 signsOnRoad[i]['startLocation']['coordinates'][0] * 1.0),
             icon:
-                // signsOnRoad[i]['name'] == "Traffic Light"
-                constants.trafficLights
-            // : constants.stopSign,
+                signsOnRoad[i]['sign']['name'] == "Traffic Light"?
+                constants.trafficLights:
+                signsOnRoad[i]['sign']['name'] == "Speed Bump"?
+                constants.bump:
+                signsOnRoad[i]['sign']['name'] == "Radar"?
+                constants.bump
+            : constants.stopSign,
             ),
       );
     }
@@ -199,25 +199,28 @@ class NavigationOnRoad extends ChangeNotifier {
         );
 
         if (distance < 5) {
-          if (signsOnRoad[i]['name'] == "Speed Bump") {
+          if (signsOnRoad[i]['sign']['name'] == "Speed Bump") {
             navigation.speedBump++;
             if (navigation.currentSpeed > 20) {
               navigation.speedBumpDangerous++;
             }
           }
-          TextSpeech.speak("Did you find a ${signsOnRoad[i]['name']}");
-          showAutoDismissDialog(ctx, "${signsOnRoad[i]['name']}");
+
+          TextSpeech.speak("Did you find a ${signsOnRoad[i]['sign']['name']}");
+          showAutoDismissDialog(ctx, "${signsOnRoad[i]['sign']['name']}");
           toggleListening(ctx, _controller, services);
-        } else if (distance < 100) {
+        }
+        else if (distance < 100) {
           print("distance: $distance");
           navigation.warning =
-              "There Is A ${signsOnRoad[i]['name']}\n In ${distance.toStringAsFixed(1)} meters";
+              "There Is A ${signsOnRoad[i]['sign']['name']}\n In ${distance.toStringAsFixed(1)} meters";
 
           TextSpeech.speak(navigation.warning);
 
           navigation.warningColor = Colors.red;
           break;
-        } else {
+        }
+        else {
           navigation.warning = "";
           navigation.warningColor = Colors.blue;
         }
@@ -227,9 +230,7 @@ class NavigationOnRoad extends ChangeNotifier {
 
   getSignsAroundUser(MapServices services, String token) async {
     await services.getCurrentLocation();
-    signsOnRoad = json.decode((await services.getSigns(
-            token, navigation.position.latitude, navigation.position.longitude))
-        .body);
+    signsOnRoad = json.decode((await services.getSigns(token,services.lat, services.long)).body);
     addMarkers(constants, token);
     Timer.periodic(const Duration(seconds: 50), (timer) async {
       signsOnRoad = json.decode((await services.getSigns(token,

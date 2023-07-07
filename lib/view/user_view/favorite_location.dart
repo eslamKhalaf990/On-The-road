@@ -9,10 +9,8 @@ import 'package:provider/provider.dart';
 
 import '../../model/user.dart';
 
-class FavoriteLoc{
-  late String name;
-  late Color color;
-}
+
+
 class FavoriteLocation extends StatefulWidget {
   const FavoriteLocation({super.key});
 
@@ -21,20 +19,11 @@ class FavoriteLocation extends StatefulWidget {
 }
 
 class _FavoriteLocationState extends State<FavoriteLocation> {
-  Color c = Colors.red.shade700;
-  late List<FavoriteLoc> favList = [];
+
   @override
   void initState() {
-    // TODO: implement initState
+    Provider.of<User>(context, listen: false).getFavLocation();
     super.initState();
-    var len =Provider.of<User>(context, listen: false).favoritePlaces.length;
-    var fav =Provider.of<User>(context, listen: false).favoritePlaces;
-    for(int i=0;i<len;i++){
-      FavoriteLoc f = FavoriteLoc();
-      f.name = fav[i]['name'];
-      f.color = Colors.red.shade700;
-      favList.add(f);
-    }
   }
 
   @override
@@ -56,7 +45,7 @@ class _FavoriteLocationState extends State<FavoriteLocation> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: Provider.of<User>(context).favoritePlaces.length,
+                itemCount: Provider.of<User>(context, listen: false).favList.length,
                 itemBuilder: (context, index) {
                   return Container(
                     decoration: DesignConstants.roundedBorder,
@@ -64,21 +53,22 @@ class _FavoriteLocationState extends State<FavoriteLocation> {
                     padding: const EdgeInsets.all(3),
                     child: ListTile(
                       title: Text(
-                        Provider.of<User>(context).favoritePlaces[index]['name'],
+                        Provider.of<User>(context, listen: false).favList[index].name,
                         style: const TextStyle(fontFamily: 'tajawal'),
                       ),
                       onTap: () async {
                       },
                       trailing: IconButton(
-                          onPressed: (){
-                            MapServices services = MapServices();
-                            services.removeFavLocation(Provider.of<User>(context, listen: false).token,
-                                Provider.of<User>(context, listen: false).favoritePlaces[index]['name']);
-                            setState(() {
-                              favList[index].color = Colors.white;
-                            });
-                          },
-                          icon: const Icon(Icons.favorite), color: favList[index].color,
+                        onPressed: (){
+                          MapServices services = MapServices();
+                          services.removeFavLocation(Provider.of<User>(context, listen: false).token,
+                              Provider.of<User>(context, listen: false).favoriteLocations[index]['name']);
+                          setState(() {
+                            Provider.of<User>(context, listen: false).favList[index].color = Colors.white;
+                            Provider.of<User>(context, listen: false).favList.removeAt(index);
+                          });
+                        },
+                        icon: const Icon(Icons.favorite), color: Provider.of<User>(context, listen: false).favList[index].color,
                       ),
                     ),
                   );
