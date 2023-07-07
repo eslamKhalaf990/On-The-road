@@ -19,9 +19,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<User>(create: (_)=>User()),
-        ChangeNotifierProvider<SettingsModel>(create: (_)=>SettingsModel()),
-        ChangeNotifierProvider<NavigationOnRoad>(create: (_)=>NavigationOnRoad()),
+        ChangeNotifierProvider<User>(create: (_) => User()),
+        ChangeNotifierProvider<SettingsModel>(create: (_) => SettingsModel()),
+        ChangeNotifierProvider<NavigationOnRoad>(
+            create: (_) => NavigationOnRoad()),
       ],
       child: MaterialApp(
         title: 'On The Road',

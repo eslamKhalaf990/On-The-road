@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pytorch/pigeon.dart';
 import 'package:flutter_pytorch/flutter_pytorch.dart';
+import 'package:on_the_road/ai_models/detection_model/detection_services.dart';
+import 'package:on_the_road/view/home_view/widgets/warning.dart';
 import 'camera_view_singleton.dart';
 
 class CameraView extends StatefulWidget {
@@ -22,7 +24,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   late bool predicting;
 
   ModelObjectDetection? _objectModel;
-
+  DetectionServices detectionServices = DetectionServices();
   bool classification = false;
   @override
   void initState() {
@@ -95,15 +97,20 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
     }
 
     return SafeArea(
-      child: Container(
-        margin: const EdgeInsets.all(10),
-        child: ClipRRect(
-            borderRadius: const BorderRadius.all(
-              Radius.circular(30),
-            ),
-            child: CameraPreview(cameraController!)),
-      ),
-    );
+        child: Column(
+      children: [
+        // Camera_Warning_widget(),
+        Warning(),
+        Container(
+          margin: const EdgeInsets.all(10),
+          child: ClipRRect(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(30),
+              ),
+              child: CameraPreview(cameraController!)),
+        ),
+      ],
+    ));
   }
 
   /// Callback to receive each frame [CameraImage] perform inference on it
@@ -129,6 +136,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
               IOUThershold: 0.3);
 
       print("data outputted $objDetect");
+      detectionServices.objectDetected(cameraImage, objDetect, context);
       widget.resultsCallback(objDetect);
     }
 
