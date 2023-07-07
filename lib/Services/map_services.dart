@@ -46,17 +46,55 @@ class MapServices {
     );
   }
 
+  int getSpeedLimit() {
+    return 5;
+  }
+
+  Future<void> sendDailyStat(
+      String token,
+      int speedBumpDangerous,
+      int speedExceeded,
+      int speedBump,
+      int time,
+      int maxSpeed,
+      int avgSpeed,
+      int distance) async {
+    await http.post(
+      Uri.parse('https://ontheroad.onrender.com/api/userStats/addDailyStat'),
+      // https://ontheroad.onrender.com/api/sign/getSign
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(
+        {
+          "distance": distance,
+          "avgSpeed": avgSpeed,
+          "maxSpeed": maxSpeed,
+          "speedExceeded": speedExceeded,
+          "count": time,
+          "speedBumps": speedBump,
+          "dangerSpeedBumps": speedBumpDangerous
+        },
+      ),
+    );
+  }
+
   //Retrieve all signs from Database
   Future<http.Response> getSigns(
       String token, double latitude, double longitude) async {
     var response = await http.get(
-      Uri.parse('https://nodeapi-35lq.onrender.com/api/sign/'),
+      Uri.parse(
+          'https://ontheroad.onrender.com/api/sign/getSign?lat=$latitude&long=$longitude'),
       // https://ontheroad.onrender.com/api/sign/getSign
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
     );
+    print("------------------------");
+    print(response.body);
+    print("------------------------");
 
     return (response);
   }

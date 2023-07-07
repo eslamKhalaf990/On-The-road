@@ -15,6 +15,7 @@ class gyroscope {
   final _streamSubscriptions = <StreamSubscription<dynamic>>[];
   bool working = false;
   Future<void> start() async {
+
     params0 =
         await readJsonFile('assets/models/DT_os_22_6.json'); //make sure to wait
     DecisionTreeClassifier classifier = DecisionTreeClassifier.fromMap(params0);
@@ -47,6 +48,9 @@ class gyroscope {
       else if (classification == 3)
         print(" Sudden Left Turn ");
       else if (classification == 4) print("Sudden Break");
+      else {
+        print(" Normal ");
+      }
     });
     working = true;
   }

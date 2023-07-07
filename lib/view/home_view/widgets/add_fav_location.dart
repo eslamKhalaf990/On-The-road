@@ -56,7 +56,7 @@ void addFavLocation(BuildContext context, LatLng latLng) {
                   labelText: "Location name",
                   prefixIcon: Container(
                     margin: const EdgeInsets.only(right: 10, bottom: 6),
-                    child: Icon(Icons.location_history),
+                    child: const Icon(Icons.location_history),
                   ),
                   labelStyle: const TextStyle(fontFamily: 'tajawal'),
                 ),

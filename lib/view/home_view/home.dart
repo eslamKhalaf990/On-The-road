@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:on_the_road/view/home_view/notifications_list.dart';
 import 'package:on_the_road/view_model/navigation_on_road_v_m.dart';
 import 'package:on_the_road/constants/constants_on_map.dart';
 import 'package:on_the_road/model/settings.dart';
@@ -61,25 +62,28 @@ class _HomeState extends State<Home> {
                             Radius.circular(30),
                           ),
                           child: GoogleMap(
-                            onTap: (LatLng l) {
+                            onTap: (LatLng latLng) {
                               stream.addMarker(
                                 Marker(
                                   markerId: const MarkerId('favorite place'),
                                   position: LatLng(
-                                    l.latitude,
-                                    l.longitude,
+                                    latLng.latitude,
+                                    latLng.longitude,
                                   ),
                                   icon: constants.userLocation,
                                 ),
                               );
-                              addFavLocation(context, l);
+                              addFavLocation(context, latLng);
                             },
+                            zoomControlsEnabled: false,
+                            minMaxZoomPreference: const MinMaxZoomPreference(10, 20),
                             mapType:
                                 Provider.of<SettingsModel>(context).mapTheme,
                             initialCameraPosition: CameraPosition(
                               target: LatLng(
                                   Provider.of<User>(context).location.latitude,
-                                  Provider.of<User>(context).location.longitude),
+                                  Provider.of<User>(context).location.longitude,
+                              ),
                               tilt: 90,
                               zoom: 18,
                             ),
@@ -138,6 +142,21 @@ class _HomeState extends State<Home> {
                           backgroundColor: Colors.grey[800],
                           child: const Icon(
                             Icons.location_on_rounded,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 70, left: 8, right: 8, bottom: 8),
+                        alignment: Alignment.topRight,
+                        child: FloatingActionButton(
+                          heroTag: null,
+                          onPressed: () {
+                            viewEventsList(context);
+                          },
+                          backgroundColor: Colors.grey[800],
+                          child: const Icon(
+                            Icons.notification_add_rounded,
                             color: Colors.white,
                           ),
                         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:on_the_road/model/secure_storage.dart';
 import 'package:on_the_road/model/settings.dart';
 import 'package:provider/provider.dart';
 import '../../constants/design_constants.dart';
@@ -16,11 +17,13 @@ class SettingsView extends StatefulWidget {
 class _SettingsViewState extends State<SettingsView> {
   final gyroscope gyro = gyroscope();
   bool isGyroscopeOn = false;
+  late bool gyroS = false;
+  SecuredUserStorage securedUserStorage = SecuredUserStorage();
 
   @override
   void initState() {
-    super.initState();
     isGyroscopeOn = gyro.working;
+    super.initState();
   }
 
   @override
@@ -192,12 +195,8 @@ class _SettingsViewState extends State<SettingsView> {
                         onChanged: (value) {
                           setState(() {
                             isGyroscopeOn = value;
-                          });
-                          if (value) {
                             gyro.start();
-                          } else {
-                            gyro.end();
-                          }
+                          });
                         },
                       ),
                     ),
@@ -239,6 +238,13 @@ class _SettingsViewState extends State<SettingsView> {
                         borderRadius: BorderRadius.circular(8),
                         selectedColor: Colors.white,
                         fillColor: Colors.blue,
+                        isSelected: [
+                          settingsModel.safeDistanceTime == 2.0,
+                          settingsModel.safeDistanceTime == 3.0,
+                        ],
+                        onPressed: (index) {
+                          settingsModel.safeDistanceTime = [2.0, 3.0][index];
+                        },
                         children: const [
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16),
@@ -249,13 +255,6 @@ class _SettingsViewState extends State<SettingsView> {
                             child: Text('3 sec'),
                           ),
                         ],
-                        isSelected: [
-                          settingsModel.safeDistanceTime == 2.0,
-                          settingsModel.safeDistanceTime == 3.0,
-                        ],
-                        onPressed: (index) {
-                          settingsModel.safeDistanceTime = [2.0, 3.0][index];
-                        },
                       ),
                     ),
                   ),

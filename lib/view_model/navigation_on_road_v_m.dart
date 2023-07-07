@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
@@ -28,7 +29,6 @@ class NavigationOnRoad extends ChangeNotifier {
   var signsOnRoad;
   int time = 0;
   int i = 0;
-
   Future<void> navigateOnRoad(
       Completer<GoogleMapController> _controller,
       BuildContext ctx,
@@ -47,6 +47,9 @@ class NavigationOnRoad extends ChangeNotifier {
 
     startTimer();
     getSignsAroundUser(services, token);
+    sendAvgStat(services, token);
+    checkIfSpeedExceeded(services, token);
+    getSpeedLimit(services, token);
     if (ctx.mounted) {
       getNearestSign(ctx, _controller, services);
     }
@@ -96,8 +99,8 @@ class NavigationOnRoad extends ChangeNotifier {
 
       if (analyze) {
         i++;
-        if(chartData.length>19){
-          chartData.removeRange(0,1);
+        if (chartData.length > 19) {
+          chartData.removeRange(0, 1);
         }
         print(chartData.length);
         chartData.add(
@@ -108,10 +111,40 @@ class NavigationOnRoad extends ChangeNotifier {
     });
   }
 
+  void sendAvgStat(MapServices services, String token) {
+    Timer.periodic(const Duration(seconds: 10), (timer) async {
+      //600
+      services.sendDailyStat(
+          token,
+          navigation.speedBumpDangerous,
+          navigation.speedExceeded,
+          navigation.speedBump,
+          time,
+          navigation.maxSpeed.toInt(),
+          navigation.maxSpeed.toInt(),
+          navigation.distanceTraveled.toInt());
+    });
+  }
+
+  void checkIfSpeedExceeded(MapServices services, String token) {
+    Timer.periodic(const Duration(seconds: 60), (timer) async {
+      if (navigation.currentSpeed > navigation.speedLimit) {
+        TextSpeech.speak("");
+        //tts
+        //send event to server
+        navigation.speedExceeded++;
+      }
+    });
+  }
+
+  void getSpeedLimit(MapServices services, String token) {
+    Timer.periodic(const Duration(seconds: 300), (timer) async {
+      // take care the return will be Future
+      // navigation.speedLimit= mapServices.getSpeedLimit();
+    });
+  }
+
   void addMarkers(Constants constants, String token) async {
-    // MapServices services = MapServices();
-    // var response = await services.getSigns(token, );
-    // var data = json.decode(response.body);
     if (markersOnMap.isNotEmpty) {
       markersOnMap.clear();
     }
@@ -166,6 +199,12 @@ class NavigationOnRoad extends ChangeNotifier {
         );
 
         if (distance < 5) {
+          if (signsOnRoad[i]['name'] == "Speed Bump") {
+            navigation.speedBump++;
+            if (navigation.currentSpeed > 20) {
+              navigation.speedBumpDangerous++;
+            }
+          }
           TextSpeech.speak("Did you find a ${signsOnRoad[i]['name']}");
           showAutoDismissDialog(ctx, "${signsOnRoad[i]['name']}");
           toggleListening(ctx, _controller, services);
@@ -188,90 +227,15 @@ class NavigationOnRoad extends ChangeNotifier {
 
   getSignsAroundUser(MapServices services, String token) async {
     await services.getCurrentLocation();
-    // signsOnRoad  = services.getSigns(token, services.lat, services.long);
-    signsOnRoad = [
-      {
-        "id": 4,
-        "startLocation": {
-          "crs": {
-            "type": "name",
-            "properties": {"name": "EPSG:4326"}
-          },
-          "type": "Point",
-          "coordinates": [31.21063763465604, 30.03129769641675]
-        },
-        "endLocation": null,
-        "reportedCount": 10,
-        "active": true,
-        "oneWay": true,
-        "createdAt": "2023-07-04T18:14:04.004Z",
-        "updatedAt": "2023-07-04T18:14:04.004Z",
-        "signId": 2,
-        "distance": 35.00340213
-      },
-      {
-        "id": 5,
-        "startLocation": {
-          "crs": {
-            "type": "name",
-            "properties": {"name": "EPSG:4326"}
-          },
-          "type": "Point",
-          "coordinates": [31.209076589162546, 30.027512555235536]
-        },
-        "endLocation": null,
-        "reportedCount": 20,
-        "active": true,
-        "oneWay": true,
-        "createdAt": "2023-07-04T18:14:50.303Z",
-        "updatedAt": "2023-07-04T18:14:50.303Z",
-        "signId": 3,
-        "distance": 415.41820329
-      }
-    ];
+    signsOnRoad = json.decode((await services.getSigns(
+            token, navigation.position.latitude, navigation.position.longitude))
+        .body);
     addMarkers(constants, token);
     Timer.periodic(const Duration(seconds: 50), (timer) async {
-      // signsOnRoad = json.decode((await services.getSigns(token, navigation.position.latitude, navigation.position.longitude)).body);
-      signsOnRoad = [
-        {
-          "id": 4,
-          "startLocation": {
-            "crs": {
-              "type": "name",
-              "properties": {"name": "EPSG:4326"}
-            },
-            "type": "Point",
-            "coordinates": [31.21063763465604, 30.03129769641675]
-          },
-          "endLocation": null,
-          "reportedCount": 10,
-          "active": true,
-          "oneWay": true,
-          "createdAt": "2023-07-04T18:14:04.004Z",
-          "updatedAt": "2023-07-04T18:14:04.004Z",
-          "signId": 2,
-          "distance": 35.00340213
-        },
-        {
-          "id": 5,
-          "startLocation": {
-            "crs": {
-              "type": "name",
-              "properties": {"name": "EPSG:4326"}
-            },
-            "type": "Point",
-            "coordinates": [31.209076589162546, 30.027512555235536]
-          },
-          "endLocation": null,
-          "reportedCount": 20,
-          "active": true,
-          "oneWay": true,
-          "createdAt": "2023-07-04T18:14:50.303Z",
-          "updatedAt": "2023-07-04T18:14:50.303Z",
-          "signId": 3,
-          "distance": 415.41820329
-        }
-      ];
+      signsOnRoad = json.decode((await services.getSigns(token,
+              navigation.position.latitude, navigation.position.longitude))
+          .body);
+
       addMarkers(constants, token);
       print("Getting Signs on road");
     });
