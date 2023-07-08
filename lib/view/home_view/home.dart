@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:on_the_road/view/home_view/notifications_list.dart';
+import 'package:on_the_road/view/home_view/signs_list.dart';
 import 'package:on_the_road/view_model/navigation_on_road_v_m.dart';
 import 'package:on_the_road/constants/constants_on_map.dart';
 import 'package:on_the_road/model/settings.dart';
@@ -88,13 +89,14 @@ class _HomeState extends State<Home> {
                               addFavLocation(context, latLng);
                             },
                             zoomControlsEnabled: false,
-                            minMaxZoomPreference: const MinMaxZoomPreference(10, 20),
+                            minMaxZoomPreference:
+                                const MinMaxZoomPreference(10, 20),
                             mapType:
                                 Provider.of<SettingsModel>(context).mapTheme,
                             initialCameraPosition: CameraPosition(
                               target: LatLng(
-                                  Provider.of<User>(context).location.latitude,
-                                  Provider.of<User>(context).location.longitude,
+                                Provider.of<User>(context).location.latitude,
+                                Provider.of<User>(context).location.longitude,
                               ),
                               tilt: 90,
                               zoom: 18,
@@ -140,38 +142,59 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
-                      Container(
-                        margin: const EdgeInsets.all(8),
-                        alignment: Alignment.topRight,
-                        child: FloatingActionButton(
-                          heroTag: null,
-                          onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return const SearchAutocomplete();
-                            }));
-                          },
-                          backgroundColor: Colors.grey[800],
-                          child: const Icon(
-                            Icons.location_on_rounded,
-                            color: Colors.white,
+                      Column(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.all(8),
+                            alignment: Alignment.topRight,
+                            child: FloatingActionButton(
+                              heroTag: null,
+                              onPressed: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return const SearchAutocomplete();
+                                }));
+                              },
+                              backgroundColor: Colors.grey[800],
+                              child: const Icon(
+                                Icons.location_on_rounded,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 70, left: 8, right: 8, bottom: 8),
-                        alignment: Alignment.topRight,
-                        child: FloatingActionButton(
-                          heroTag: null,
-                          onPressed: () {
-                            viewEventsList(context);
-                          },
-                          backgroundColor: Colors.grey[800],
-                          child: const Icon(
-                            Icons.notification_add_rounded,
-                            color: Colors.white,
+                          Container(
+                            margin: const EdgeInsets.only(
+                                left: 8, right: 8, bottom: 8),
+                            alignment: Alignment.topRight,
+                            child: FloatingActionButton(
+                              heroTag: null,
+                              onPressed: () {
+                                viewEventsList(context);
+                              },
+                              backgroundColor: Colors.grey[800],
+                              child: const Icon(
+                                Icons.notification_add_rounded,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                        ),
+                          Container(
+                            margin: const EdgeInsets.only(
+                                left: 8, right: 8, bottom: 8),
+                            alignment: Alignment.topRight,
+                            child: FloatingActionButton(
+                              heroTag: null,
+                              onPressed: () {
+                                viewAddSignList(context);
+                              },
+                              backgroundColor: Colors.grey[800],
+                              child: const Icon(
+                                Icons.signpost_outlined,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       Positioned(
                         bottom: 16.0,

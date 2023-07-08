@@ -50,6 +50,17 @@ class MapServices {
     return 60;
   }
 
+  Future<void> sendUserFeedBack(String token, bool exists, int id) async {
+    await http.post(
+      Uri.parse('https://ontheroad.onrender.com/api/sign/signFollowUp'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({"exists": exists, "signId": id}),
+    );
+  }
+
   Future<void> sendDailyStat(
       String token,
       int speedBumpDangerous,
@@ -80,7 +91,8 @@ class MapServices {
   }
 
   //Retrieve all signs from Database
-  Future<http.Response> getSigns(String token, double latitude, double longitude) async {
+  Future<http.Response> getSigns(
+      String token, double latitude, double longitude) async {
     var response = await http.get(
       Uri.parse(
           'https://ontheroad.onrender.com/api/sign/getSign?lat=$latitude&long=$longitude'),
@@ -133,16 +145,6 @@ class MapServices {
       ),
     );
     return (response);
-  }
-  Future<void> sendUserFeedBack(String token, bool exists, int id) async {
-    await http.post(
-      Uri.parse('https://ontheroad.onrender.com/api/sign/signFollowUp'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode({"exists": exists, "signId": id}),
-    );
   }
 
   Future<void> sendAction(

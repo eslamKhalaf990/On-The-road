@@ -10,7 +10,7 @@ class Navigation extends ChangeNotifier {
   late int speedBump = 0;
   late int speedBumpDangerous = 0;
   late int speedExceeded = 0;
-  late int speedLimit=60;
+  late int speedLimit = 60;
   late Color warningColor = Colors.black;
   late double avgSpeed = 0.0;
   late double distanceTraveled = 0.0;
