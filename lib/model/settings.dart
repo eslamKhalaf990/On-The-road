@@ -88,4 +88,10 @@ class SettingsModel extends ChangeNotifier {
     isGyroscopeOn = state;
     notifyListeners();
   }
+
+  void getNotifyDistance() async {
+    double state = await securedUserStorage.getDistanceState();
+    notifyDistance = state;
+    notifyListeners();
+  }
 }

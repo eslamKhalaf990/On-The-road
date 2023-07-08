@@ -37,16 +37,19 @@ class _HomeState extends State<Home> {
 
   void startGyro(){
     Provider.of<SettingsModel>(context, listen: false).getGyroState();
-    Future.delayed(const Duration(seconds: 10),(){
+    Provider.of<SettingsModel>(context, listen: false).getNotifyDistance();
+    Future.delayed(const Duration(seconds: 5),(){
       if(Provider.of<SettingsModel>(context, listen: false).isGyroscopeOn){
         Provider.of<SettingsModel>(context, listen: false).gyro.start();
       }
     });
+
   }
 
   @override
   void initState() {
     listenToNotification();
+    startGyro();
     super.initState();
   }
 

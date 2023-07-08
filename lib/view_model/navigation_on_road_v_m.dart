@@ -6,7 +6,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:on_the_road/constants/text-speech.dart';
 import 'package:on_the_road/ai_models/speech_text/speak_to.dart';
+import 'package:on_the_road/model/settings.dart';
 import 'package:on_the_road/view/home_view/widgets/dialog_box.dart';
+import 'package:provider/provider.dart';
 import '../constants/constants_on_map.dart';
 import '../model/navigation.dart';
 import '../view/home_view/home.dart';
@@ -258,7 +260,7 @@ class NavigationOnRoad extends ChangeNotifier {
           showAutoDismissDialog(
               ctx, "${signsOnRoad[i]['sign']['name']}", signsOnRoad[i]['id']);
           toggleListening(ctx, _controller, services);
-        } else if (distance < 100 &&
+        } else if (distance < Provider.of<SettingsModel>(ctx,listen: false).notifyDistance &&
             !signsOnRoad[i]["oneWay"] &&
             !signsOnRoad[i]['notified']) {
           signsOnRoad[i]['notified'] = true;

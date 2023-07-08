@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -23,16 +25,32 @@ class SecuredUserStorage{
       value: state.toString(),
     );
   }
+
+  void saveDistanceState(double distance){
+
+    const storage = FlutterSecureStorage();
+    storage.write(
+      key: "distance_state",
+      value: distance.toString(),
+    );
+    print("writing $distance");
+  }
+
+  Future<double> getDistanceState()async{
+    const storage = FlutterSecureStorage();
+
+    String? state = await storage.read(
+      key: "distance_state",
+    );
+    return double.parse(state!);
+  }
+
   Future<String> getGyroState()async{
     const storage = FlutterSecureStorage();
 
     String? state = await storage.read(
       key: "gyroscope_state",
     );
-    print("-----------------------------");
-    print(state);
-    print("-----------------------------");
-
     return state!;
   }
 
