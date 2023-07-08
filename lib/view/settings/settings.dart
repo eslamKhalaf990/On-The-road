@@ -225,54 +225,58 @@ class _SettingsViewState extends State<SettingsView> {
                       ),
                     ),
                   ),
-                  Container(
-                    height: 130,
-                    padding: const EdgeInsets.all(10),
-                    margin: const EdgeInsets.all(10),
-                    decoration: DesignConstants.roundedBorder,
-                    child: ListTile(
-                      leading: const Icon(Icons.timer),
-                      title: const Text('Safe Distance'),
-                      trailing: ToggleButtons(
-                        borderRadius: BorderRadius.circular(8),
-                        selectedColor: Colors.white,
-                        fillColor: Colors.blue,
-                        isSelected: [
-                          settingsModel.safeDistanceTime == 2.0,
-                          settingsModel.safeDistanceTime == 3.0,
-                        ],
-                        onPressed: (index) {
-                          settingsModel.safeDistanceTime = [2.0, 3.0][index];
-                        },
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Text('2 sec'),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Text('3 sec'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 130,
-                    padding: const EdgeInsets.all(10),
-                    margin: const EdgeInsets.all(10),
-                    decoration: DesignConstants.roundedBorder,
-                    child: ListTile(
-                      leading: const Icon(Icons.question_answer),
-                      title: const Text('Ask About Objects on Road'),
-                      trailing: Switch(
-                        value: Provider.of<SettingsModel>(context).askAboutObjects,
-                        onChanged: (value) {
-                          settingsModel.setAskAboutObjects(value);
-                        },
-                      ),
-                    ),
-                  ),
+                  // Container(
+                  //   height: 130,
+                  //   padding: const EdgeInsets.all(10),
+                  //   margin: const EdgeInsets.all(10),
+                  //   decoration: DesignConstants.roundedBorder,
+                  //   child: ListTile(
+                  //     leading: const Icon(Icons.timer),
+                  //     title: const Text('Safe Distance'),
+                  //     trailing: ToggleButtons(
+                  //
+                  //       borderRadius: BorderRadius.circular(8),
+                  //       selectedColor: Colors.white,
+                  //       fillColor: Colors.grey,
+                  //
+                  //       isSelected: [
+                  //         settingsModel.safeDistanceTime == 2.0,
+                  //         settingsModel.safeDistanceTime == 3.0,
+                  //       ],
+                  //
+                  //       onPressed: (index) {
+                  //         settingsModel.setSafeDistanceTime([2.0, 3.0][index]);
+                  //       },
+                  //
+                  //       children: const [
+                  //         Padding(
+                  //           padding: EdgeInsets.symmetric(horizontal: 16),
+                  //           child: Text('2 sec'),
+                  //         ),
+                  //         Padding(
+                  //           padding: EdgeInsets.symmetric(horizontal: 16),
+                  //           child: Text('3 sec'),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  // Container(
+                  //   height: 130,
+                  //   padding: const EdgeInsets.all(10),
+                  //   margin: const EdgeInsets.all(10),
+                  //   decoration: DesignConstants.roundedBorder,
+                  //   child: ListTile(
+                  //     leading: const Icon(Icons.question_answer),
+                  //     title: const Text('Ask About Objects on Road'),
+                  //     trailing: Switch(
+                  //       value: Provider.of<SettingsModel>(context).askAboutObjects,
+                  //       onChanged: (value) {
+                  //         settingsModel.setAskAboutObjects(value);
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
                   Container(
                     height: 130,
                     padding: const EdgeInsets.all(10),
