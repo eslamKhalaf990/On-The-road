@@ -89,6 +89,7 @@ class SettingsModel extends ChangeNotifier {
     notifyListeners();
   }
 
+
   void getNotifyDistance() async {
     double state = await securedUserStorage.getDistanceState();
     notifyDistance = state;

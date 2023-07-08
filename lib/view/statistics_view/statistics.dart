@@ -19,26 +19,29 @@ class Statistics extends StatefulWidget {
 class _StatisticsState extends State<Statistics> {
   List<dynamic> data = [];
   late List<PieData> pie_1_data;
-  late StatServices statServices = StatServices();
+  late StatServices statServices;
+
   @override
   void initState() {
-    getData();
     tooltip = TooltipBehavior(enable: true);
     super.initState();
+    getData();
   }
-
-  late TooltipBehavior tooltip;
-  final int i = 0;
-  Future<void> getData() async {
+  getData()async{
+    statServices = StatServices();
     data.add(statServices.pie1());
     data.add(statServices.histogram1());
     data.add(statServices.pie2());
     data.add(statServices.histogram2());
-    data.add(statServices
-        .lineChart1(Provider.of<User>(context, listen: false).token));
-    print(data[4]);
+
+    data.add(await (statServices
+        .lineChart1(Provider.of<User>(context, listen: false).token)));
     data.add(statServices.doubleHistogram1());
+
   }
+
+  late TooltipBehavior tooltip;
+  final int i = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +49,8 @@ class _StatisticsState extends State<Statistics> {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Statistics'),
-          bottom: TabBar(
+          title: const Text('Statistics'),
+          bottom: const TabBar(
             tabs: [
               Tab(icon: Icon(Icons.today), text: "Today's data"),
               Tab(icon: Icon(Icons.pie_chart), text: "Frequency"),

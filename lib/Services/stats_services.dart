@@ -1,9 +1,8 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 import '../view/statistics_view/statistics.dart';
-import 'package:http/http.dart' as http;
 
 class StatServices {
   List<PieData> pie1() {
@@ -79,4 +78,24 @@ class StatServices {
     }
     return list;
   }
+
+  // List<LieData> lineChart1() {
+  //   return [
+  //     LieData("5-1", 10),
+  //     LieData("5-2", 20),
+  //     LieData("5-3", 15),
+  //     LieData("5-4", 25),
+  //     LieData("5-5", 30),
+  //     LieData("5-6", 20),
+  //     LieData("5-7", 28),
+  //     LieData("5-8", 8),
+  //     LieData("5-9", 10),
+  //     LieData("5-10", 8),
+  //     LieData("5-11", 18),
+  //     LieData("5-12", 8),
+  //     LieData("5-13", 15),
+  //     LieData("5-14", 18),
+  //     LieData("5-15", 10),
+  //   ];
+  // }
 }
