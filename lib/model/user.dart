@@ -17,7 +17,6 @@ class User extends ChangeNotifier {
   late String id;
   late Location location = Location();
   late bool exist = false;
-  late var favoritePlaces;
   late List<FavoriteLoc> favList = [];
 
   updateUser(User user) {
@@ -27,12 +26,9 @@ class User extends ChangeNotifier {
     isAdmin = user.isAdmin;
     exist = user.exist;
     location = user.location;
-    favoritePlaces = user.favoritePlaces;
     notifyListeners();
   }
-
   var favoriteLocations;
-
   void getFavLocation()async{
     MapServices services = MapServices();
     favoriteLocations = jsonDecode((await services.getFavLocations(token)).body);

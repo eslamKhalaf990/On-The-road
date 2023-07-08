@@ -33,7 +33,6 @@ class _StatisticsState extends State<Statistics> {
     data.add(statServices.histogram1());
     data.add(statServices.pie2());
     data.add(statServices.histogram2());
-
     data.add(await (statServices
         .lineChart1(Provider.of<User>(context, listen: false).token)));
     data.add(statServices.doubleHistogram1());
