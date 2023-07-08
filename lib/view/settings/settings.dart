@@ -16,6 +16,7 @@ class SettingsView extends StatefulWidget {
 
 class _SettingsViewState extends State<SettingsView> {
   SecuredUserStorage securedUserStorage = SecuredUserStorage();
+  // TextEditingController distance = TextEditingController();
 
   @override
   void initState() {
@@ -209,8 +210,12 @@ class _SettingsViewState extends State<SettingsView> {
                           initialValue: settingsModel.notifyDistance.toString(),
                           keyboardType: TextInputType.number,
                           onChanged: (value) {
-                            settingsModel.setNotifyDistance(double.parse(value));
+                            if(value.isNotEmpty){
+                              securedUserStorage.saveDistanceState(double.parse(value));
+                              settingsModel.setNotifyDistance(double.parse(value));
+                            }
                           },
+                          // controller: distance,
                           decoration: const InputDecoration(
                             hintText: 'Enter distance',
                             contentPadding: EdgeInsets.zero,
