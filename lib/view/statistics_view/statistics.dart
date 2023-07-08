@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../Services/stats_services.dart';
+import '../../model/user.dart';
 import 'FirstTab.dart';
 import 'FourthTab.dart';
 import 'SecondTab.dart';
@@ -17,23 +19,26 @@ class Statistics extends StatefulWidget {
 class _StatisticsState extends State<Statistics> {
   List<dynamic> data = [];
   late List<PieData> pie_1_data;
-  late StatServices statServices;
-
+  late StatServices statServices = StatServices();
   @override
   void initState() {
-    statServices = StatServices();
-    data.add(statServices.pie1());
-    data.add(statServices.histogram1());
-    data.add(statServices.pie2());
-    data.add(statServices.histogram2());
-    data.add(statServices.lineChart1());
-    data.add(statServices.doubleHistogram1());
+    getData();
     tooltip = TooltipBehavior(enable: true);
     super.initState();
   }
 
   late TooltipBehavior tooltip;
   final int i = 0;
+  Future<void> getData() async {
+    data.add(statServices.pie1());
+    data.add(statServices.histogram1());
+    data.add(statServices.pie2());
+    data.add(statServices.histogram2());
+    data.add(statServices
+        .lineChart1(Provider.of<User>(context, listen: false).token));
+    print(data[4]);
+    data.add(statServices.doubleHistogram1());
+  }
 
   @override
   Widget build(BuildContext context) {
