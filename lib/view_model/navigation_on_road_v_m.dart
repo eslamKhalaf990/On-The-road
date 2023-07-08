@@ -29,7 +29,7 @@ class NavigationOnRoad extends ChangeNotifier {
   var signsOnRoad;
   int time = 0;
   int i = 0;
-  Future <void> navigateOnRoad(
+  Future<void> navigateOnRoad(
       Completer<GoogleMapController> _controller,
       BuildContext ctx,
       MapServices services,
@@ -51,64 +51,66 @@ class NavigationOnRoad extends ChangeNotifier {
     checkIfSpeedExceeded(services, token);
     getSpeedLimit(services, token);
     if (ctx.mounted) {
-      getNearestSign(ctx, _controller, services);
+      getNearestSign(ctx, _controller, services, token);
     }
-    positionStream = Geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position) async {
-      if ((position.speed * 3.6) < 3) {
-        navigation.currentSpeed = 0.0;
-      } else {
-        navigation.currentSpeed = position.speed * 3.6;
-      }
-      if (navigation.currentSpeed > navigation.maxSpeed) {
-        navigation.maxSpeed = navigation.currentSpeed;
-      }
+    positionStream =
+        Geolocator.getPositionStream(locationSettings: locationSettings)
+            .listen((Position position) async {
+          if ((position.speed * 3.6) < 0.2) {
+            navigation.currentSpeed = 0.0;
+          } else {
+            navigation.currentSpeed = position.speed * 3.6;
+          }
+          if (navigation.currentSpeed > navigation.maxSpeed) {
+            navigation.maxSpeed = navigation.currentSpeed;
+          }
 
-      navigation.position = position;
-      isStreaming = true;
+          navigation.position = position;
+          isStreaming = true;
 
-      mapController.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: LatLng(
-                navigation.position.latitude, navigation.position.longitude),
-            zoom: await mapController.getZoomLevel(),
-            tilt: 90,
-          ),
-        ),
-      );
+          mapController.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(
+                    navigation.position.latitude, navigation.position.longitude),
+                zoom: await mapController.getZoomLevel(),
+                tilt: 90,
+              ),
+            ),
+          );
 
-      sum += navigation.currentSpeed;
-      cnt++;
+          sum += navigation.currentSpeed;
+          cnt++;
 
-      navigation.avgSpeed = sum / cnt;
+          navigation.avgSpeed = sum / cnt;
 
-      if (navigation.currentSpeed < 3) {
-        if (distanceTime.isActive) {
-          distanceTime.cancel();
-        }
-      } else {
-        if (!distanceTime.isActive) {
-          startTimer();
-        }
-        navigation.distanceTraveled =
-            (navigation.avgSpeed * 0.277778 * time) / 1000;
-      }
+          if (navigation.currentSpeed < 0.1) {
+            if (distanceTime.isActive) {
+              distanceTime.cancel();
+            }
+          } else {
+            if (!distanceTime.isActive) {
+              startTimer();
+            }
+            navigation.distanceTraveled =
+                (navigation.avgSpeed * 0.277778 * time) / 1000;
+          }
 
-      if (analyze) {
-        i++;
-        if (chartData.length > 19) {
-          chartData.removeAt(0);
-        }
-        chartData.add(
-          ChartData("t$i", navigation.currentSpeed),
-        );
-      }
-      notifyListeners();
-    });
+          if (analyze) {
+            i++;
+            if (chartData.length > 19) {
+              chartData.removeAt(0);
+            }
+            chartData.add(
+              ChartData("t$i", navigation.currentSpeed),
+            );
+          }
+          notifyListeners();
+        });
   }
 
   void sendAvgStat(MapServices services, String token) {
-    Timer.periodic(const Duration(seconds: 10), (timer) async {
+    Timer.periodic(const Duration(seconds: 600), (timer) async {
       //600
       services.sendDailyStat(
           token,
@@ -123,11 +125,33 @@ class NavigationOnRoad extends ChangeNotifier {
   }
 
   void checkIfSpeedExceeded(MapServices services, String token) {
-    Timer.periodic(const Duration(seconds: 60), (timer) async {
+    Timer.periodic(const Duration(seconds: 10), (timer) async {
       if (navigation.currentSpeed > navigation.speedLimit) {
-        TextSpeech.speak("");
+        double diff = navigation.currentSpeed - navigation.speedLimit;
+        TextSpeech.speak("You are exceeding the speed limit please slow down");
         //tts
-        //send event to server
+        if (diff < 10) {
+          services.sendAction(
+              token,
+              "low risk speed",
+              navigation.position.latitude,
+              navigation.position.longitude,
+              navigation.currentSpeed);
+        } else if (diff < 20) {
+          services.sendAction(
+              token,
+              "mid risk speed",
+              navigation.position.latitude,
+              navigation.position.longitude,
+              navigation.currentSpeed);
+        } else {
+          services.sendAction(
+              token,
+              "high risk speed",
+              navigation.position.latitude,
+              navigation.position.longitude,
+              navigation.currentSpeed);
+        }
         navigation.speedExceeded++;
       }
     });
@@ -145,21 +169,21 @@ class NavigationOnRoad extends ChangeNotifier {
       markersOnMap.clear();
     }
     for (int i = 0; i < signsOnRoad.length; i++) {
+      signsOnRoad[i]['notified'] = false;
       markersOnMap.add(
         Marker(
-            markerId: MarkerId('$i'),
-            position: LatLng(
-                signsOnRoad[i]['startLocation']['coordinates'][1] * 1.0,
-                signsOnRoad[i]['startLocation']['coordinates'][0] * 1.0),
-            icon:
-                signsOnRoad[i]['sign']['name'] == "Traffic Light"?
-                constants.trafficLights:
-                signsOnRoad[i]['sign']['name'] == "Speed Bump"?
-                constants.bump:
-                signsOnRoad[i]['sign']['name'] == "Radar"?
-                constants.bump
-            : constants.stopSign,
-            ),
+          markerId: MarkerId('$i'),
+          position: LatLng(
+              signsOnRoad[i]['startLocation']['coordinates'][1] * 1.0,
+              signsOnRoad[i]['startLocation']['coordinates'][0] * 1.0),
+          icon: signsOnRoad[i]['sign']['name'] == "Traffic Light"
+              ? constants.trafficLights
+              : signsOnRoad[i]['sign']['name'] == "Speed Bump"
+              ? constants.bump
+              : signsOnRoad[i]['sign']['name'] == "Radar"
+              ? constants.radar
+              : constants.stopSign,
+        ),
       );
     }
     notifyListeners();
@@ -187,8 +211,12 @@ class NavigationOnRoad extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getNearestSign(BuildContext ctx, Completer<GoogleMapController> _controller, MapServices services) {
-    Timer.periodic(const Duration(seconds: 15), (timer) async {
+  void getNearestSign(
+      BuildContext ctx,
+      Completer<GoogleMapController> _controller,
+      MapServices services,
+      String token) {
+    Timer.periodic(const Duration(seconds: 5), (timer) async {
       for (int i = 0; i < signsOnRoad.length; i++) {
         double distance = Geolocator.distanceBetween(
           navigation.position.latitude,
@@ -200,27 +228,72 @@ class NavigationOnRoad extends ChangeNotifier {
         if (distance < 5) {
           if (signsOnRoad[i]['sign']['name'] == "Speed Bump") {
             navigation.speedBump++;
-            if (navigation.currentSpeed > 20) {
+            if (navigation.currentSpeed > 15) {
               navigation.speedBumpDangerous++;
+              if (navigation.currentSpeed < 20) {
+                services.sendAction(
+                    token,
+                    "speed pumb low risk",
+                    navigation.position.latitude,
+                    navigation.position.longitude,
+                    navigation.currentSpeed);
+              } else if (navigation.currentSpeed < 25) {
+                services.sendAction(
+                    token,
+                    "speed pumb mid risk",
+                    navigation.position.latitude,
+                    navigation.position.longitude,
+                    navigation.currentSpeed);
+              } else {
+                services.sendAction(
+                    token,
+                    "speed pumb high risk",
+                    navigation.position.latitude,
+                    navigation.position.longitude,
+                    navigation.currentSpeed);
+              }
             }
           }
-
           TextSpeech.speak("Did you find a ${signsOnRoad[i]['sign']['name']}");
-          showAutoDismissDialog(ctx, "${signsOnRoad[i]['sign']['name']}", signsOnRoad[i]['id']);
-          // showAutoDismissDialog(ctx, "${signsOnRoad[i]['sign']['name']}");
+          showAutoDismissDialog(
+              ctx, "${signsOnRoad[i]['sign']['name']}", signsOnRoad[i]['id']);
           toggleListening(ctx, _controller, services);
-        }
-        else if (distance < 100) {
+        } else if (distance < 100 &&
+            !signsOnRoad[i]["oneWay"] &&
+            !signsOnRoad[i]['notified']) {
+          signsOnRoad[i]['notified'] = true;
           print("distance: $distance");
           navigation.warning =
-              "There Is A ${signsOnRoad[i]['sign']['name']}\n In ${distance.toStringAsFixed(1)} meters";
-
+          "There Is A ${signsOnRoad[i]['sign']['name']}\n In ${distance.toStringAsFixed(1)} meters";
           TextSpeech.speak(navigation.warning);
 
           navigation.warningColor = Colors.red;
           break;
-        }
-        else {
+        } else if (signsOnRoad[i]["oneWay"]) {
+          double oldSign_user = Geolocator.distanceBetween(
+            navigation.position.latitude,
+            navigation.position.longitude,
+            signsOnRoad[i]['endLocation']['coordinates'][1],
+            signsOnRoad[i]['endLocation']['coordinates'][0],
+          );
+          double Sign_oldUser = distance;
+          if (navigation.lastLocations.length != 0) {
+            Sign_oldUser = Geolocator.distanceBetween(
+              navigation.lastLocations.first.latitude,
+              navigation.lastLocations.first.longitude,
+              signsOnRoad[i]['startLocation']['coordinates'][1],
+              signsOnRoad[i]['startLocation']['coordinates'][0],
+            );
+          }
+
+          if (oldSign_user < 20 && distance < Sign_oldUser) {
+            navigation.warning =
+            "There Is A ${signsOnRoad[i]['sign']['name']}\n In ${distance.toStringAsFixed(1)} meters";
+            TextSpeech.speak(navigation.warning);
+
+            navigation.warningColor = Colors.red;
+          }
+        } else {
           navigation.warning = "";
           navigation.warningColor = Colors.blue;
         }
@@ -230,11 +303,12 @@ class NavigationOnRoad extends ChangeNotifier {
 
   getSignsAroundUser(MapServices services, String token) async {
     await services.getCurrentLocation();
-    signsOnRoad = json.decode((await services.getSigns(token,services.lat, services.long)).body);
+    signsOnRoad = json.decode(
+        (await services.getSigns(token, services.lat, services.long)).body);
     addMarkers(constants, token);
     Timer.periodic(const Duration(seconds: 50), (timer) async {
       signsOnRoad = json.decode((await services.getSigns(token,
-              navigation.position.latitude, navigation.position.longitude))
+          navigation.position.latitude, navigation.position.longitude))
           .body);
 
       addMarkers(constants, token);
@@ -249,7 +323,22 @@ class NavigationOnRoad extends ChangeNotifier {
       distanceTime = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
         time++;
         print('Seconds passed: $time');
+        if(time>4){
+
+          if (navigation.lastLocations.length > 5) {
+            navigation.lastLocations.removeAt(0);
+          }
+
+          navigation.lastLocations.add(
+            LatLng(navigation.position.latitude, navigation.position.longitude),
+          );
+
+        }
       });
+
+
+
+
     });
   }
 

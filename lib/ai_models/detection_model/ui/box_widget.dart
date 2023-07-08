@@ -44,7 +44,7 @@ class BoxWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 100,),
+          // const SizedBox(height: 100,),
           FutureBuilder<double>(
             future: detectServices
                 .calculateDistance(result), // Call the calculateDistance method

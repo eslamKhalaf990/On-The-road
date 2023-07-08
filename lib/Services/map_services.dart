@@ -144,4 +144,22 @@ class MapServices {
       body: jsonEncode({"exists": exists, "signId": id}),
     );
   }
+
+  Future<void> sendAction(
+      String token, String name, double lat, double long, double speed) async {
+    var response = await http.post(
+      Uri.parse('https://ontheroad.onrender.com/api/userAction/addAction'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(
+        {
+          "name": name,
+          "location": [lat, long],
+          "speed": speed
+        },
+      ),
+    );
+  }
 }

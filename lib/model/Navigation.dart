@@ -15,5 +15,6 @@ class Navigation extends ChangeNotifier {
   late double avgSpeed = 0.0;
   late double distanceTraveled = 0.0;
   late double maxSpeed = -1.0;
+  late List<LatLng> lastLocations = [];
   late List<LatLng> coordinates = [];
 }
