@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 import '../view/statistics_view/statistics.dart';
@@ -58,23 +60,42 @@ class StatServices {
     ];
   }
 
-  List<LieData> lineChart1() {
-    return [
-      LieData("5-1", 10),
-      LieData("5-2", 20),
-      LieData("5-3", 15),
-      LieData("5-4", 25),
-      LieData("5-5", 30),
-      LieData("5-6", 20),
-      LieData("5-7", 28),
-      LieData("5-8", 8),
-      LieData("5-9", 10),
-      LieData("5-10", 8),
-      LieData("5-11", 18),
-      LieData("5-12", 8),
-      LieData("5-13", 15),
-      LieData("5-14", 18),
-      LieData("5-15", 10),
-    ];
+  Future<List<LieData>> lineChart1(String token) async {
+    var response = await http.get(
+      Uri.parse(
+          'https://ontheroad.onrender.com/api/userStats/riskPointsOverTime'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    var decoded = json.decode(response.body);
+    int len = decoded.length;
+    print("&&&&&&&&&&&&&&&&&&&&&&&&" + len.toString());
+    List<LieData> list = [];
+    for (int i = 0; i < len; i++) {
+      list.add(LieData(decoded[i]["date"], double.parse(decoded[i]["sum"])));
+    }
+    return list;
   }
+
+  // List<LieData> lineChart1() {
+  //   return [
+  //     LieData("5-1", 10),
+  //     LieData("5-2", 20),
+  //     LieData("5-3", 15),
+  //     LieData("5-4", 25),
+  //     LieData("5-5", 30),
+  //     LieData("5-6", 20),
+  //     LieData("5-7", 28),
+  //     LieData("5-8", 8),
+  //     LieData("5-9", 10),
+  //     LieData("5-10", 8),
+  //     LieData("5-11", 18),
+  //     LieData("5-12", 8),
+  //     LieData("5-13", 15),
+  //     LieData("5-14", 18),
+  //     LieData("5-15", 10),
+  //   ];
+  // }
 }
