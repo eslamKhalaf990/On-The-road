@@ -99,7 +99,6 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
         child: Column(
       children: [
         // Camera_Warning_widget(),
-        // Warning(),
         Container(
           margin: const EdgeInsets.all(10),
           child: ClipRRect(
@@ -108,6 +107,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
               ),
               child: CameraPreview(cameraController!)),
         ),
+        Warning(),
       ],
     ));
   }
@@ -134,7 +134,10 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
               minimumScore: 0.3,
               IOUThershold: 0.3);
 
-      print("data outputted $objDetect");
+
+      for (var obj in objDetect) {
+        print("data outputted ${obj?.className!.trim()}");
+      }
       detectionServices.objectDetected(cameraImage, objDetect, context);
       widget.resultsCallback(objDetect);
     }

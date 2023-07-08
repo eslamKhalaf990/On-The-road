@@ -22,8 +22,8 @@ class _FavoriteLocationState extends State<FavoriteLocation> {
 
   @override
   void initState() {
-    Provider.of<User>(context, listen: false).getFavLocation();
     super.initState();
+    Provider.of<User>(context, listen: false).getFavLocation();
   }
 
   @override
