@@ -27,7 +27,8 @@ class _StatisticsState extends State<Statistics> {
     super.initState();
     getData();
   }
-  getData()async{
+
+  getData() async {
     statServices = StatServices();
     data.add(statServices.pie1());
     data.add(statServices.histogram1());
@@ -37,7 +38,6 @@ class _StatisticsState extends State<Statistics> {
     data.add(await (statServices
         .lineChart1(Provider.of<User>(context, listen: false).token)));
     data.add(statServices.doubleHistogram1());
-
   }
 
   late TooltipBehavior tooltip;

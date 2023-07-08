@@ -35,7 +35,25 @@ class StatServices {
     ];
   }
 
-  List<DoubleHistogramData> doubleHistogram1() {
+  Future<List<DoubleHistogramData>> doubleHistogram1(String token) async {
+    // var response = await http.get(
+    //   Uri.parse(
+    //       'https://ontheroad.onrender.com/api/userStats/maxAvgSpeedOverTime'),
+    //   headers: <String, String>{
+    //     'Content-Type': 'application/json; charset=UTF-8',
+    //     'Authorization': 'Bearer $token',
+    //   },
+    // );
+    // var decoded = json.decode(response.body);
+    // int len = decoded.length;
+    // List<DoubleHistogramData> list = [];
+    // for (int i = 0; i < len; i++) {
+    //   list.add(DoubleHistogramData(
+    //       decoded[i]["day"].substring(0, 10),
+    //       decoded[i]["avgSpeed"].toDouble(),
+    //       decoded[i]["maxSpeed"].toDouble()));
+    // }
+    // return list;
     return [
       DoubleHistogramData("Range 1", 10, 5),
       DoubleHistogramData("Range 2", 20, 6),
