@@ -134,4 +134,14 @@ class MapServices {
     );
     return (response);
   }
+  Future<void> sendUserFeedBack(String token, bool exists, int id) async {
+    await http.post(
+      Uri.parse('https://ontheroad.onrender.com/api/sign/signFollowUp'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({"exists": exists, "signId": id}),
+    );
+  }
 }

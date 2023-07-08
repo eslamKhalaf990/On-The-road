@@ -66,8 +66,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
     cameras = await availableCameras();
 
     // cameras[0] for rear-camera
-    cameraController =
-        CameraController(cameras[0], ResolutionPreset.high, enableAudio: false);
+    cameraController = CameraController(cameras[0], ResolutionPreset.max, enableAudio: false);
 
     cameraController?.initialize().then((_) async {
       // Stream of image passed to [onLatestImageAvailable] callback
@@ -100,7 +99,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
         child: Column(
       children: [
         // Camera_Warning_widget(),
-        Warning(),
+        // Warning(),
         Container(
           margin: const EdgeInsets.all(10),
           child: ClipRRect(

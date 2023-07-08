@@ -187,8 +187,7 @@ class NavigationOnRoad extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getNearestSign(BuildContext ctx,
-      Completer<GoogleMapController> _controller, MapServices services) {
+  void getNearestSign(BuildContext ctx, Completer<GoogleMapController> _controller, MapServices services) {
     Timer.periodic(const Duration(seconds: 15), (timer) async {
       for (int i = 0; i < signsOnRoad.length; i++) {
         double distance = Geolocator.distanceBetween(
@@ -207,7 +206,8 @@ class NavigationOnRoad extends ChangeNotifier {
           }
 
           TextSpeech.speak("Did you find a ${signsOnRoad[i]['sign']['name']}");
-          showAutoDismissDialog(ctx, "${signsOnRoad[i]['sign']['name']}");
+          showAutoDismissDialog(ctx, "${signsOnRoad[i]['sign']['name']}", signsOnRoad[i]['id']);
+          // showAutoDismissDialog(ctx, "${signsOnRoad[i]['sign']['name']}");
           toggleListening(ctx, _controller, services);
         }
         else if (distance < 100) {

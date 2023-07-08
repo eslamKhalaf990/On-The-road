@@ -1,9 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:on_the_road/Services/map_services.dart';
 import 'package:on_the_road/constants/design_constants.dart';
+import 'package:provider/provider.dart';
 
-void showAutoDismissDialog(BuildContext context, String message) {
+import '../../../model/user.dart';
+
+void showAutoDismissDialog(BuildContext context, String message, int id) {
   Timer t;
+  MapServices mapServices = MapServices();
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -41,6 +46,10 @@ void showAutoDismissDialog(BuildContext context, String message) {
                           .grey[700]), // Set the background color of the button
                     ),
                     onPressed: () {
+                      mapServices.sendUserFeedBack(
+                          Provider.of<User>(context, listen: false).token,
+                          true,
+                          id);
                       t.cancel();
                       Navigator.of(context).pop();
                     },
@@ -61,6 +70,10 @@ void showAutoDismissDialog(BuildContext context, String message) {
                     ),
                     onPressed: () {
                       t.cancel();
+                      mapServices.sendUserFeedBack(
+                          Provider.of<User>(context, listen: false).token,
+                          false,
+                          id);
                       Navigator.of(context).pop();
                     },
                     child: Text(
