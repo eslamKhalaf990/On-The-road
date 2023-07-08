@@ -56,57 +56,57 @@ class NavigationOnRoad extends ChangeNotifier {
     positionStream =
         Geolocator.getPositionStream(locationSettings: locationSettings)
             .listen((Position position) async {
-          if ((position.speed * 3.6) < 0.2) {
-            navigation.currentSpeed = 0.0;
-          } else {
-            navigation.currentSpeed = position.speed * 3.6;
-          }
-          if (navigation.currentSpeed > navigation.maxSpeed) {
-            navigation.maxSpeed = navigation.currentSpeed;
-          }
+      if ((position.speed * 3.6) < 0.2) {
+        navigation.currentSpeed = 0.0;
+      } else {
+        navigation.currentSpeed = position.speed * 3.6;
+      }
+      if (navigation.currentSpeed > navigation.maxSpeed) {
+        navigation.maxSpeed = navigation.currentSpeed;
+      }
 
-          navigation.position = position;
-          isStreaming = true;
+      navigation.position = position;
+      isStreaming = true;
 
-          mapController.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(
-                target: LatLng(
-                    navigation.position.latitude, navigation.position.longitude),
-                zoom: await mapController.getZoomLevel(),
-                tilt: 90,
-              ),
-            ),
-          );
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(
+                navigation.position.latitude, navigation.position.longitude),
+            zoom: await mapController.getZoomLevel(),
+            tilt: 90,
+          ),
+        ),
+      );
 
-          sum += navigation.currentSpeed;
-          cnt++;
+      sum += navigation.currentSpeed;
+      cnt++;
 
-          navigation.avgSpeed = sum / cnt;
+      navigation.avgSpeed = sum / cnt;
 
-          if (navigation.currentSpeed < 0.1) {
-            if (distanceTime.isActive) {
-              distanceTime.cancel();
-            }
-          } else {
-            if (!distanceTime.isActive) {
-              startTimer();
-            }
-            navigation.distanceTraveled =
-                (navigation.avgSpeed * 0.277778 * time) / 1000;
-          }
+      if (navigation.currentSpeed < 0.1) {
+        if (distanceTime.isActive) {
+          distanceTime.cancel();
+        }
+      } else {
+        if (!distanceTime.isActive) {
+          startTimer();
+        }
+        navigation.distanceTraveled =
+            (navigation.avgSpeed * 0.277778 * time) / 1000;
+      }
 
-          if (analyze) {
-            i++;
-            if (chartData.length > 19) {
-              chartData.removeAt(0);
-            }
-            chartData.add(
-              ChartData("t$i", navigation.currentSpeed),
-            );
-          }
-          notifyListeners();
-        });
+      if (analyze) {
+        i++;
+        if (chartData.length > 19) {
+          chartData.removeAt(0);
+        }
+        chartData.add(
+          ChartData("t$i", navigation.currentSpeed),
+        );
+      }
+      notifyListeners();
+    });
   }
 
   void sendAvgStat(MapServices services, String token) {
@@ -179,10 +179,10 @@ class NavigationOnRoad extends ChangeNotifier {
           icon: signsOnRoad[i]['sign']['name'] == "Traffic Light"
               ? constants.trafficLights
               : signsOnRoad[i]['sign']['name'] == "Speed Bump"
-              ? constants.bump
-              : signsOnRoad[i]['sign']['name'] == "Radar"
-              ? constants.radar
-              : constants.stopSign,
+                  ? constants.bump
+                  : signsOnRoad[i]['sign']['name'] == "Radar"
+                      ? constants.radar
+                      : constants.stopSign,
         ),
       );
     }
@@ -264,7 +264,7 @@ class NavigationOnRoad extends ChangeNotifier {
           signsOnRoad[i]['notified'] = true;
           print("distance: $distance");
           navigation.warning =
-          "There Is A ${signsOnRoad[i]['sign']['name']}\n In ${distance.toStringAsFixed(1)} meters";
+              "There Is A ${signsOnRoad[i]['sign']['name']}\n In ${distance.toStringAsFixed(1)} meters";
           TextSpeech.speak(navigation.warning);
 
           navigation.warningColor = Colors.red;
@@ -288,7 +288,7 @@ class NavigationOnRoad extends ChangeNotifier {
 
           if (oldSign_user < 20 && distance < Sign_oldUser) {
             navigation.warning =
-            "There Is A ${signsOnRoad[i]['sign']['name']}\n In ${distance.toStringAsFixed(1)} meters";
+                "There Is A ${signsOnRoad[i]['sign']['name']}\n In ${distance.toStringAsFixed(1)} meters";
             TextSpeech.speak(navigation.warning);
 
             navigation.warningColor = Colors.red;
@@ -308,7 +308,7 @@ class NavigationOnRoad extends ChangeNotifier {
     addMarkers(constants, token);
     Timer.periodic(const Duration(seconds: 50), (timer) async {
       signsOnRoad = json.decode((await services.getSigns(token,
-          navigation.position.latitude, navigation.position.longitude))
+              navigation.position.latitude, navigation.position.longitude))
           .body);
 
       addMarkers(constants, token);
@@ -323,8 +323,7 @@ class NavigationOnRoad extends ChangeNotifier {
       distanceTime = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
         time++;
         print('Seconds passed: $time');
-        if(time>4){
-
+        if (time > 4) {
           if (navigation.lastLocations.length > 5) {
             navigation.lastLocations.removeAt(0);
           }
@@ -332,13 +331,8 @@ class NavigationOnRoad extends ChangeNotifier {
           navigation.lastLocations.add(
             LatLng(navigation.position.latitude, navigation.position.longitude),
           );
-
         }
       });
-
-
-
-
     });
   }
 
