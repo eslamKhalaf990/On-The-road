@@ -176,7 +176,7 @@ class NavigationOnRoad extends ChangeNotifier {
           position: LatLng(
               signsOnRoad[i]['startLocation']['coordinates'][1] * 1.0,
               signsOnRoad[i]['startLocation']['coordinates'][0] * 1.0),
-          icon: signsOnRoad[i]['sign']['name'] == "Traffic Light"
+              icon: signsOnRoad[i]['sign']['name'] == "Traffic Light"
               ? constants.trafficLights
               : signsOnRoad[i]['sign']['name'] == "Speed Bump"
               ? constants.bump

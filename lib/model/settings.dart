@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:on_the_road/model/secure_storage.dart';
+
+import '../ai_models/tree_accelaration/gyroscope.dart';
 
 class SettingsModel extends ChangeNotifier {
   LocationAccuracy locationAccuracy = LocationAccuracy.bestForNavigation;
@@ -9,6 +12,10 @@ class SettingsModel extends ChangeNotifier {
   double safeDistanceTime = 2.0;
   bool askAboutObjects = false;
   bool voiceAssistEnabled = false;
+  final gyroscope gyro = gyroscope();
+  bool isGyroscopeOn = false;
+  late bool gyroS = false;
+  SecuredUserStorage securedUserStorage = SecuredUserStorage();
 
   List<String> settings = [
     "Location Accuracy",
@@ -18,6 +25,7 @@ class SettingsModel extends ChangeNotifier {
     "Ask About Objects on Road",
     "Voice Assist",
   ];
+
   List<IconData> icons = [
     Icons.location_searching_outlined,
     Icons.map_outlined,
@@ -26,6 +34,7 @@ class SettingsModel extends ChangeNotifier {
     Icons.question_answer,
     Icons.volume_up,
   ];
+
   List<List> options = [
     [
       "HIGH",
@@ -65,6 +74,18 @@ class SettingsModel extends ChangeNotifier {
 
   void setVoiceAssistEnabled(bool value) {
     voiceAssistEnabled = value;
+    notifyListeners();
+  }
+
+  void setGyroState(bool state)async{
+    isGyroscopeOn = state;
+    notifyListeners();
+  }
+
+  void getGyroState() async {
+
+    bool state = await securedUserStorage.getGyroState() == "true";
+    isGyroscopeOn = state;
     notifyListeners();
   }
 }

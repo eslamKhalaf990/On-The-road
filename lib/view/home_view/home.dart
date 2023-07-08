@@ -35,6 +35,15 @@ class _HomeState extends State<Home> {
     await Test.initFirebase(context);
   }
 
+  void startGyro(){
+    Provider.of<SettingsModel>(context, listen: false).getGyroState();
+    Future.delayed(const Duration(seconds: 10),(){
+      if(Provider.of<SettingsModel>(context, listen: false).isGyroscopeOn){
+        Provider.of<SettingsModel>(context, listen: false).gyro.start();
+      }
+    });
+  }
+
   @override
   void initState() {
     listenToNotification();
