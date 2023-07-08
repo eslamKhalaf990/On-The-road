@@ -168,7 +168,8 @@ class _HomeState extends State<Home> {
                             child: FloatingActionButton(
                               heroTag: null,
                               onPressed: () {
-                                viewEventsList(context);
+                                EventList eventList = EventList();
+                                eventList.viewEventsList(context);
                               },
                               backgroundColor: Colors.grey[800],
                               child: const Icon(

@@ -44,6 +44,23 @@ class MapServices {
     );
   }
 
+  Future<http.Response> addEvents(
+      String eventName, double long, double lat, String token) async {
+    return await http.post(
+      Uri.parse('https://ontheroad.onrender.com/api/userEvents/addEvent'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(
+        {
+          "message": eventName,
+          "location": [long, lat]
+        },
+      ),
+    );
+  }
+
   int getSpeedLimit() {
     return 60;
   }
