@@ -15,14 +15,10 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
-  final gyroscope gyro = gyroscope();
-  bool isGyroscopeOn = false;
-  late bool gyroS = false;
   SecuredUserStorage securedUserStorage = SecuredUserStorage();
 
   @override
   void initState() {
-    isGyroscopeOn = gyro.working;
     super.initState();
   }
 
@@ -72,14 +68,14 @@ class _SettingsViewState extends State<SettingsView> {
                                     if (settingsModel.options[0][k] is String)
                                       MaterialButton(
                                         onPressed: () {
-                                          // if (index == 0 && k == 0) {
-                                          //   settingsModel.locationAccuracy =
-                                          //       LocationAccuracy
-                                          //           .bestForNavigation;
-                                          // } else if (index == 0 && k == 1) {
-                                          //   settingsModel.locationAccuracy =
-                                          //       LocationAccuracy.lowest;
-                                          // }
+                                          if (k == 0) {
+                                            settingsModel.locationAccuracy =
+                                                LocationAccuracy
+                                                    .bestForNavigation;
+                                          } else if (k == 2) {
+                                            settingsModel.locationAccuracy =
+                                                LocationAccuracy.lowest;
+                                          }
                                         },
                                         child:
                                             Text(settingsModel.options[0][k]),
@@ -87,13 +83,6 @@ class _SettingsViewState extends State<SettingsView> {
                                     else
                                       MaterialButton(
                                         onPressed: () {
-                                          // if (index == 1 && k == 0) {
-                                          //   settingsModel.mapTheme =
-                                          //       MapType.normal;
-                                          // } else if (index == 1 && k == 1) {
-                                          //   settingsModel.mapTheme =
-                                          //       MapType.satellite;
-                                          // }
                                         },
                                         child: ClipRRect(
                                           borderRadius: const BorderRadius.all(
@@ -140,14 +129,13 @@ class _SettingsViewState extends State<SettingsView> {
                                     if (settingsModel.options[1][k] is String)
                                       MaterialButton(
                                         onPressed: () {
-                                          // if (index == 0 && k == 0) {
-                                          //   settingsModel.locationAccuracy =
-                                          //       LocationAccuracy
-                                          //           .bestForNavigation;
-                                          // } else if (index == 0 && k == 1) {
-                                          //   settingsModel.locationAccuracy =
-                                          //       LocationAccuracy.lowest;
-                                          // }
+                                          if (k == 0) {
+                                            settingsModel.mapTheme =
+                                                MapType.normal;
+                                          } else if (k == 1) {
+                                            settingsModel.mapTheme =
+                                                MapType.satellite;
+                                          }
                                         },
                                         child:
                                             Text(settingsModel.options[1][k]),
@@ -155,13 +143,13 @@ class _SettingsViewState extends State<SettingsView> {
                                     else
                                       MaterialButton(
                                         onPressed: () {
-                                          // if (index == 1 && k == 0) {
-                                          //   settingsModel.mapTheme =
-                                          //       MapType.normal;
-                                          // } else if (index == 1 && k == 1) {
-                                          //   settingsModel.mapTheme =
-                                          //       MapType.satellite;
-                                          // }
+                                          if ( k == 0) {
+                                            settingsModel.mapTheme =
+                                                MapType.normal;
+                                          } else if ( k == 1) {
+                                            settingsModel.mapTheme =
+                                                MapType.satellite;
+                                          }
                                         },
                                         child: ClipRRect(
                                           borderRadius: const BorderRadius.all(
@@ -191,11 +179,17 @@ class _SettingsViewState extends State<SettingsView> {
                       leading: const Icon(Icons.gesture),
                       title: const Text('Gyroscope'),
                       trailing: Switch(
-                        value: isGyroscopeOn,
+                        value: Provider.of<SettingsModel>(context,listen: false).isGyroscopeOn,
                         onChanged: (value) {
                           setState(() {
-                            isGyroscopeOn = value;
-                            gyro.start();
+                            securedUserStorage.saveGyroState(value);
+                            Provider.of<SettingsModel>(context,listen: false).setGyroState(value);
+                            if(Provider.of<SettingsModel>(context,listen: false).gyro.working){
+                              Provider.of<SettingsModel>(context, listen: false).gyro.end();
+                            }
+                            else{
+                              Provider.of<SettingsModel>(context, listen: false).gyro.start();
+                            }
                           });
                         },
                       ),
@@ -215,7 +209,7 @@ class _SettingsViewState extends State<SettingsView> {
                           initialValue: settingsModel.notifyDistance.toString(),
                           keyboardType: TextInputType.number,
                           onChanged: (value) {
-                            settingsModel.notifyDistance = double.parse(value);
+                            settingsModel.setNotifyDistance(double.parse(value));
                           },
                           decoration: const InputDecoration(
                             hintText: 'Enter distance',
@@ -267,9 +261,9 @@ class _SettingsViewState extends State<SettingsView> {
                       leading: const Icon(Icons.question_answer),
                       title: const Text('Ask About Objects on Road'),
                       trailing: Switch(
-                        value: settingsModel.askAboutObjects,
+                        value: Provider.of<SettingsModel>(context).askAboutObjects,
                         onChanged: (value) {
-                          settingsModel.askAboutObjects = value;
+                          settingsModel.setAskAboutObjects(value);
                         },
                       ),
                     ),
@@ -285,7 +279,7 @@ class _SettingsViewState extends State<SettingsView> {
                       trailing: Switch(
                         value: settingsModel.voiceAssistEnabled,
                         onChanged: (value) {
-                          settingsModel.voiceAssistEnabled = value;
+                          settingsModel.setVoiceAssistEnabled(value);
                         },
                       ),
                     ),
