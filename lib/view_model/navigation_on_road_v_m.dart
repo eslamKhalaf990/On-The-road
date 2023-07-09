@@ -31,6 +31,7 @@ class NavigationOnRoad extends ChangeNotifier {
   var signsOnRoad;
   int time = 0;
   int i = 0;
+  DateTime lastAsked = DateTime.now().subtract(const Duration(seconds: 10));
   Future<void> navigateOnRoad(
       Completer<GoogleMapController> _controller,
       BuildContext ctx,
@@ -178,29 +179,35 @@ class NavigationOnRoad extends ChangeNotifier {
           position: LatLng(
               signsOnRoad[i]['startLocation']['coordinates'][1] * 1.0,
               signsOnRoad[i]['startLocation']['coordinates'][0] * 1.0),
-              icon: signsOnRoad[i]['sign']['name'] == "Traffic Light"
+          icon: signsOnRoad[i]['sign']['name'] == "Traffic Light"
               ? constants.trafficLights
               : signsOnRoad[i]['sign']['name'] == "Speed Bump"
                   ? constants.bump
                   : signsOnRoad[i]['sign']['name'] == "Radar"
-                  ? constants.radar
-                  : signsOnRoad[i]['sign']['name'] == "Speed 60"
-                  ? constants.mph60
-                  : signsOnRoad[i]['sign']['name'] == "Speed 100"
-                  ? constants.mph100
-                  : signsOnRoad[i]['sign']['name'] == "Speed 30"
-                  ? constants.mph30
-                  : signsOnRoad[i]['sign']['name'] == "Speed 80"
-                  ? constants.mph80
-                  : signsOnRoad[i]['sign']['name'] == "Speed 90"
-                  ? constants.mph90
-                  : signsOnRoad[i]['sign']['name'] == "Speed 40"
-                  ? constants.mph40
-                  : signsOnRoad[i]['sign']['name'] == "Speed 50"
-                  ? constants.mph50
-                  : signsOnRoad[i]['sign']['name'] == "Speed 70"
-                  ? constants.mph70
-                  : constants.trafficLights,
+                      ? constants.radar
+                      : signsOnRoad[i]['sign']['name'] == "Speed 60"
+                          ? constants.mph60
+                          : signsOnRoad[i]['sign']['name'] == "Speed 100"
+                              ? constants.mph100
+                              : signsOnRoad[i]['sign']['name'] == "Speed 30"
+                                  ? constants.mph30
+                                  : signsOnRoad[i]['sign']['name'] == "Speed 80"
+                                      ? constants.mph80
+                                      : signsOnRoad[i]['sign']['name'] ==
+                                              "Speed 90"
+                                          ? constants.mph90
+                                          : signsOnRoad[i]['sign']['name'] ==
+                                                  "Speed 40"
+                                              ? constants.mph40
+                                              : signsOnRoad[i]['sign']
+                                                          ['name'] ==
+                                                      "Speed 50"
+                                                  ? constants.mph50
+                                                  : signsOnRoad[i]['sign']
+                                                              ['name'] ==
+                                                          "Speed 70"
+                                                      ? constants.mph70
+                                                      : constants.trafficLights,
         ),
       );
     }
@@ -272,11 +279,16 @@ class NavigationOnRoad extends ChangeNotifier {
               }
             }
           }
-          TextSpeech.speak("Did you find a ${signsOnRoad[i]['sign']['name']}");
-          showAutoDismissDialog(
-              ctx, "${signsOnRoad[i]['sign']['name']}", signsOnRoad[i]['id']);
-          toggleListening(ctx, _controller, services);
-        } else if (distance < Provider.of<SettingsModel>(ctx,listen: false).notifyDistance &&
+          if (DateTime.now().difference(lastAsked).inSeconds > 15) {
+            lastAsked = DateTime.now();
+            TextSpeech.speak(
+                "Did you find a ${signsOnRoad[i]['sign']['name']}");
+            showAutoDismissDialog(
+                ctx, "${signsOnRoad[i]['sign']['name']}", signsOnRoad[i]['id']);
+            toggleListening(ctx, _controller, services);
+          }
+        } else if (distance <
+                Provider.of<SettingsModel>(ctx, listen: false).notifyDistance &&
             !signsOnRoad[i]["oneWay"] &&
             !signsOnRoad[i]['notified']) {
           signsOnRoad[i]['notified'] = true;

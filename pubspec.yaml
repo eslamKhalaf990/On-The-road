@@ -50,6 +50,7 @@ dependencies:
   google_maps_routes: ^1.1.2
   flutter_tts: ^3.7.0
   speech_to_text: ^6.1.1
+  audioplayers: ^0.20.1
   flutter:
     sdk: flutter
 
@@ -86,6 +87,7 @@ flutter:
     - images/
     - images/speedLimits/
     - assets/models/
+    - assets/sounds/
     - assets/labels/
 #    - assets/
 

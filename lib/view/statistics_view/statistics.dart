@@ -36,7 +36,8 @@ class _StatisticsState extends State<Statistics> {
         .histogram1(Provider.of<User>(context, listen: false).token));
     data.add(await statServices
         .pie2(Provider.of<User>(context, listen: false).token));
-    data.add(statServices.histogram2());
+    data.add(await statServices
+        .histogram2(Provider.of<User>(context, listen: false).token));
     data.add(await statServices
         .lineChart1(Provider.of<User>(context, listen: false).token));
     data.add(await statServices
@@ -74,7 +75,7 @@ class _StatisticsState extends State<Statistics> {
                   buildFirstTab(context),
                   buildSecondTab(tooltip, data!),
                   buildThirdTab(data),
-                  // buildFourthTab(),
+                  buildFourthTab(),
                 ],
               );
             }

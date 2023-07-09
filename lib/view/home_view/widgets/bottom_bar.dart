@@ -13,6 +13,9 @@ import 'package:on_the_road/view/statistics_view/statistics.dart';
 import 'package:on_the_road/view/user_view/Profile.dart';
 import 'package:on_the_road/view/home_view/home.dart';
 
+import '../../../ai_models/detection_model/RunModelByFrontCameraDemo.dart';
+import '../../../constants/sounds.dart';
+
 void startNavigation(BuildContext context,
     Completer<GoogleMapController> _controller, MapServices services) {
   constants.activeColor = Colors.green;
@@ -51,7 +54,7 @@ class BottomBar extends StatelessWidget {
               },
               icon: Icon(
                 Icons.home,
-                size: 30,
+                size: 25,
                 color: constants.activeColor,
               ),
             ),
@@ -68,7 +71,24 @@ class BottomBar extends StatelessWidget {
               },
               icon: const Icon(
                 Icons.camera_alt,
-                size: 30,
+                size: 25,
+                // color: Colors.grey,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                if (stream.isStreaming) {
+                  stream.positionStream.cancel();
+                  stream.isStreaming = false;
+                  constants.activeColor = Colors.white;
+                }
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return RunModelByFrontCameraDemo();
+                }));
+              },
+              icon: const Icon(
+                Icons.camera_front,
+                size: 25,
                 // color: Colors.grey,
               ),
             ),
@@ -78,7 +98,7 @@ class BottomBar extends StatelessWidget {
               },
               icon: const Icon(
                 Icons.mic_none_outlined,
-                size: 30,
+                size: 25,
                 // color: Colors.grey,
               ),
             ),
@@ -90,7 +110,7 @@ class BottomBar extends StatelessWidget {
               },
               icon: const Icon(
                 Icons.analytics_outlined,
-                size: 30,
+                size: 25,
                 // color: Colors.grey,
               ),
             ),
@@ -103,7 +123,7 @@ class BottomBar extends StatelessWidget {
               },
               icon: const Icon(
                 Icons.settings,
-                size: 30,
+                size: 25,
                 // color: Colors.wh,
               ),
             ),
@@ -120,7 +140,7 @@ class BottomBar extends StatelessWidget {
               icon: Hero(
                 tag: "profile",
                 child: CircleAvatar(
-                  radius: 30,
+                  radius: 25,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.all(
                       Radius.circular(100),

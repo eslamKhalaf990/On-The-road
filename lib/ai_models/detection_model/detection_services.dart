@@ -5,10 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_pytorch/pigeon.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants/sounds.dart';
 import '../../constants/text-speech.dart';
 import '../../view_model/navigation_on_road_v_m.dart';
 
 class DetectionServices extends ChangeNotifier {
+  Sounds s = Sounds();
   //to be decided in settings
   final objectsWidth = {
     'Car': 1.9,
@@ -46,6 +48,10 @@ class DetectionServices extends ChangeNotifier {
             navigationOnRoad.navigation.warning = "";
           }
         });
+      }
+      if (obj?.className?.trim() == "Doze eyes" ||
+          obj?.className?.trim() == "Doze mouth") {
+        s.playSound();
       } else {
         navigationOnRoad.navigation.warningColor = Colors.blue;
         navigationOnRoad.navigation.warning = "";

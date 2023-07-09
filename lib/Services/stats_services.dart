@@ -71,7 +71,31 @@ class StatServices {
     return list;
   }
 
-  List<HistogramData> histogram2() {
+  Future<List<HistogramData>> histogram2(String token) async {
+    var response = await http.get(
+      Uri.parse(
+          'https://ontheroad.onrender.com/api/userStats/speedBumpRiskDetails'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    var decoded = json.decode(response.body);
+    int len = decoded.length;
+    List<HistogramData> list = [];
+    Color color;
+    for (int i = 0; i < len; i++) {
+      if (decoded[i]["name"] == "speed pumb low risk") {
+        color = Colors.blue;
+      } else if (decoded[i]["name"] == "speed pumb mid risk") {
+        color = const Color(0xffFFBA00);
+      } else {
+        color = Colors.red;
+      }
+      list.add(HistogramData(
+          decoded[i]["name"], int.parse(decoded[i]["count"]), color));
+    }
+    return list;
     return [
       HistogramData("Low Risk", 10, Colors.blue),
       HistogramData("Medium Risk", 20, Color(0xffFFBA00)),
