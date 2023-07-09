@@ -47,11 +47,12 @@ class SpeedList {
                           backgroundColor:
                               MaterialStateProperty.all(Colors.grey[700]),
                         ),
-                        onPressed: () {
+                        onPressed: () async{
                           getLocation();
-                          mapServices.addSign(
-                              "Speed 30", longitude, latitude, token);
+                          print((await mapServices.addSign("Speed 30", longitude, latitude, token)).body);
+                          if(context.mounted){
                           Navigator.pop(context);
+                          }
                         },
                         child: Column(
                           children: [
@@ -89,11 +90,12 @@ class SpeedList {
                         backgroundColor:
                             MaterialStateProperty.all(Colors.grey[700]),
                       ),
-                      onPressed: () {
+                      onPressed: () async{
                         getLocation();
-                        mapServices.addSign(
-                            "Speed 40", longitude, latitude, token);
+                        print((await mapServices.addSign("Speed 40", longitude, latitude, token)).body);
+                        if(context.mounted){
                         Navigator.pop(context);
+                        }
                       },
                       child: Column(
                         children: [

@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class SignUp{
-  Future<http.Response> signUp(String name, String email, String password)async{
+  Future<http.Response> signUp(String name, String email, String password, String fcToken)async{
 
     return await http.post(
-      Uri.parse('https://nodeapi-35lq.onrender.com/api/auth/register'),
+      Uri.parse('https://ontheroad.onrender.com/api/auth/register'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -13,6 +13,7 @@ class SignUp{
         'username': name,
         'email': email,
         'password':password,
+        'notiLocation':fcToken
       }),
     );
   }

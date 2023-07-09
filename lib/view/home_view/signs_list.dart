@@ -45,10 +45,13 @@ class SignList {
                           ),
                           backgroundColor: MaterialStateProperty.all(Colors.grey[700]),
                         ),
-                        onPressed: () {
+                        onPressed: ()async{
                           getLocation();
-                          mapServices.addSign("Radar", longitude, latitude, token);
-                          Navigator.pop(context);
+                          print((await mapServices.addSign("Radar", longitude, latitude, token)).body);
+                          if(context.mounted){
+                            Navigator.pop(context);
+                          }
+
                         },
                         child: Column(
                           children: [

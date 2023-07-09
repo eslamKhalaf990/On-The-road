@@ -28,6 +28,7 @@ class MapServices {
   //Add Sign to a given location
   Future<http.Response> addSign(
       String signName, double long, double lat, String token) async {
+    print("$signName, $lat");
     return await http.post(
       Uri.parse('https://ontheroad.onrender.com/api/sign/addSign'),
       headers: <String, String>{

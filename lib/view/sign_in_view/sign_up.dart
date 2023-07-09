@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'Widgets/widgets.dart';
 import 'loading_sign_up.dart';
@@ -23,6 +24,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isPasswordLengthValid = false;
   bool isPasswordContainsUppercase = false;
   bool isPasswordContainsNumber = false;
+  late String fcToken;
+  void getToken()async{
+    final firebase = FirebaseMessaging.instance;
+    await firebase.requestPermission();
+    fcToken = (await firebase.getToken())!;
+    print("token: $fcToken");
+  }
 
   @override
   void initState() {
@@ -107,7 +115,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         obsText: true,
                         onChanged: checkPassword,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 7,
                       ),
                       // Password validation checks
@@ -115,7 +123,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         margin: const EdgeInsets.only(left: 25),
                         child: Column(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               height: 7,
                             ),
                             if (_controllerPassword.text.isNotEmpty)
@@ -140,7 +148,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                 ],
                               ),
-                            SizedBox(
+                            const SizedBox(
                               height: 7,
                             ),
                             if (_controllerPassword.text.isNotEmpty)
@@ -165,7 +173,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                 ],
                               ),
-                            SizedBox(
+                            const SizedBox(
                               height: 7,
                             ),
                             if (_controllerPassword.text.isNotEmpty)
@@ -190,7 +198,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                 ],
                               ),
-                            SizedBox(
+                            const SizedBox(
                               height: 7,
                             ),
                           ],
@@ -210,15 +218,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 backgroundColor:
                                     MaterialStateProperty.all(Colors.grey),
                               ),
-                              onPressed: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return LoadingSignUp(
-                                    name: _controllerName.text,
-                                    email: _controllerEmail.text,
-                                    password: _controllerPassword.text,
-                                  );
-                                }));
+                              onPressed: () async{
+                                getToken();
+                                print(fcToken);
+                                Future.delayed(const Duration(seconds: 2),(){
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                        return LoadingSignUp(
+                                          name: _controllerName.text,
+                                          email: _controllerEmail.text,
+                                          password: _controllerPassword.text,
+                                          fcToken: fcToken,
+                                        );
+                                      }));
+                                });
+
                               },
                               child: const Text(
                                 'SIGN UP',

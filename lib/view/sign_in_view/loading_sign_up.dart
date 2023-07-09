@@ -9,12 +9,14 @@ class LoadingSignUp extends StatefulWidget {
   final String name;
   final String email;
   final String password;
+  final String fcToken;
 
   const LoadingSignUp(
       {super.key,
       required this.name,
       required this.email,
       required this.password,
+        required this.fcToken,
       }
   );
   @override
@@ -25,11 +27,11 @@ class _LoadingSignUpState extends State<LoadingSignUp> {
   @override
   void initState() {
     super.initState();
-    signUp(widget.name, widget.email, widget.password);
+    signUp(widget.name, widget.email, widget.password, widget.fcToken);
   }
-  void signUp(String name, String email, String password) async {
+  void signUp(String name, String email, String password, String fcToken) async {
     SignUp signUp = SignUp();
-    var response = await signUp.signUp(name, email, password);
+    var response = await signUp.signUp(name, email, password, fcToken);
     print(response.statusCode);
     if(response.statusCode == 201 || response.statusCode == 200){
       Navigator.pushReplacement(
