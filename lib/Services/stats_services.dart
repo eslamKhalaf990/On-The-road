@@ -5,17 +5,42 @@ import 'package:flutter/material.dart';
 import '../view/statistics_view/statistics.dart';
 
 class StatServices {
-  List<PieData> pie1() {
+  Future<List<PieData>> pie1(String token) async {
+    https: //ontheroad.onrender.com/api/userStats/percentSpeedBumpDanger
+    var response = await http.get(
+      Uri.parse(
+          'https://ontheroad.onrender.com/api/userStats/percentSpeedLimitExceeded'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    var decoded = json.decode(response.body);
+    double pres = decoded[0]["?column?"];
     return [
-      PieData("Risky", 15, const Color.fromARGB(1, 199, 31, 45)),
-      PieData("Not Risky", 85, const Color(0xffFFBA00)),
+      PieData(
+          "Risky", (pres * 100).toInt(), const Color.fromARGB(1, 199, 31, 45)),
+      PieData(
+          "Not Risky", ((1.0 - pres) * 100).toInt(), const Color(0xffFFBA00)),
     ];
   }
 
-  List<PieData> pie2() {
+  Future<List<PieData>> pie2(String token) async {
+    var response = await http.get(
+      Uri.parse(
+          'https://ontheroad.onrender.com/api/userStats/percentSpeedBumpDanger'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    var decoded = json.decode(response.body);
+    double pres = decoded[0]["coalesce"];
     return [
-      PieData("Risky", 15, const Color.fromARGB(1, 199, 31, 45)),
-      PieData("Not Risky", 85, const Color(0xffFFBA00)),
+      PieData(
+          "Risky", (pres * 100).toInt(), const Color.fromARGB(1, 199, 31, 45)),
+      PieData(
+          "Not Risky", ((1.0 - pres) * 100).toInt(), const Color(0xffFFBA00)),
     ];
   }
 

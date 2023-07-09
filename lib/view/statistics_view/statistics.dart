@@ -30,10 +30,12 @@ class _StatisticsState extends State<Statistics> {
   Future<List<dynamic>> getData() async {
     StatServices statServices = StatServices();
     List<dynamic> data = [];
-    data.add(statServices.pie1());
+    data.add(await statServices
+        .pie1(Provider.of<User>(context, listen: false).token));
     data.add(await statServices
         .histogram1(Provider.of<User>(context, listen: false).token));
-    data.add(statServices.pie2());
+    data.add(await statServices
+        .pie2(Provider.of<User>(context, listen: false).token));
     data.add(statServices.histogram2());
     data.add(await statServices
         .lineChart1(Provider.of<User>(context, listen: false).token));
@@ -72,7 +74,7 @@ class _StatisticsState extends State<Statistics> {
                   buildFirstTab(context),
                   buildSecondTab(tooltip, data!),
                   buildThirdTab(data),
-                  buildFourthTab(),
+                  // buildFourthTab(),
                 ],
               );
             }
