@@ -6,7 +6,12 @@ class Constants {
   late BitmapDescriptor userLocation;
   late BitmapDescriptor mph100;
   late BitmapDescriptor mph60;
-  late BitmapDescriptor mph10;
+  late BitmapDescriptor mph30;
+  late BitmapDescriptor mph40;
+  late BitmapDescriptor mph50;
+  late BitmapDescriptor mph70;
+  late BitmapDescriptor mph80;
+  late BitmapDescriptor mph90;
   late BitmapDescriptor trafficLights;
   late BitmapDescriptor stopSign;
   late BitmapDescriptor radar;
@@ -47,9 +52,41 @@ class Constants {
       ImageConfiguration.empty,
       'images/forbidden.png',
     );
+
+    mph60 = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration.empty,
+      'images/speedLimits/60.png',
+    );
+
+    mph30 = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration.empty,
+      'images/speedLimits/30.png',
+    );
+
     mph100 = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration.empty,
-      'images/one-hundred.png',
+      'images/speedLimits/100.png',
     );
+    mph40 = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration.empty,
+      'images/speedLimits/40.png',
+    );
+    mph50 = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration.empty,
+      'images/speedLimits/50.png',
+    );
+    mph70 = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration.empty,
+      'images/speedLimits/70.png',
+    );
+    mph80 = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration.empty,
+      'images/speedLimits/80.png',
+    );
+    mph90 = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration.empty,
+      'images/speedLimits/90.png',
+    );
+
   }
 }

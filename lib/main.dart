@@ -21,11 +21,11 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<User>(create: (_) => User()),
         ChangeNotifierProvider<SettingsModel>(create: (_) => SettingsModel()),
-        ChangeNotifierProvider<NavigationOnRoad>(
-            create: (_) => NavigationOnRoad()),
+        ChangeNotifierProvider<NavigationOnRoad>(create: (_) => NavigationOnRoad()),
       ],
       child: MaterialApp(
-        title: 'On The Road',
+        title: 'Co-Driver',
+        debugShowCheckedModeBanner: false,
         darkTheme: ThemeData(
           brightness: Brightness.dark,
           visualDensity: VisualDensity.adaptivePlatformDensity,

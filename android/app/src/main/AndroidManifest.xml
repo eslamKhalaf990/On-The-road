@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <application
-        android:label="On The Road"
+        android:label="Co-Driver"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAd_6qR4-KaM0bcwM8bq56LsVsd41AJomk"/>

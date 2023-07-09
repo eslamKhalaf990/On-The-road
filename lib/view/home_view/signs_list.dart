@@ -10,6 +10,7 @@ class SignList {
   late double longitude = 0.0;
   late double latitude = 0.0;
   MapServices mapServices = MapServices();
+
   void getLocation() async {
     await mapServices.getCurrentLocation();
     longitude = mapServices.long;
@@ -21,13 +22,11 @@ class SignList {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        // Set up a Timer to dismiss the dialog after 10 seconds
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
           backgroundColor: Colors.grey[900],
-          // title: const Text('Auto Dismiss Dialog'),
           actions: <Widget>[
             Column(
               children: [
@@ -44,13 +43,11 @@ class SignList {
                               borderRadius: BorderRadius.circular(15.0),
                             ),
                           ),
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.grey[700]),
+                          backgroundColor: MaterialStateProperty.all(Colors.grey[700]),
                         ),
                         onPressed: () {
                           getLocation();
-                          mapServices.addSign(
-                              "Radar", longitude, latitude, token);
+                          mapServices.addSign("Radar", longitude, latitude, token);
                           Navigator.pop(context);
                         },
                         child: Column(

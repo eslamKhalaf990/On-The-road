@@ -183,8 +183,24 @@ class NavigationOnRoad extends ChangeNotifier {
               : signsOnRoad[i]['sign']['name'] == "Speed Bump"
                   ? constants.bump
                   : signsOnRoad[i]['sign']['name'] == "Radar"
-                      ? constants.radar
-                      : constants.stopSign,
+                  ? constants.radar
+                  : signsOnRoad[i]['sign']['name'] == "Speed 60"
+                  ? constants.mph60
+                  : signsOnRoad[i]['sign']['name'] == "Speed 100"
+                  ? constants.mph100
+                  : signsOnRoad[i]['sign']['name'] == "Speed 30"
+                  ? constants.mph30
+                  : signsOnRoad[i]['sign']['name'] == "Speed 80"
+                  ? constants.mph80
+                  : signsOnRoad[i]['sign']['name'] == "Speed 90"
+                  ? constants.mph90
+                  : signsOnRoad[i]['sign']['name'] == "Speed 40"
+                  ? constants.mph40
+                  : signsOnRoad[i]['sign']['name'] == "Speed 50"
+                  ? constants.mph50
+                  : signsOnRoad[i]['sign']['name'] == "Speed 70"
+                  ? constants.mph70
+                  : constants.trafficLights,
         ),
       );
     }
