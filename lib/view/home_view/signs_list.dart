@@ -11,7 +11,7 @@ class SignList {
   late double latitude = 0.0;
   MapServices mapServices = MapServices();
 
-  void getLocation() async {
+  Future<void> getLocation() async {
     await mapServices.getCurrentLocation();
     longitude = mapServices.long;
     latitude = mapServices.lat;
@@ -46,7 +46,7 @@ class SignList {
                           backgroundColor: MaterialStateProperty.all(Colors.grey[700]),
                         ),
                         onPressed: ()async{
-                          getLocation();
+                          await getLocation();
                           print((await mapServices.addSign("Radar", longitude, latitude, token)).body);
                           if(context.mounted){
                             Navigator.pop(context);
@@ -87,11 +87,12 @@ class SignList {
                         backgroundColor:
                             MaterialStateProperty.all(Colors.grey[700]),
                       ),
-                      onPressed: () {
-                        getLocation();
-                        mapServices.addSign(
-                            "Speed Bumps", longitude, latitude, token);
+                      onPressed: () async{
+                        await getLocation();
+                        print((await mapServices.addSign("Speed Bump", longitude, latitude, token)).body);
+                        if(context.mounted){
                         Navigator.pop(context);
+                        }
                       },
                       child: Column(
                         children: [
@@ -133,11 +134,12 @@ class SignList {
                           backgroundColor:
                               MaterialStateProperty.all(Colors.grey[700]),
                         ),
-                        onPressed: () {
-                          getLocation();
-                          mapServices.addSign(
-                              "Traffic Light", longitude, latitude, token);
-                          Navigator.pop(context);
+                        onPressed: () async{
+                          await getLocation();
+                          print((await mapServices.addSign("Traffic Light", longitude, latitude, token)).body);
+                          if(context.mounted){
+                            Navigator.pop(context);
+                          }
                         },
                         child: Column(
                           children: [

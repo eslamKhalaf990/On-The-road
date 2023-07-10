@@ -70,7 +70,7 @@ class _FrontCameraViewState extends State<FrontCameraView>
 
     // cameras[0] for rear-camera
     cameraController =
-        CameraController(cameras[1], ResolutionPreset.high, enableAudio: false);
+        CameraController(cameras[0], ResolutionPreset.high, enableAudio: false);
 
     cameraController?.initialize().then((_) async {
       // Stream of image passed to [onLatestImageAvailable] callback

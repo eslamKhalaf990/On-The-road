@@ -10,7 +10,8 @@ class SpeedList {
   late double longitude = 0.0;
   late double latitude = 0.0;
   MapServices mapServices = MapServices();
-  void getLocation() async {
+
+  Future<void> getLocation() async {
     await mapServices.getCurrentLocation();
     longitude = mapServices.long;
     latitude = mapServices.lat;
@@ -48,7 +49,7 @@ class SpeedList {
                               MaterialStateProperty.all(Colors.grey[700]),
                         ),
                         onPressed: () async{
-                          getLocation();
+                          await getLocation();
                           print((await mapServices.addSign("Speed 30", longitude, latitude, token)).body);
                           if(context.mounted){
                           Navigator.pop(context);
@@ -91,7 +92,7 @@ class SpeedList {
                             MaterialStateProperty.all(Colors.grey[700]),
                       ),
                       onPressed: () async{
-                        getLocation();
+                        await getLocation();
                         print((await mapServices.addSign("Speed 40", longitude, latitude, token)).body);
                         if(context.mounted){
                         Navigator.pop(context);
@@ -138,11 +139,12 @@ class SpeedList {
                           backgroundColor:
                               MaterialStateProperty.all(Colors.grey[700]),
                         ),
-                        onPressed: () {
-                          getLocation();
-                          mapServices.addSign(
-                              "Speed 50", longitude, latitude, token);
+                        onPressed: () async{
+                          await getLocation();
+                          print((await mapServices.addSign("Speed 50", longitude, latitude, token)).body);
+                          if(context.mounted){
                           Navigator.pop(context);
+                          }
                         },
                         child: Column(
                           children: [
@@ -179,11 +181,12 @@ class SpeedList {
                         backgroundColor:
                             MaterialStateProperty.all(Colors.grey[700]),
                       ),
-                      onPressed: () {
-                        getLocation();
-                        mapServices.addSign(
-                            "Speed 60", longitude, latitude, token);
+                      onPressed: () async{
+                        await getLocation();
+                        print((await mapServices.addSign("Speed 60", longitude, latitude, token)).body);
+                        if(context.mounted){
                         Navigator.pop(context);
+                        }
                       },
                       child: Column(
                         children: [
@@ -227,11 +230,12 @@ class SpeedList {
                           backgroundColor:
                               MaterialStateProperty.all(Colors.grey[700]),
                         ),
-                        onPressed: () {
-                          getLocation();
-                          mapServices.addSign(
-                              "Speed 70", longitude, latitude, token);
-                          Navigator.pop(context);
+                        onPressed: () async{
+                          await getLocation();
+                          print((await mapServices.addSign("Speed 70", longitude, latitude, token)).body);
+                          if(context.mounted){
+                            Navigator.pop(context);
+                          }
                         },
                         child: Column(
                           children: [
@@ -269,11 +273,12 @@ class SpeedList {
                         backgroundColor:
                             MaterialStateProperty.all(Colors.grey[700]),
                       ),
-                      onPressed: () {
-                        getLocation();
-                        mapServices.addSign(
-                            "Speed 80", longitude, latitude, token);
+                      onPressed: () async{
+                        await getLocation();
+                        print((await mapServices.addSign("Speed 80", longitude, latitude, token)).body);
+                        if(context.mounted){
                         Navigator.pop(context);
+                        }
                       },
                       child: Column(
                         children: [
@@ -317,11 +322,12 @@ class SpeedList {
                           backgroundColor:
                               MaterialStateProperty.all(Colors.grey[700]),
                         ),
-                        onPressed: () {
-                          getLocation();
-                          mapServices.addSign(
-                              "Speed 90", longitude, latitude, token);
+                        onPressed: () async{
+                          await getLocation();
+                          print((await mapServices.addSign("Speed 90", longitude, latitude, token)).body);
+                          if(context.mounted){
                           Navigator.pop(context);
+                          }
                         },
                         child: Column(
                           children: [
@@ -359,11 +365,12 @@ class SpeedList {
                         backgroundColor:
                             MaterialStateProperty.all(Colors.grey[700]),
                       ),
-                      onPressed: () {
-                        getLocation();
-                        mapServices.addSign(
-                            "Speed 100", longitude, latitude, token);
+                      onPressed: () async{
+                        await getLocation();
+                        print((await mapServices.addSign("Speed 100", longitude, latitude, token)).body);
+                        if(context.mounted){
                         Navigator.pop(context);
+                        }
                       },
                       child: Column(
                         children: [

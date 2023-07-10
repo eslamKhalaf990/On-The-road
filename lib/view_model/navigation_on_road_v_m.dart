@@ -173,6 +173,7 @@ class NavigationOnRoad extends ChangeNotifier {
     }
     for (int i = 0; i < signsOnRoad.length; i++) {
       signsOnRoad[i]['notified'] = false;
+      print(signsOnRoad[i]['sign']['name']);
       markersOnMap.add(
         Marker(
           markerId: MarkerId('$i'),
