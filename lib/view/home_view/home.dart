@@ -41,7 +41,7 @@ class _HomeState extends State<Home> {
     Provider.of<SettingsModel>(context, listen: false).getNotifyDistance();
     Future.delayed(const Duration(seconds: 5), () {
       if (Provider.of<SettingsModel>(context, listen: false).isGyroscopeOn) {
-        Provider.of<SettingsModel>(context, listen: false).gyro.start();
+        Provider.of<SettingsModel>(context, listen: false).gyro.start(context);
       }
     });
   }

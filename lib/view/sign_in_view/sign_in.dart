@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:on_the_road/Services/sign_up_services.dart';
 import 'package:on_the_road/model/secure_storage.dart';
+import 'package:on_the_road/view/sign_in_view/sign_up.dart';
 import '../../constants/design_constants.dart';
 import 'Widgets/widgets.dart';
 import 'loading_sign_in.dart';
@@ -97,23 +99,31 @@ class _SignInScreenState extends State<SignInScreen> {
                       margin: const EdgeInsets.only(
                           left: 10, top: 5, bottom: 5, right: 5),
                       child: Row(
-                        children: const [
-                          Text(
-                            "Forget your ",
+                        children: [
+                          const Text(
+                            "Don't have an account ",
                             style: TextStyle(
                                 fontSize: 16,
                                 fontFamily: 'tajawal',
                                 fontWeight: FontWeight.w900),
                             textAlign: TextAlign.center,
                           ),
-                          Text(
-                            "password?",
-                            style: TextStyle(
-                                color: Colors.blueAccent,
-                                fontSize: 16,
-                                fontFamily: 'tajawal',
-                                fontWeight: FontWeight.w900),
-                            textAlign: TextAlign.center,
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return SignUpScreen(signedIn: "signup");
+                              }));
+                            },
+                            child: const Text(
+                              "SIGN UP",
+                              style: TextStyle(
+                                  color: Colors.blueAccent,
+                                  fontSize: 16,
+                                  fontFamily: 'tajawal',
+                                  fontWeight: FontWeight.w900),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ],
                       ),
@@ -130,28 +140,28 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           child: TextButton(
                             style: const ButtonStyle(
-                                backgroundColor:
-                                    MaterialStatePropertyAll(Colors.grey),
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.grey),
                             ),
                             onPressed: () {
-
-                              securedUserStorage.saveCredentials(_controllerName, _controllerPassword);
+                              securedUserStorage.saveCredentials(
+                                  _controllerName, _controllerPassword);
 
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
                                 return LoadingSignIn(
-                                    name: _controllerName.text,
-                                    password: _controllerPassword.text,
+                                  name: _controllerName.text,
+                                  password: _controllerPassword.text,
                                 );
                               }));
                             },
                             child: const Text(
                               'SIGN IN',
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'tajawal',
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'tajawal',
                               ),
                             ),
                           ),

@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../constants/sounds.dart';
 import '../../constants/text-speech.dart';
 import '../../view_model/navigation_on_road_v_m.dart';
+import 'package:http/http.dart' as http;
 
 class DetectionServices extends ChangeNotifier {
   Sounds s = Sounds();
@@ -21,8 +22,8 @@ class DetectionServices extends ChangeNotifier {
   };
   DateTime lastNotified = DateTime.now().subtract(const Duration(seconds: 5));
   final objectsToReport = ['Sign', 'tv', 'laptop'];
-  final reportAccuracy = 0.085;
-  final ttsAccuracy = 0.080;
+  final reportAccuracy = 0.85;
+  final ttsAccuracy = 0.60;
   final channel = const MethodChannel('java_channel');
   final safeDistanceTime = 2.0; // 2 seconds
   double focalLength = 0;
@@ -49,8 +50,9 @@ class DetectionServices extends ChangeNotifier {
           }
         });
       }
-      if (obj?.className?.trim() == "Doze eyes" ||
-          obj?.className?.trim() == "Doze mouth") {
+      if (obj?.className?.trim() == "Doze" ||
+          obj?.className?.trim() == "Doze eyes") {
+        // obj?.className?.trim() == "Doze eyes" ||obj?.className?.trim() == "Doze mouth"
         s.playSound();
       } else {
         navigationOnRoad.navigation.warningColor = Colors.blue;
@@ -67,7 +69,7 @@ class DetectionServices extends ChangeNotifier {
       focalLength = await getFocalLength();
     }
     if (focalLength > 0) {
-      distance = (0.5 * focalLength * 0.25) / object.rect.width;
+      distance = (1.9 * focalLength * 0.25) / object.rect.width;
     }
     distance = double.parse(distance.toStringAsFixed(1));
     return distance;
@@ -89,6 +91,7 @@ class DetectionServices extends ChangeNotifier {
 
   void sendToServer(CameraImage cameraImage) {
     print('Sending to server...');
+    sendImage(cameraImage, 30.027512555235536, 31.209076589162546);
   }
 
   void notKeepingSafeDistance(
@@ -106,4 +109,40 @@ class DetectionServices extends ChangeNotifier {
   }
 
   DetectionServices();
+}
+
+Future<void> sendImage(CameraImage cameraImage, double lat, double long) async {
+  // Convert the CameraImage to bytes
+  final planeBytes = cameraImage.planes.map((plane) => plane.bytes).toList();
+  final bytes = concatenateBytes(planeBytes);
+
+  // Define the URL and query parameters
+  final url = Uri.http('https://ontheroad.onrender.com', '/api/detection/', {
+    'lat': lat,
+    'long': long,
+  });
+
+  // Create a multipart request
+  var request = http.MultipartRequest('POST', url);
+
+  // Add the image bytes to the request
+  request.files.add(http.MultipartFile.fromBytes('image', bytes));
+
+  // Send the request
+  var response = await request.send();
+
+  // Read and print the response
+  var responseBody = await response.stream.bytesToString();
+  print("@@@@@@@@@@@@@@@@@@" + responseBody);
+}
+
+Uint8List concatenateBytes(List<Uint8List> bytesList) {
+  final totalLength = bytesList.fold(0, (count, bytes) => count + bytes.length);
+  final result = Uint8List(totalLength);
+  var offset = 0;
+  for (var bytes in bytesList) {
+    result.setRange(offset, offset + bytes.length, bytes);
+    offset += bytes.length;
+  }
+  return result;
 }

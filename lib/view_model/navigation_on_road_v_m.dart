@@ -280,12 +280,21 @@ class NavigationOnRoad extends ChangeNotifier {
             }
           }
           if (DateTime.now().difference(lastAsked).inSeconds > 15) {
-            lastAsked = DateTime.now();
-            TextSpeech.speak(
-                "Did you find a ${signsOnRoad[i]['sign']['name']}");
-            showAutoDismissDialog(
-                ctx, "${signsOnRoad[i]['sign']['name']}", signsOnRoad[i]['id']);
-            toggleListening(ctx, _controller, services);
+            if (!signsOnRoad[i]["oneWay"]) {
+              lastAsked = DateTime.now();
+              TextSpeech.speak(
+                  "Did you find a ${signsOnRoad[i]['sign']['name']}");
+              showAutoDismissDialog(ctx, "${signsOnRoad[i]['sign']['name']}",
+                  signsOnRoad[i]['id']);
+              toggleListening(ctx, _controller, services);
+            } else if (inSignsWay(signsOnRoad[i], distance)) {
+              lastAsked = DateTime.now();
+              TextSpeech.speak(
+                  "Did you find a ${signsOnRoad[i]['sign']['name']}");
+              showAutoDismissDialog(ctx, "${signsOnRoad[i]['sign']['name']}",
+                  signsOnRoad[i]['id']);
+              toggleListening(ctx, _controller, services);
+            }
           }
         } else if (distance <
                 Provider.of<SettingsModel>(ctx, listen: false).notifyDistance &&
@@ -300,23 +309,9 @@ class NavigationOnRoad extends ChangeNotifier {
           navigation.warningColor = Colors.red;
           break;
         } else if (signsOnRoad[i]["oneWay"]) {
-          double oldSign_user = Geolocator.distanceBetween(
-            navigation.position.latitude,
-            navigation.position.longitude,
-            signsOnRoad[i]['endLocation']['coordinates'][1],
-            signsOnRoad[i]['endLocation']['coordinates'][0],
-          );
-          double Sign_oldUser = distance;
-          if (navigation.lastLocations.length != 0) {
-            Sign_oldUser = Geolocator.distanceBetween(
-              navigation.lastLocations.first.latitude,
-              navigation.lastLocations.first.longitude,
-              signsOnRoad[i]['startLocation']['coordinates'][1],
-              signsOnRoad[i]['startLocation']['coordinates'][0],
-            );
-          }
-
-          if (oldSign_user < 20 && distance < Sign_oldUser) {
+          if (inSignsWay(signsOnRoad[i], distance) &&
+              !signsOnRoad[i]['notified']) {
+            signsOnRoad[i]['notified'] = true;
             navigation.warning =
                 "There Is A ${signsOnRoad[i]['sign']['name']}\n In ${distance.toStringAsFixed(1)} meters";
             TextSpeech.speak(navigation.warning);
@@ -329,6 +324,25 @@ class NavigationOnRoad extends ChangeNotifier {
         }
       }
     });
+  }
+
+  bool inSignsWay(var sign, double distance) {
+    double oldSign_user = Geolocator.distanceBetween(
+      navigation.position.latitude,
+      navigation.position.longitude,
+      sign['endLocation']['coordinates'][1],
+      sign['endLocation']['coordinates'][0],
+    );
+    double Sign_oldUser = distance;
+    if (navigation.lastLocations.length != 0) {
+      Sign_oldUser = Geolocator.distanceBetween(
+        navigation.lastLocations.first.latitude,
+        navigation.lastLocations.first.longitude,
+        sign['startLocation']['coordinates'][1],
+        sign['startLocation']['coordinates'][0],
+      );
+    }
+    return (oldSign_user < 20 && distance < Sign_oldUser);
   }
 
   getSignsAroundUser(MapServices services, String token) async {

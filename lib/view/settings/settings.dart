@@ -83,8 +83,7 @@ class _SettingsViewState extends State<SettingsView> {
                                       )
                                     else
                                       MaterialButton(
-                                        onPressed: () {
-                                        },
+                                        onPressed: () {},
                                         child: ClipRRect(
                                           borderRadius: const BorderRadius.all(
                                             Radius.circular(13),
@@ -144,10 +143,10 @@ class _SettingsViewState extends State<SettingsView> {
                                     else
                                       MaterialButton(
                                         onPressed: () {
-                                          if ( k == 0) {
+                                          if (k == 0) {
                                             settingsModel.mapTheme =
                                                 MapType.normal;
-                                          } else if ( k == 1) {
+                                          } else if (k == 1) {
                                             settingsModel.mapTheme =
                                                 MapType.satellite;
                                           }
@@ -180,16 +179,25 @@ class _SettingsViewState extends State<SettingsView> {
                       leading: const Icon(Icons.gesture),
                       title: const Text('Gyroscope'),
                       trailing: Switch(
-                        value: Provider.of<SettingsModel>(context,listen: false).isGyroscopeOn,
+                        value:
+                            Provider.of<SettingsModel>(context, listen: false)
+                                .isGyroscopeOn,
                         onChanged: (value) {
                           setState(() {
                             securedUserStorage.saveGyroState(value);
-                            Provider.of<SettingsModel>(context,listen: false).setGyroState(value);
-                            if(Provider.of<SettingsModel>(context,listen: false).gyro.working){
-                              Provider.of<SettingsModel>(context, listen: false).gyro.end();
-                            }
-                            else{
-                              Provider.of<SettingsModel>(context, listen: false).gyro.start();
+                            Provider.of<SettingsModel>(context, listen: false)
+                                .setGyroState(value);
+                            if (Provider.of<SettingsModel>(context,
+                                    listen: false)
+                                .gyro
+                                .working) {
+                              Provider.of<SettingsModel>(context, listen: false)
+                                  .gyro
+                                  .end();
+                            } else {
+                              Provider.of<SettingsModel>(context, listen: false)
+                                  .gyro
+                                  .start(context);
                             }
                           });
                         },
@@ -210,9 +218,11 @@ class _SettingsViewState extends State<SettingsView> {
                           initialValue: settingsModel.notifyDistance.toString(),
                           keyboardType: TextInputType.number,
                           onChanged: (value) {
-                            if(value.isNotEmpty){
-                              securedUserStorage.saveDistanceState(double.parse(value));
-                              settingsModel.setNotifyDistance(double.parse(value));
+                            if (value.isNotEmpty) {
+                              securedUserStorage
+                                  .saveDistanceState(double.parse(value));
+                              settingsModel
+                                  .setNotifyDistance(double.parse(value));
                             }
                           },
                           // controller: distance,

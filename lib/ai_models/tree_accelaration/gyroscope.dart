@@ -1,11 +1,16 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:on_the_road/ai_models/tree_accelaration/tree/tree.dart';
 import 'package:on_the_road/ai_models/tree_accelaration/tree/tree.dart';
+import 'package:provider/provider.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:statistics/statistics.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+
+import '../../constants/text-speech.dart';
+import '../../view_model/navigation_on_road_v_m.dart';
 
 class gyroscope {
   Timer? timer;
@@ -14,8 +19,10 @@ class gyroscope {
   var params0;
   final _streamSubscriptions = <StreamSubscription<dynamic>>[];
   bool working = false;
-  Future<void> start() async {
 
+  Future<void> start(BuildContext context) async {
+    NavigationOnRoad navigationOnRoad =
+        Provider.of<NavigationOnRoad>(context, listen: false);
     params0 =
         await readJsonFile('assets/models/DT_os_22_6.json'); //make sure to wait
     DecisionTreeClassifier classifier = DecisionTreeClassifier.fromMap(params0);
@@ -40,16 +47,23 @@ class gyroscope {
       print(t.tick);
       var record = CalculateStats();
       var classification;
-      classification = classifier.predict(record);
-      if (classification == 1)
-        print("Sudden Acceleration");
-      else if (classification == 2)
-        print("Sudden Right Turn");
-      else if (classification == 3)
-        print(" Sudden Left Turn ");
-      else if (classification == 4) print("Sudden Break");
-      else {
-        print(" Normal ");
+      if (navigationOnRoad.navigation.currentSpeed > 20) {
+        classification = classifier.predict(record);
+        if (classification == 1) {
+          TextSpeech.speak("Sudden Acceleration");
+          print("Sudden Acceleration");
+        } else if (classification == 2) {
+          TextSpeech.speak("Sudden Right Turn");
+          print("Sudden Right Turn");
+        } else if (classification == 3) {
+          TextSpeech.speak("Sudden Left Turn");
+          print("Sudden Left Turn ");
+        } else if (classification == 4) {
+          TextSpeech.speak("Sudden Break");
+          print("Sudden Break");
+        } else {
+          print(" Normal ");
+        }
       }
     });
     working = true;
