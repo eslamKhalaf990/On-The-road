@@ -20,7 +20,7 @@ class FrontCameraView extends StatefulWidget {
 class _FrontCameraViewState extends State<FrontCameraView>
     with WidgetsBindingObserver {
   late List<CameraDescription> cameras;
-
+  int camIndex = 1;
   CameraController? cameraController;
 
   late bool predicting;
@@ -69,8 +69,9 @@ class _FrontCameraViewState extends State<FrontCameraView>
     cameras = await availableCameras();
 
     // cameras[0] for rear-camera
-    cameraController =
-        CameraController(cameras[0], ResolutionPreset.high, enableAudio: false);
+    cameraController = CameraController(
+        cameras[camIndex], ResolutionPreset.high,
+        enableAudio: false);
 
     cameraController?.initialize().then((_) async {
       // Stream of image passed to [onLatestImageAvailable] callback
@@ -112,6 +113,16 @@ class _FrontCameraViewState extends State<FrontCameraView>
               child: CameraPreview(cameraController!)),
         ),
         Warning(),
+        FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              if (camIndex == 1)
+                camIndex = 0;
+              else
+                camIndex = 1;
+            });
+          },
+        )
       ],
     ));
   }
