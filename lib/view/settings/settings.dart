@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:on_the_road/model/secure_storage.dart';
 import 'package:on_the_road/model/settings.dart';
 import 'package:provider/provider.dart';
+import '../../ai_models/detection_model/ui/front_camera_view.dart';
 import '../../constants/design_constants.dart';
 import '../../ai_models/tree_accelaration/gyroscope.dart';
 
@@ -235,6 +236,42 @@ class _SettingsViewState extends State<SettingsView> {
                       ),
                     ),
                   ),
+                  Container(
+                    height: 130,
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.all(10),
+                    decoration: DesignConstants.roundedBorder,
+                    child: ListTile(
+                      leading: const Icon(Icons.camera_front),
+                      title: const Text('Front Cam'),
+                      trailing: SizedBox(
+                        width: 120,
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              camIndex = camIndex == 0 ? 1 : 0;
+                            });
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: camIndex == 0 ? Colors.grey : Colors.green,
+                            ),
+                            child: Text(
+                              camIndex == 0 ? 'Off' : 'On',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+
                   // Container(
                   //   height: 130,
                   //   padding: const EdgeInsets.all(10),
@@ -286,7 +323,8 @@ class _SettingsViewState extends State<SettingsView> {
                   //       },
                   //     ),
                   //   ),
-                  // ),
+                  // )
+                  ,
                   Container(
                     height: 130,
                     padding: const EdgeInsets.all(10),

@@ -7,6 +7,8 @@ import 'package:on_the_road/ai_models/detection_model/detection_services.dart';
 import 'package:on_the_road/view/home_view/widgets/warning.dart';
 import 'camera_view_singleton.dart';
 
+int camIndex = 1;
+
 class FrontCameraView extends StatefulWidget {
   final Function(List<ResultObjectDetection?> recognitions) resultsCallback;
   final Function(String classification) resultsCallbackClassification;
@@ -20,7 +22,7 @@ class FrontCameraView extends StatefulWidget {
 class _FrontCameraViewState extends State<FrontCameraView>
     with WidgetsBindingObserver {
   late List<CameraDescription> cameras;
-  int camIndex = 1;
+
   CameraController? cameraController;
 
   late bool predicting;
@@ -113,16 +115,6 @@ class _FrontCameraViewState extends State<FrontCameraView>
               child: CameraPreview(cameraController!)),
         ),
         Warning(),
-        FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              if (camIndex == 1)
-                camIndex = 0;
-              else
-                camIndex = 1;
-            });
-          },
-        )
       ],
     ));
   }
