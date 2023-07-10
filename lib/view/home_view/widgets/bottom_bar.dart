@@ -12,7 +12,6 @@ import 'package:on_the_road/view/settings/settings.dart';
 import 'package:on_the_road/view/statistics_view/statistics.dart';
 import 'package:on_the_road/view/user_view/Profile.dart';
 import 'package:on_the_road/view/home_view/home.dart';
-
 import '../../../ai_models/detection_model/RunModelByFrontCameraDemo.dart';
 import '../../../constants/sounds.dart';
 
@@ -44,7 +43,7 @@ class BottomBar extends StatelessWidget {
     return Consumer<NavigationOnRoad>(
       builder: (BuildContext context, stream, child) {
         return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          // mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
               onPressed: () {

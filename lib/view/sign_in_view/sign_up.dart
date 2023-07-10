@@ -34,6 +34,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void initState() {
+    getToken();
     super.initState();
     if (widget.signedIn == "failed") {
       state = "Email Already Exist, Try a different one";
@@ -219,9 +220,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     MaterialStateProperty.all(Colors.grey),
                               ),
                               onPressed: () async{
-                                getToken();
-                                print(fcToken);
-                                Future.delayed(const Duration(seconds: 2),(){
+                                Future.delayed(const Duration(seconds: 4),(){
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
                                         return LoadingSignUp(

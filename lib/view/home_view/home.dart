@@ -200,9 +200,9 @@ class _HomeState extends State<Home> {
                       Positioned(
                         bottom: 16.0,
                         left: 2.0,
-                        right: 2.0,
+                        right: 8.0,
                         child: Container(
-                          width: 100,
+                          // width: 200,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(40),
                             color: Colors.black54,
@@ -216,7 +216,7 @@ class _HomeState extends State<Home> {
                               ),
                             ],
                           ),
-                          margin: const EdgeInsets.only(left: 40, right: 40),
+                          margin: const EdgeInsets.only(left: 20, right: 20),
                           child: BottomBar(
                               controller: _controller, services: services),
                         ),

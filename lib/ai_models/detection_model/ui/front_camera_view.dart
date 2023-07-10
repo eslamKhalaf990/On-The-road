@@ -37,12 +37,12 @@ class _FrontCameraViewState extends State<FrontCameraView>
   //load your model
   Future loadModel() async {
     // String pathObjectDetectionModel = "assets/models/best(monasha).torchscript";
-    String pathObjectDetectionModel = "assets/models/detection.torchscript";
+    String pathObjectDetectionModel = "assets/models/best(monasha).torchscript";
     try {
       //_customModel = await PytorchLite.loadCustomModel(pathCustomModel);
       _objectModel = await FlutterPytorch.loadObjectDetectionModel(
-          pathObjectDetectionModel, 10, 640, 640,
-          labelPath: "assets/labels/4-7-a.txt");
+          pathObjectDetectionModel, 2, 640, 640,
+          labelPath: "assets/labels/best(monasha).txt");
       // labelPath: "assets/labels/best(monasha).txt");
     } catch (e) {
       if (e is PlatformException) {
