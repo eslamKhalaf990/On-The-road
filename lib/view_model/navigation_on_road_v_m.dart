@@ -59,7 +59,7 @@ class NavigationOnRoad extends ChangeNotifier {
     positionStream =
         Geolocator.getPositionStream(locationSettings: locationSettings)
             .listen((Position position) async {
-      if ((position.speed * 3.6) < 0.2) {
+      if ((position.speed * 3.6) < 2) {
         navigation.currentSpeed = 0.0;
       } else {
         navigation.currentSpeed = position.speed * 3.6;
@@ -87,7 +87,7 @@ class NavigationOnRoad extends ChangeNotifier {
 
       navigation.avgSpeed = sum / cnt;
 
-      if (navigation.currentSpeed < 0.1) {
+      if (navigation.currentSpeed == 0) {
         if (distanceTime.isActive) {
           distanceTime.cancel();
         }
